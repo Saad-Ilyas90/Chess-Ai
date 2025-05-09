@@ -11,6 +11,7 @@ import Dialog from 'material-ui/Dialog';
 import {fenToBoard} from './Fen.js';
 import FlatButton from 'material-ui/FlatButton';
 import Slider from 'material-ui/Slider';
+import BlunderAnalysis from './BlunderAnalysis.js';
 let startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 var Chess = require('./chess.js').Chess;
 let sf = null;
@@ -54,6 +55,9 @@ class App extends Component {
       boardIndex: 0,
       newGameDiaOpen: false,
       intelligenceDiaOpen: false,
+      blunderConfirmationOpen: false,
+      blunderAnalysisOpen: false,
+      gameOver: false,
       historicalStates: [startFen],
       intelligenceLevel: localStorage.getItem("intelligenceLevel") ? localStorage.getItem("intelligenceLevel") : "10"
     };
@@ -82,10 +86,24 @@ class App extends Component {
     return orig.join("");
   }
 
-  handleChessMove = (fen) => {
-    this.state.historicalStates = this.state.historicalStates.slice(0, this.state.boardIndex + 1);
-    this.state.historicalStates.push(fen);
-    this.setState({ boardIndex: this.state.historicalStates.length - 1, historicalStates: this.state.historicalStates });
+  handleChessMove = (fen, gameOver = false) => {
+    // Create a clean copy of the historicalStates array up to the current boardIndex
+    const historicalStates = this.state.historicalStates.slice(0, this.state.boardIndex + 1);
+    
+    // Add the new position
+    historicalStates.push(fen);
+    
+    this.setState({ 
+      boardIndex: historicalStates.length - 1, 
+      historicalStates: historicalStates,
+      gameOver: gameOver
+    });
+    
+    // Show blunder confirmation when game is over
+    if (gameOver) {
+      this.setState({ blunderConfirmationOpen: true });
+    }
+    
     this.getFallenOnes();
   }
 
@@ -119,7 +137,44 @@ class App extends Component {
   }
   requestCreateNewGame = () => {
     var chess = new Chess();
-    this.setState({ newGameDiaOpen: false, boardIndex: 0, historicalStates: [startFen] })
+    this.setState({ 
+      newGameDiaOpen: false, 
+      boardIndex: 0, 
+      historicalStates: [startFen], 
+      gameOver: false,
+      blunderConfirmationOpen: false,
+      blunderAnalysisOpen: false
+    });
+  }
+
+  closeBlunderConfirmation = () => {
+    this.setState({ blunderConfirmationOpen: false });
+  }
+  
+  showBlunderAnalysis = () => {
+    this.setState({ 
+      blunderConfirmationOpen: false,
+      blunderAnalysisOpen: true 
+    });
+  }
+  
+  closeBlunderAnalysis = () => {
+    this.setState({ blunderAnalysisOpen: false });
+  }
+  
+  jumpToPosition = (index) => {
+    console.log('App: Setting board index to', index, 'from current', this.state.boardIndex);
+    
+    // Close the dialog when jumping to a position and set a timer to reopen it
+    this.setState({ 
+      boardIndex: index,
+      blunderAnalysisOpen: false 
+    });
+    
+    // Reopen the blunder analysis dialog after 2 seconds
+    setTimeout(() => {
+      this.setState({ blunderAnalysisOpen: true });
+    }, 2000);
   }
 
   render() {
@@ -132,10 +187,16 @@ class App extends Component {
       <FlatButton label="Cancel" primary={true} style={{ color: '#333' }} onClick={this.requestCloseIntelligenceDia} />,
       <FlatButton label="OK" primary={true} style={{ color: '#333' }} onClick={this.requestCloseIntelligenceDia} />,
     ];
+    
+    const blunderConfirmationActions = [
+      <FlatButton label="No" primary={true} style={{ color: '#333' }} onClick={this.closeBlunderConfirmation} />,
+      <FlatButton label="Yes" primary={true} style={{ color: '#333' }} onClick={this.showBlunderAnalysis} />,
+    ];
 
     return (
       <MuiThemeProvider muiTheme={getMuiTheme(chessLight)}>
         <div className="App">
+          <div id="thinking-bar"></div>
           <Header requestOpenNewGame={this.requestOpenNewGame} requestOpenIntelligenceDia={this.requestOpenIntelligenceDia} />
           <WindowResizeListener onResize={windowSize => { resized(windowSize.windowWidth, windowSize.windowHeight) }} />
           <ChessBoard onMove={this.handleChessMove} intelligenceLevel={this.state.intelligenceLevel} board={this.state.historicalStates[this.state.boardIndex]} />
@@ -146,6 +207,21 @@ class App extends Component {
             <div className="label">Depth {this.state.intelligenceLevel}</div>
             <Slider step={1} value={this.state.intelligenceLevel} min={1} max={20} defaultValue={this.state.intelligenceLevel} onChange={this.onChangeIntelligenceLevel} />
           </Dialog>
+          <Dialog 
+            title="Game Analysis" 
+            actions={blunderConfirmationActions} 
+            modal={false} 
+            open={this.state.blunderConfirmationOpen} 
+            onRequestClose={this.closeBlunderConfirmation}
+          >
+            Would you like to check the blunders made in this game?
+          </Dialog>
+          <BlunderAnalysis 
+            open={this.state.blunderAnalysisOpen} 
+            onClose={this.closeBlunderAnalysis}
+            historicalStates={this.state.historicalStates}
+            onJumpToPosition={this.jumpToPosition}
+          />
           <Footer fallenOnes={this.getFallenOnes()} playForHuman={this.handlePlayForHuman} gotoPreviousState={this.handleGotoPreviousState} gotoNextState={this.handleGotoNextState} />
         </div>
       </MuiThemeProvider>
