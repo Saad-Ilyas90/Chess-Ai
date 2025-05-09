@@ -45,6 +45,24 @@ class ChessBoard extends Component {
         this.forceUpdate();
     }
 
+    componentDidUpdate(prevProps) {
+        // If board prop changed, refresh the board
+        if (prevProps.board !== this.props.board) {
+            console.log('Board updated, refreshing...');
+            var chess = new Chess(this.props.board);
+            var board = chess.board();
+            
+            // Clear all cell classes first
+            var cells = document.getElementsByClassName("cell");
+            for (var i = 0; i < cells.length; i++) {
+                cells[i].classList = ['cell'];
+            }
+            
+            // Refresh the board with new positions
+            this.refreshBoard(board);
+        }
+    }
+
     nextState(cellCode) {
         var chess = new Chess(this.props.board);
         if(sf==null){
@@ -66,13 +84,15 @@ class ChessBoard extends Component {
                         document.getElementById(`cell-${move.substr(0,2)}`).classList.add('ai-footprint-in-sand');
                         document.getElementById(`cell-${move.substr(2,4)}`).classList.add('ai-footprint-in-sand');
                     }
-                    this.props.onMove(chess.fen())
-                    if(!(chess.turn()===this.state.userColor)){
+                    
+                    // Check if game is over after AI move
+                    const gameOver = this.checkGameOver(chess);
+                    this.props.onMove(chess.fen(), gameOver);
+                    
+                    if(!gameOver && !(chess.turn()===this.state.userColor)){
                         sf.postMessage("position fen "+chess.fen())
                         sf.postMessage(`go depth ${this.props.intelligenceLevel}`)
                     }
-                    if (chess.game_over())
-                        alert("Game Over!");
                 }
                 
             }
@@ -91,16 +111,16 @@ class ChessBoard extends Component {
                 else
                     chess.move({ from: this.state.from, to: cellCode }); // if not a promotion, be normal
                 
+                // Check if game is over after player move
+                const gameOver = this.checkGameOver(chess);
+                
+                if (!gameOver) {
                     showThinkingBar(true);
-                //-----------------PUT AI HERE-------------------------------
-                // var moves = chess.moves();
-                // var move = moves[Math.floor(Math.random() * moves.length)];
-                // chess.move(move);
-                // showThinkingBar(false);
-                sf.postMessage(`position fen ${chess.fen()}`)
-                sf.postMessage(`go depth ${this.props.intelligenceLevel}`)
-                //-----------------PUT AI HERE-------------------------------
-                this.props.onMove(chess.fen())
+                    sf.postMessage(`position fen ${chess.fen()}`)
+                    sf.postMessage(`go depth ${this.props.intelligenceLevel}`)
+                }
+                
+                this.props.onMove(chess.fen(), gameOver);
             }
             this.state.to = '';
             this.state.from = '';
@@ -125,8 +145,29 @@ class ChessBoard extends Component {
         this.refreshBoard(chess.board());
     }
 
-    
-
+    checkGameOver(chess) {
+        if (chess.game_over()) {
+            let result = '';
+            if (chess.in_checkmate()) {
+                const winner = chess.turn() === 'w' ? 'Black' : 'White';
+                result = `Checkmate! ${winner} wins.`;
+            } else if (chess.in_draw()) {
+                if (chess.in_stalemate()) {
+                    result = 'Game drawn by stalemate.';
+                } else if (chess.in_threefold_repetition()) {
+                    result = 'Game drawn by threefold repetition.';
+                } else if (chess.insufficient_material()) {
+                    result = 'Game drawn due to insufficient material.';
+                } else {
+                    result = 'Game drawn by the 50-move rule.';
+                }
+            }
+            
+            alert(result);
+            return true;
+        }
+        return false;
+    }
 
     render() {
         let renderableBoard = fenToBoard(this.props.board);
