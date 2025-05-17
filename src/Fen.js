@@ -1,4 +1,10 @@
 let fenToBoard = (fen) => {
+    // Safety check for undefined or null fen
+    if (!fen) {
+        console.warn("Received undefined or null FEN string");
+        return "";
+    }
+    
     let tempRow = '';
     let map = { 'b': 'N', 'n': 'J', 'q': 'W', 'p': 'O', 'k': 'L', 'r': 'T', 'B': 'B', 'N': 'H', 'Q': 'Q', 'P': 'P', 'K': 'K', 'R': 'R', '.': ' ' };
 

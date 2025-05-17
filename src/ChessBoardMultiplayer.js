@@ -197,8 +197,20 @@ class ChessBoardMultiplayer extends Component {
         if (chess.game_over()) {
             let result = '';
             if (chess.in_checkmate()) {
-                const winner = chess.turn() === 'w' ? 'Black' : 'White';
-                result = `Checkmate! ${winner} wins.`;
+                const loser = chess.turn(); // The player who's turn it is has lost
+                const winner = loser === 'w' ? 'b' : 'w';
+                
+                // Determine if the current user won or lost
+                if (winner === this.props.userColor) {
+                    result = `Checkmate! You win!`;
+                } else {
+                    result = `Checkmate! You lost!`;
+                }
+                
+                // Make sure we show the alert to both players
+                setTimeout(() => {
+                    alert(result);
+                }, 100);
             } else if (chess.in_draw()) {
                 if (chess.in_stalemate()) {
                     result = 'Game drawn by stalemate.';
@@ -209,9 +221,9 @@ class ChessBoardMultiplayer extends Component {
                 } else {
                     result = 'Game drawn by the 50-move rule.';
                 }
+                alert(result);
             }
             
-            alert(result);
             return true;
         }
         return false;
