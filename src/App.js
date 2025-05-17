@@ -1,5 +1,4 @@
 import './App.css';
-import Chess from './chess.js';
 import React, { Component } from 'react';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -13,6 +12,8 @@ import {fenToBoard} from './Fen.js';
 import FlatButton from 'material-ui/FlatButton';
 import Slider from 'material-ui/Slider';
 import Analysis from './Analysis.js';
+// Use require for Chess because it uses CommonJS export
+const Chess = require('./chess.js').Chess;
 let startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 let sf = null;
 
