@@ -3,9 +3,10 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import TextField from 'material-ui/TextField';
-import { generateGameId } from './firebase';
+import { generateGameId, isColorTaken, getGameData } from './firebase';
 import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
+import CircularProgress from 'material-ui/CircularProgress';
 
 class GameModeDialog extends Component {
   constructor(props) {
@@ -15,34 +16,106 @@ class GameModeDialog extends Component {
       joinGame: false,
       gameId: generateGameId(),
       playerColor: 'w',
-      error: ''
+      error: '',
+      loading: false,
+      oppositeColorSelected: false,
+      gameData: null
     };
   }
 
   handleGameModeChange = (event, value) => {
-    this.setState({ gameMode: value, joinGame: false });
+    this.setState({ 
+      gameMode: value, 
+      joinGame: false, 
+      oppositeColorSelected: false,
+      gameData: null
+    });
   };
 
   handleJoinTypeChange = (event, value) => {
     const joinGame = value === 'join';
     const gameId = joinGame ? this.state.gameId : generateGameId();
-    this.setState({ joinGame, gameId });
+    this.setState({ 
+      joinGame, 
+      gameId, 
+      oppositeColorSelected: false,
+      gameData: null,
+      error: ''
+    });
+  };
+
+  handleGameIdChange = async (event) => {
+    const gameId = event.target.value;
+    this.setState({ gameId, loading: true, error: '' });
+    
+    // If we're joining a game, check if it exists and which colors are taken
+    if (gameId) {
+      try {
+        const gameData = await getGameData(gameId);
+        if (gameData && gameData.players) {
+          // Check which colors are taken
+          const whiteIsTaken = !!gameData.players.w;
+          const blackIsTaken = !!gameData.players.b;
+          
+          let playerColor = this.state.playerColor;
+          let oppositeColorSelected = false;
+          
+          // Auto-select the opposite color
+          if (whiteIsTaken && !blackIsTaken) {
+            playerColor = 'b'; // White is taken, select black
+            oppositeColorSelected = true;
+          } else if (blackIsTaken && !whiteIsTaken) {
+            playerColor = 'w'; // Black is taken, select white
+            oppositeColorSelected = true;
+          }
+          
+          this.setState({ 
+            playerColor, 
+            oppositeColorSelected, 
+            gameData, 
+            loading: false 
+          });
+        } else {
+          this.setState({ 
+            loading: false, 
+            error: 'Game not found' 
+          });
+        }
+      } catch (error) {
+        console.error("Error checking game:", error);
+        this.setState({ 
+          loading: false,
+          error: 'Error checking game'
+        });
+      }
+    } else {
+      this.setState({ loading: false });
+    }
   };
 
   handleColorChange = (event, value) => {
     this.setState({ playerColor: value });
   };
 
-  handleGameIdChange = (event) => {
-    this.setState({ gameId: event.target.value });
-  };
-
-  handleSubmit = () => {
+  handleSubmit = async () => {
     const { gameMode, joinGame, gameId, playerColor } = this.state;
     
     if (gameMode === 'multiplayer' && joinGame && !gameId) {
       this.setState({ error: 'Please enter a game ID' });
       return;
+    }
+    
+    if (gameMode === 'multiplayer' && joinGame) {
+      // For joining games, verify the game exists and color is available
+      try {
+        const gameExists = await isColorTaken(gameId, playerColor);
+        if (gameExists) {
+          this.setState({ error: `The color ${playerColor === 'w' ? 'white' : 'black'} is already taken in this game` });
+          return;
+        }
+      } catch (error) {
+        console.error("Error checking color:", error);
+      }
     }
     
     this.props.onSubmit({
@@ -55,7 +128,7 @@ class GameModeDialog extends Component {
 
   render() {
     const { open, onClose } = this.props;
-    const { gameMode, joinGame, gameId, playerColor, error } = this.state;
+    const { gameMode, joinGame, gameId, playerColor, error, loading, oppositeColorSelected, gameData } = this.state;
     
     const actions = [
       <FlatButton
@@ -69,12 +142,27 @@ class GameModeDialog extends Component {
         primary={true}
         style={{ color: '#333' }}
         onClick={this.handleSubmit}
+        disabled={loading || (joinGame && !gameId)}
       />
     ];
+    
+    // Determine which color is available for joining
+    let whiteDisabled = false;
+    let blackDisabled = false;
+    
+    if (joinGame && gameData && gameData.players) {
+      whiteDisabled = !!gameData.players.w;
+      blackDisabled = !!gameData.players.b;
+    }
     
     const styles = {
       radioButton: {
         marginBottom: 16,
+      },
+      disabledRadioButton: {
+        marginBottom: 16,
+        color: '#999',
+        cursor: 'not-allowed'
       },
       group: {
         padding: '10px 0',
@@ -106,6 +194,11 @@ class GameModeDialog extends Component {
         backgroundColor: '#e0e0e0',
         borderRadius: '4px',
         display: 'inline-block',
+        marginTop: '10px'
+      },
+      loadingContainer: {
+        display: 'flex',
+        justifyContent: 'center',
         marginTop: '10px'
       }
     };
@@ -167,13 +260,25 @@ class GameModeDialog extends Component {
             </RadioButtonGroup>
             
             {joinGame ? (
-              <TextField
-                floatingLabelText="Enter Game ID"
-                fullWidth={true}
-                value={gameId}
-                onChange={this.handleGameIdChange}
-                errorText={error}
-              />
+              <div>
+                <TextField
+                  floatingLabelText="Enter Game ID"
+                  fullWidth={true}
+                  value={gameId}
+                  onChange={this.handleGameIdChange}
+                  errorText={error}
+                />
+                {loading && (
+                  <div style={styles.loadingContainer}>
+                    <CircularProgress size={24} />
+                  </div>
+                )}
+                {oppositeColorSelected && (
+                  <div style={{color: '#4caf50', marginTop: '10px'}}>
+                    Auto-selected {playerColor === 'w' ? 'white' : 'black'} as it's the only available color
+                  </div>
+                )}
+              </div>
             ) : (
               <div style={{textAlign: 'center', marginTop: '15px'}}>
                 <p>Your Game ID:</p>
@@ -194,14 +299,21 @@ class GameModeDialog extends Component {
               <RadioButton
                 value="w"
                 label="Play as White (moves first)"
-                style={styles.radioButton}
+                style={whiteDisabled ? styles.disabledRadioButton : styles.radioButton}
+                disabled={whiteDisabled}
               />
               <RadioButton
                 value="b"
                 label="Play as Black"
-                style={styles.radioButton}
+                style={blackDisabled ? styles.disabledRadioButton : styles.radioButton}
+                disabled={blackDisabled}
               />
             </RadioButtonGroup>
+            {(whiteDisabled && blackDisabled) && (
+              <div style={{color: '#f44336', marginTop: '10px'}}>
+                This game is full - both colors are already taken.
+              </div>
+            )}
           </Paper>
         )}
       </Dialog>

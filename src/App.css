@@ -65,6 +65,16 @@
   cursor: pointer;
 }
 
+.hidden-piece {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.opponent-piece {
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
 #root > div > div:nth-child(1) > div:nth-child(1) > h1 {
   font-family: 'ultraminimal'
 }
