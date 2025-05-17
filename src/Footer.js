@@ -6,10 +6,13 @@ import Paper from 'material-ui/Paper';
 import AVPlayArrow from 'material-ui/svg-icons/av/play-arrow';
 import AVFastRewind from 'material-ui/svg-icons/av/fast-rewind';
 import AVFastForward from 'material-ui/svg-icons/av/fast-forward';
+import ActionAssessment from 'material-ui/svg-icons/action/assessment';
+import FlatButton from 'material-ui/FlatButton';
 
 const aVPlayArrow = <AVPlayArrow />;
 const aVFastForward = <AVFastForward />;
 const aVFastRewind = <AVFastRewind />;
+const actionAssessment = <ActionAssessment />;
 
 class Footer extends Component {
 
@@ -20,8 +23,9 @@ class Footer extends Component {
     select = (index) => this.setState({ selectedIndex: index });
 
     render() {
-        const { gameMode = 'ai' } = this.props;
+        const { gameMode = 'ai', gameOver = false, showAnalysis } = this.props;
         const isAIMode = gameMode === 'ai';
+        const isMultiplayerGameOver = gameMode === 'multiplayer' && gameOver;
 
         return (
             <div>
@@ -35,13 +39,28 @@ class Footer extends Component {
                                 style={{ color: '#333' }}
                                 onClick={() => { this.props.gotoPreviousState() }}
                             />
-                            <BottomNavigationItem
-                                label=" "
-                                icon={aVPlayArrow}
-                                style={{ color: '#333' }}
-                                onClick={() => { isAIMode && this.props.playForHuman() }}
-                                disabled={!isAIMode}
-                            />
+                            {isAIMode ? (
+                                <BottomNavigationItem
+                                    label=" "
+                                    icon={aVPlayArrow}
+                                    style={{ color: '#333' }}
+                                    onClick={() => { this.props.playForHuman() }}
+                                />
+                            ) : isMultiplayerGameOver ? (
+                                <BottomNavigationItem
+                                    label="Analysis"
+                                    icon={actionAssessment}
+                                    style={{ color: '#333' }}
+                                    onClick={() => { showAnalysis && showAnalysis() }}
+                                />
+                            ) : (
+                                <BottomNavigationItem
+                                    label=" "
+                                    icon={aVPlayArrow}
+                                    style={{ color: '#333' }}
+                                    disabled={true}
+                                />
+                            )}
                             <BottomNavigationItem
                                 label=" "
                                 icon={aVFastForward}

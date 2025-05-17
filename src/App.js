@@ -13,6 +13,7 @@ import {fenToBoard} from './Fen.js';
 import FlatButton from 'material-ui/FlatButton';
 import Slider from 'material-ui/Slider';
 import Analysis from './Analysis.js';
+import MultiplayerAnalysis from './MultiplayerAnalysis.js';
 import GameModeDialog from './GameModeDialog';
 // Firebase services
 import { 
@@ -64,6 +65,18 @@ class App extends Component {
 
   constructor(props) {
     super(props);
+    
+    // Check if we have a saved position in session storage
+    let savedPosition = null;
+    try {
+      const posStr = sessionStorage.getItem('lockedPosition');
+      if (posStr) {
+        savedPosition = parseInt(posStr);
+      }
+    } catch (e) {
+      console.error("Error reading from session storage:", e);
+    }
+    
     this.state = {
       boardIndex: 0,
       newGameDiaOpen: false,
@@ -72,6 +85,9 @@ class App extends Component {
       analysisConfirmationOpen: false,
       analysisOpen: false,
       gameOver: false,
+      isReviewingPosition: false,
+      positionLocked: false,
+      savedPosition: savedPosition,
       historicalStates: [startFen],
       intelligenceLevel: localStorage.getItem("intelligenceLevel") ? localStorage.getItem("intelligenceLevel") : "10",
       // Multiplayer states
@@ -114,6 +130,17 @@ class App extends Component {
       this.gameListener = listenToGameChanges(this.state.gameId, (gameData) => {
         if (!gameData) return;
         
+        // If position is locked, don't update the board position at all
+        if (this.state.positionLocked) {
+          console.log("Position locked, ignoring board update");
+          return;
+        }
+        
+        // If we're reviewing a position in analysis mode, don't update the board
+        if (this.state.isReviewingPosition) {
+          return;
+        }
+        
         // Only update board if the FEN is different from our current one
         if (gameData.fen && this.state.historicalStates[this.state.boardIndex] !== gameData.fen) {
           // Create a clean copy of the historicalStates array up to the current boardIndex
@@ -124,11 +151,30 @@ class App extends Component {
             historicalStates.push(gameData.fen);
           }
           
+          // Check if the game just ended based on opponent's move
+          const gameJustEnded = !this.state.gameOver && gameData.gameOver;
+          
           this.setState({
             historicalStates: historicalStates,
             boardIndex: historicalStates.length - 1,
             gameOver: gameData.gameOver || false
           });
+          
+          // If game just ended based on opponent's move, verify the checkmate locally
+          if (gameJustEnded) {
+            const chess = new Chess(gameData.fen);
+            if (chess.in_checkmate()) {
+              const loser = chess.turn();
+              // If this player is the loser, show the popup
+              if (loser === this.state.userColor) {
+                setTimeout(() => {
+                  alert('Checkmate! You lost!');
+                  // Show analysis confirmation
+                  this.setState({ analysisConfirmationOpen: true });
+                }, 500);
+              }
+            }
+          }
         }
         
         // Check if opponent joined
@@ -230,6 +276,14 @@ class App extends Component {
   };
 
   getFallenOnes = () => {
+    // Check if we have valid historical states
+    if (!this.state.historicalStates || 
+        this.state.boardIndex < 0 || 
+        this.state.boardIndex >= this.state.historicalStates.length ||
+        !this.state.historicalStates[this.state.boardIndex]) {
+      return ""; // Return empty string if no valid state exists
+    }
+    
     var orig = "tJnWlNjTOoOoOoOoZ+Z+Z+Z++Z+Z+Z+ZZ+Z+Z+Z++Z+Z+Z+ZpPpPpPpPRhBqKbHr".toLowerCase();
     var curr = fenToBoard(this.state.historicalStates[this.state.boardIndex]).toLowerCase();
     orig = orig.replace(/z/g,"");
@@ -269,8 +323,8 @@ class App extends Component {
       }
     }
     
-    // Show analysis confirmation when game is over, but only in AI mode
-    if (gameOver && this.state.gameMode === 'ai') {
+    // Show analysis confirmation when game is over in any game mode
+    if (gameOver) {
       this.setState({ analysisConfirmationOpen: true });
     }
     
@@ -289,7 +343,8 @@ class App extends Component {
   }
   handleGotoPreviousState = () => {
     if (this.state.boardIndex > 0) {
-      this.setState({ boardIndex: this.state.boardIndex - 2 });
+      // Use our lockBoardPosition method to ensure the position stays fixed
+      this.lockBoardPosition(this.state.boardIndex - 1);
     }
   }
   handlePlayForHuman = () => {
@@ -306,8 +361,9 @@ class App extends Component {
     this.state.historicalStates = this.state.historicalStates.slice(0, this.state.boardIndex + 1);
   }
   handleGotoNextState = () => {
-    if (this.state.boardIndex < this.state.historicalStates.length - 2) {
-      this.setState({ boardIndex: this.state.boardIndex + 2 });
+    if (this.state.boardIndex < this.state.historicalStates.length - 1) {
+      // Use our lockBoardPosition method to ensure the position stays fixed
+      this.lockBoardPosition(this.state.boardIndex + 1);
     }
   }
   requestCreateNewGame = () => {
@@ -330,22 +386,75 @@ class App extends Component {
   }
   
   closeAnalysis = () => {
-    this.setState({ analysisOpen: false });
+    // When closing analysis, return to the final position
+    if (this.state.historicalStates.length > 0) {
+      this.setState({ 
+        analysisOpen: false,
+        isReviewingPosition: false,
+        boardIndex: this.state.historicalStates.length - 1
+      }, () => {
+        // Restart Firebase listeners ONLY after analysis is closed
+        if (this.state.gameMode === 'multiplayer' && this.state.gameId) {
+          console.log("Restarting Firebase listeners after analysis");
+          this.setupGameListener();
+        }
+      });
+    } else {
+      this.setState({ 
+        analysisOpen: false,
+        isReviewingPosition: false
+      });
+    }
+  }
+  
+  lockBoardPosition = (index) => {
+    // Set the board index and lock it from being changed by listeners
+    console.log(`Locking board position at index ${index}`);
+    
+    this.setState({
+      boardIndex: index,
+      isReviewingPosition: true,
+      positionLocked: true // Add this flag to completely lock the position
+    });
+    
+    // Store this state in session storage as well for extra persistence
+    try {
+      sessionStorage.setItem('lockedPosition', index.toString());
+    } catch (e) {
+      console.error("Could not save position to session storage:", e);
+    }
   }
   
   jumpToPosition = (index) => {
     console.log('App: Setting board index to', index, 'from current', this.state.boardIndex);
     
-    // Close the dialog when jumping to a position and set a timer to reopen it
+    // Disable all Firebase listeners temporarily
+    if (this.gameListener) {
+      console.log("Disabling Firebase listeners to prevent auto-resets");
+      this.gameListener();
+      this.gameListener = null;
+    }
+    
+    // Set the board index directly without any listener complications
     this.setState({ 
       boardIndex: index,
-      analysisOpen: false 
+      isReviewingPosition: true,
+      // Keep the analysis dialog open
+      analysisOpen: true
     });
     
-    // Reopen the analysis dialog after 2 seconds
-    setTimeout(() => {
-      this.setState({ analysisOpen: true });
-    }, 2000);
+    // Don't restart listeners - this is key to preventing auto-resets
+  }
+
+  // Add a method to exit review mode
+  exitReviewMode = () => {
+    // Return to the final position when exiting review mode
+    if (this.state.historicalStates.length > 0) {
+      this.setState({
+        boardIndex: this.state.historicalStates.length - 1,
+        isReviewingPosition: false
+      });
+    }
   }
 
   renderChessBoard() {
@@ -436,12 +545,23 @@ class App extends Component {
             Would you like to evaluate this game?
           </Dialog>
           
-          <Analysis 
-            open={this.state.analysisOpen} 
-            onClose={this.closeAnalysis}
-            historicalStates={this.state.historicalStates}
-            onJumpToPosition={this.jumpToPosition}
-          />
+          {this.state.gameMode === 'multiplayer' ? (
+            <MultiplayerAnalysis 
+              open={this.state.analysisOpen} 
+              onClose={this.closeAnalysis}
+              historicalStates={this.state.historicalStates}
+              onJumpToPosition={this.jumpToPosition}
+              playerColor={this.state.userColor}
+            />
+          ) : (
+            <Analysis 
+              open={this.state.analysisOpen} 
+              onClose={this.closeAnalysis}
+              historicalStates={this.state.historicalStates}
+              onJumpToPosition={this.jumpToPosition}
+              userColor={this.state.userColor}
+            />
+          )}
           
           <Footer 
             fallenOnes={this.getFallenOnes()} 
@@ -449,6 +569,8 @@ class App extends Component {
             gotoPreviousState={this.handleGotoPreviousState} 
             gotoNextState={this.handleGotoNextState}
             gameMode={this.state.gameMode}
+            gameOver={this.state.gameOver}
+            showAnalysis={this.showAnalysis}
           />
         </div>
       </MuiThemeProvider>
