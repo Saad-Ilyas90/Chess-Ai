@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {fenToBoard} from './Fen.js';
-var Chess = require('./chess.js').Chess;
+const Chess = require('./chess.js').Chess;
 let sf = null;
 
 function showThinkingBar(value){
