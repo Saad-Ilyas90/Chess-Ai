@@ -20,6 +20,9 @@ class Footer extends Component {
     select = (index) => this.setState({ selectedIndex: index });
 
     render() {
+        const { gameMode = 'ai' } = this.props;
+        const isAIMode = gameMode === 'ai';
+
         return (
             <div>
                 <p className="graveyard"><div id="graves">{this.props.fallenOnes}</div> </p>
@@ -36,7 +39,8 @@ class Footer extends Component {
                                 label=" "
                                 icon={aVPlayArrow}
                                 style={{ color: '#333' }}
-                                onClick={() => { this.props.playForHuman() }}
+                                onClick={() => { isAIMode && this.props.playForHuman() }}
+                                disabled={!isAIMode}
                             />
                             <BottomNavigationItem
                                 label=" "
