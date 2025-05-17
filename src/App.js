@@ -1,19 +1,19 @@
 import './App.css';
-import ChessBoard from './ChessBoard.js';
+import Chess from './chess.js';
 import React, { Component } from 'react';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Header from './Header.js';
 import Footer from './Footer.js';
+import ChessBoard from './ChessBoard.js';
 import { WindowResizeListener } from 'react-window-resize-listener'
 import Dialog from 'material-ui/Dialog';
 import {fenToBoard} from './Fen.js';
 import FlatButton from 'material-ui/FlatButton';
 import Slider from 'material-ui/Slider';
-import BlunderAnalysis from './BlunderAnalysis.js';
+import Analysis from './Analysis.js';
 let startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-var Chess = require('./chess.js').Chess;
 let sf = null;
 
 const chessLight = getMuiTheme({
@@ -55,8 +55,8 @@ class App extends Component {
       boardIndex: 0,
       newGameDiaOpen: false,
       intelligenceDiaOpen: false,
-      blunderConfirmationOpen: false,
-      blunderAnalysisOpen: false,
+      analysisConfirmationOpen: false,
+      analysisOpen: false,
       gameOver: false,
       historicalStates: [startFen],
       intelligenceLevel: localStorage.getItem("intelligenceLevel") ? localStorage.getItem("intelligenceLevel") : "10"
@@ -99,9 +99,9 @@ class App extends Component {
       gameOver: gameOver
     });
     
-    // Show blunder confirmation when game is over
+    // Show analysis confirmation when game is over
     if (gameOver) {
-      this.setState({ blunderConfirmationOpen: true });
+      this.setState({ analysisConfirmationOpen: true });
     }
     
     this.getFallenOnes();
@@ -142,24 +142,24 @@ class App extends Component {
       boardIndex: 0, 
       historicalStates: [startFen], 
       gameOver: false,
-      blunderConfirmationOpen: false,
-      blunderAnalysisOpen: false
+      analysisConfirmationOpen: false,
+      analysisOpen: false
     });
   }
 
-  closeBlunderConfirmation = () => {
-    this.setState({ blunderConfirmationOpen: false });
+  closeAnalysisConfirmation = () => {
+    this.setState({ analysisConfirmationOpen: false });
   }
   
-  showBlunderAnalysis = () => {
+  showAnalysis = () => {
     this.setState({ 
-      blunderConfirmationOpen: false,
-      blunderAnalysisOpen: true 
+      analysisConfirmationOpen: false,
+      analysisOpen: true 
     });
   }
   
-  closeBlunderAnalysis = () => {
-    this.setState({ blunderAnalysisOpen: false });
+  closeAnalysis = () => {
+    this.setState({ analysisOpen: false });
   }
   
   jumpToPosition = (index) => {
@@ -168,12 +168,12 @@ class App extends Component {
     // Close the dialog when jumping to a position and set a timer to reopen it
     this.setState({ 
       boardIndex: index,
-      blunderAnalysisOpen: false 
+      analysisOpen: false 
     });
     
-    // Reopen the blunder analysis dialog after 2 seconds
+    // Reopen the analysis dialog after 2 seconds
     setTimeout(() => {
-      this.setState({ blunderAnalysisOpen: true });
+      this.setState({ analysisOpen: true });
     }, 2000);
   }
 
@@ -188,9 +188,9 @@ class App extends Component {
       <FlatButton label="OK" primary={true} style={{ color: '#333' }} onClick={this.requestCloseIntelligenceDia} />,
     ];
     
-    const blunderConfirmationActions = [
-      <FlatButton label="No" primary={true} style={{ color: '#333' }} onClick={this.closeBlunderConfirmation} />,
-      <FlatButton label="Yes" primary={true} style={{ color: '#333' }} onClick={this.showBlunderAnalysis} />,
+    const analysisConfirmationActions = [
+      <FlatButton label="No" primary={true} style={{ color: '#333' }} onClick={this.closeAnalysisConfirmation} />,
+      <FlatButton label="Yes" primary={true} style={{ color: '#333' }} onClick={this.showAnalysis} />,
     ];
 
     return (
@@ -209,16 +209,16 @@ class App extends Component {
           </Dialog>
           <Dialog 
             title="Game Analysis" 
-            actions={blunderConfirmationActions} 
+            actions={analysisConfirmationActions} 
             modal={false} 
-            open={this.state.blunderConfirmationOpen} 
-            onRequestClose={this.closeBlunderConfirmation}
+            open={this.state.analysisConfirmationOpen} 
+            onRequestClose={this.closeAnalysisConfirmation}
           >
-            Would you like to check the blunders made in this game?
+            Would you like to evaluate this game?
           </Dialog>
-          <BlunderAnalysis 
-            open={this.state.blunderAnalysisOpen} 
-            onClose={this.closeBlunderAnalysis}
+          <Analysis 
+            open={this.state.analysisOpen} 
+            onClose={this.closeAnalysis}
             historicalStates={this.state.historicalStates}
             onJumpToPosition={this.jumpToPosition}
           />

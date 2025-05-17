@@ -78,11 +78,15 @@ class ChessBoard extends Component {
                     var moveResult = chess.move(move, {sloppy: true});
                     
                     if(moveResult.flags.indexOf('c')!=-1){
-                        document.getElementById(`cell-${move.substr(0,2)}`).classList.add('ai-bloody-footprint-in-sand');
-                        document.getElementById(`cell-${move.substr(2,4)}`).classList.add('ai-bloody-footprint-in-sand');
+                        const fromCell = document.getElementById(`cell-${move.substr(0,2)}`);
+                        const toCell = document.getElementById(`cell-${move.substr(2,4)}`);
+                        if (fromCell) fromCell.classList.add('ai-bloody-footprint-in-sand');
+                        if (toCell) toCell.classList.add('ai-bloody-footprint-in-sand');
                     }else{
-                        document.getElementById(`cell-${move.substr(0,2)}`).classList.add('ai-footprint-in-sand');
-                        document.getElementById(`cell-${move.substr(2,4)}`).classList.add('ai-footprint-in-sand');
+                        const fromCell = document.getElementById(`cell-${move.substr(0,2)}`);
+                        const toCell = document.getElementById(`cell-${move.substr(2,4)}`);
+                        if (fromCell) fromCell.classList.add('ai-footprint-in-sand');
+                        if (toCell) toCell.classList.add('ai-footprint-in-sand');
                     }
                     
                     // Check if game is over after AI move
