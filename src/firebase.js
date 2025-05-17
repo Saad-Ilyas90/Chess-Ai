@@ -73,6 +73,41 @@ export const updateGameState = async (gameId, newFen, gameOver = false) => {
   }
 };
 
+// Update selected piece
+export const updateSelectedPiece = async (gameId, selectedPiece) => {
+  try {
+    await axios.patch(`${dbBaseUrl}/games/${gameId}.json`, {
+      selectedPiece: selectedPiece
+    });
+    return true;
+  } catch (error) {
+    console.error("Error updating selected piece:", error);
+    return false;
+  }
+};
+
+// Get game data directly
+export const getGameData = async (gameId) => {
+  try {
+    const response = await axios.get(`${dbBaseUrl}/games/${gameId}.json`);
+    return response.data;
+  } catch (error) {
+    console.error("Error getting game data:", error);
+    return null;
+  }
+};
+
+// Check if a color is already taken in a game
+export const isColorTaken = async (gameId, color) => {
+  try {
+    const response = await axios.get(`${dbBaseUrl}/games/${gameId}/players/${color}.json`);
+    return !!response.data;
+  } catch (error) {
+    console.error("Error checking if color is taken:", error);
+    return false;
+  }
+};
+
 // Generate a random game ID
 export const generateGameId = () => {
   return Math.random().toString(36).substring(2, 8);
@@ -89,4 +124,4 @@ export const checkGameExists = async (gameId) => {
   }
 };
 
-export default { createGameSession, joinGame, listenToGameChanges, updateGameState, generateGameId, checkGameExists }; 
+export default { createGameSession, joinGame, listenToGameChanges, updateGameState, updateSelectedPiece, getGameData, isColorTaken, generateGameId, checkGameExists }; 

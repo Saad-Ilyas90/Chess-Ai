@@ -20,7 +20,8 @@ import {
   joinGame, 
   listenToGameChanges, 
   updateGameState, 
-  checkGameExists
+  checkGameExists,
+  getGameData
 } from './firebase';
 
 // Use require for Chess because it uses CommonJS export
@@ -78,7 +79,9 @@ class App extends Component {
       userColor: 'w',
       gameId: null,
       isWaitingForOpponent: false,
-      opponent: null
+      opponent: null,
+      opponentSelectedPiece: null,
+      isSecondPlayer: false
     };
   }
 
@@ -132,6 +135,15 @@ class App extends Component {
         if (gameData.players && gameData.players[this.state.userColor === 'w' ? 'b' : 'w']) {
           this.setState({ isWaitingForOpponent: false });
         }
+        
+        // Track opponent's selected piece
+        const currentSelectedPiece = this.state.opponentSelectedPiece;
+        const newSelectedPiece = gameData.selectedPiece !== undefined ? gameData.selectedPiece : null;
+        
+        if (currentSelectedPiece !== newSelectedPiece) {
+          console.log("Opponent selected piece updated:", newSelectedPiece);
+          this.setState({ opponentSelectedPiece: newSelectedPiece });
+        }
       });
     }
   }
@@ -173,6 +185,10 @@ class App extends Component {
             return;
           }
 
+          // Get current game state including selected piece
+          const gameData = await getGameData(gameId);
+          const selectedPiece = gameData && gameData.selectedPiece ? gameData.selectedPiece : null;
+
           // Join existing game
           await joinGame(gameId, playerColor);
           
@@ -183,8 +199,10 @@ class App extends Component {
             userColor: playerColor,
             gameId: gameId,
             boardIndex: 0,
-            historicalStates: [startFen],
-            gameOver: false
+            historicalStates: [gameData && gameData.fen ? gameData.fen : startFen],
+            gameOver: gameData && gameData.gameOver ? gameData.gameOver : false,
+            isSecondPlayer: true,
+            opponentSelectedPiece: selectedPiece
           }, this.setupGameListener);
         } else {
           // Create new game session
@@ -200,7 +218,8 @@ class App extends Component {
             isWaitingForOpponent: true,
             boardIndex: 0,
             historicalStates: [startFen],
-            gameOver: false
+            gameOver: false,
+            isSecondPlayer: false
           }, this.setupGameListener);
         }
       } catch (error) {
@@ -337,6 +356,9 @@ class App extends Component {
           onMove={this.handleChessMove}
           board={this.state.historicalStates[this.state.boardIndex]}
           userColor={this.state.userColor}
+          gameId={this.state.gameId}
+          opponentSelectedPiece={this.state.opponentSelectedPiece}
+          isSecondPlayer={this.state.isSecondPlayer}
         />
       );
     } else {
