@@ -4,6 +4,7 @@
   "homepage": "https://avinayak.github.io/chess/",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
     "material-ui": "^0.19.1",
     "react": "^15.6.1",
     "react-bootstrap": "^0.31.3",
@@ -20,6 +21,8 @@
     "deploy": "gh-pages -d build"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/plugin-transform-object-rest-spread": "^7.27.2",
     "gh-pages": "^1.0.0"
   }
 }
