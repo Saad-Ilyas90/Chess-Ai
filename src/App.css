@@ -388,3 +388,17 @@
   background-color: #e0e0e0;
   border-radius: 4px;
 }
+
+/* Media query for chat layout */
+@media (max-width: 1000px) {
+  .board-with-timers {
+    margin-bottom: 340px; /* Make room for chat below the board on smaller screens */
+  }
+}
+
+/* Wider container on larger screens to fit both board and chat */
+@media (min-width: 1000px) {
+  .container {
+    width: 980px !important; /* Wider container to fit chat */
+  }
+}

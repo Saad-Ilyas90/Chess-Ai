@@ -16,6 +16,7 @@ import Analysis from './Analysis.js';
 import MultiplayerAnalysis from './MultiplayerAnalysis.js';
 import GameModeDialog from './GameModeDialog';
 import Timer from './Timer.js';
+import Chat from './Chat.js';
 // Firebase services
 import { 
   createGameSession, 
@@ -733,6 +734,13 @@ class App extends Component {
             <div className="board-with-timers">
               {this.renderTimers()}
               {this.renderChessBoard()}
+              {this.state.gameMode === 'multiplayer' && !this.state.isWaitingForOpponent && (
+                <Chat
+                  gameId={this.state.gameId}
+                  playerColor={this.state.userColor}
+                  playerName={`Player (${this.state.userColor === 'w' ? 'White' : 'Black'})`}
+                />
+              )}
             </div>
           )}
           
