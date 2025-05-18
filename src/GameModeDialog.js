@@ -7,6 +7,8 @@ import { generateGameId, isColorTaken, getGameData } from './firebase';
 import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
 import CircularProgress from 'material-ui/CircularProgress';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 class GameModeDialog extends Component {
   constructor(props) {
@@ -19,7 +21,8 @@ class GameModeDialog extends Component {
       error: '',
       loading: false,
       oppositeColorSelected: false,
-      gameData: null
+      gameData: null,
+      timeControl: 'none' // Default to no timer
     };
   }
 
@@ -69,11 +72,15 @@ class GameModeDialog extends Component {
             oppositeColorSelected = true;
           }
           
+          // Get time control from existing game
+          const timeControl = gameData.timeControl || 'none';
+          
           this.setState({ 
             playerColor, 
             oppositeColorSelected, 
             gameData, 
-            loading: false 
+            loading: false,
+            timeControl
           });
         } else {
           this.setState({ 
@@ -97,8 +104,12 @@ class GameModeDialog extends Component {
     this.setState({ playerColor: value });
   };
 
+  handleTimeControlChange = (event, index, value) => {
+    this.setState({ timeControl: value });
+  };
+
   handleSubmit = async () => {
-    const { gameMode, joinGame, gameId, playerColor } = this.state;
+    const { gameMode, joinGame, gameId, playerColor, timeControl } = this.state;
     
     if (gameMode === 'multiplayer' && joinGame && !gameId) {
       this.setState({ error: 'Please enter a game ID' });
@@ -122,13 +133,14 @@ class GameModeDialog extends Component {
       gameMode,
       joinGame,
       gameId: gameMode === 'multiplayer' ? gameId : null,
-      playerColor: gameMode === 'multiplayer' ? playerColor : 'w'
+      playerColor: gameMode === 'multiplayer' ? playerColor : 'w',
+      timeControl
     });
   };
 
   render() {
     const { open, onClose } = this.props;
-    const { gameMode, joinGame, gameId, playerColor, error, loading, oppositeColorSelected, gameData } = this.state;
+    const { gameMode, joinGame, gameId, playerColor, error, loading, oppositeColorSelected, gameData, timeControl } = this.state;
     
     const actions = [
       <FlatButton
@@ -312,6 +324,32 @@ class GameModeDialog extends Component {
             {(whiteDisabled && blackDisabled) && (
               <div style={{color: '#f44336', marginTop: '10px'}}>
                 This game is full - both colors are already taken.
+              </div>
+            )}
+            
+            <Divider style={{margin: '20px 0'}} />
+            
+            <div style={{...styles.title, fontSize: '20px', color: '#2196F3'}}>Time Control</div>
+            <div style={{marginBottom: '15px', color: '#666'}}>
+              Select how much time each player will have for the entire game:
+            </div>
+            <SelectField
+              floatingLabelText="Time per player"
+              value={timeControl}
+              onChange={this.handleTimeControlChange}
+              fullWidth={true}
+              disabled={joinGame && gameData && gameData.timeControl}
+              style={{marginBottom: '15px'}}
+            >
+              <MenuItem value="none" primaryText="No time limit" />
+              <MenuItem value="3" primaryText="3 minutes" leftIcon={<div style={{color: '#2196F3'}}>⏱</div>} />
+              <MenuItem value="5" primaryText="5 minutes" leftIcon={<div style={{color: '#2196F3'}}>⏱</div>} />
+              <MenuItem value="10" primaryText="10 minutes" leftIcon={<div style={{color: '#2196F3'}}>⏱</div>} />
+              <MenuItem value="15" primaryText="15 minutes" leftIcon={<div style={{color: '#2196F3'}}>⏱</div>} />
+            </SelectField>
+            {joinGame && gameData && gameData.timeControl && (
+              <div style={{color: '#4caf50', marginTop: '10px'}}>
+                Using time control from existing game: {gameData.timeControl === 'none' ? 'No time limit' : `${gameData.timeControl} minutes`}
               </div>
             )}
           </Paper>
