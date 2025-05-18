@@ -15,6 +15,7 @@ import Slider from 'material-ui/Slider';
 import Analysis from './Analysis.js';
 import MultiplayerAnalysis from './MultiplayerAnalysis.js';
 import GameModeDialog from './GameModeDialog';
+import Timer from './Timer.js';
 // Firebase services
 import { 
   createGameSession, 
@@ -22,7 +23,9 @@ import {
   listenToGameChanges, 
   updateGameState, 
   checkGameExists,
-  getGameData
+  getGameData,
+  updatePlayerTimer,
+  declareTimeoutWin
 } from './firebase';
 
 // Use require for Chess because it uses CommonJS export
@@ -97,11 +100,25 @@ class App extends Component {
       isWaitingForOpponent: false,
       opponent: null,
       opponentSelectedPiece: null,
-      isSecondPlayer: false
+      isSecondPlayer: false,
+      // Timer states
+      timeControl: 'none',
+      whiteTimeRemaining: 0,
+      blackTimeRemaining: 0,
+      activePlayer: 'w'
     };
   }
 
   componentDidMount() {
+    // Get the intelligence level from localStorage
+    let savedLevel = localStorage.getItem("intelligenceLevel");
+    if (savedLevel != null) {
+      this.setState({ intelligenceLevel: savedLevel });
+    }
+    
+    // Add event listener for analysis popup
+    window.addEventListener('show-analysis-confirmation', this.showAnalysisConfirmation);
+    
     // For existing games, we want to listen for changes if in multiplayer mode
     if (this.state.gameMode === 'multiplayer' && this.state.gameId) {
       this.setupGameListener();
@@ -112,11 +129,13 @@ class App extends Component {
   }
 
   componentWillUnmount() {
-    // Clean up Firebase listeners if any
+    // Clean up any listeners
     if (this.gameListener) {
       this.gameListener();
-      this.gameListener = null;
     }
+    
+    // Remove event listener for analysis popup
+    window.removeEventListener('show-analysis-confirmation', this.showAnalysisConfirmation);
   }
 
   setupGameListener = () => {
@@ -183,6 +202,19 @@ class App extends Component {
           
           // If game just ended based on opponent's move, verify the checkmate locally
           if (gameJustEnded) {
+            if (gameData.gameOverReason === 'timeout') {
+              // Handle timeout game over
+              const winner = gameData.winner;
+              const loser = winner === 'w' ? 'b' : 'w';
+              if (this.state.userColor === loser) {
+                setTimeout(() => {
+                  alert('You lost on time!');
+                  // Show analysis confirmation
+                  this.setState({ analysisConfirmationOpen: true });
+                }, 500);
+              }
+            } else {
+              // Handle checkmate game over
             const chess = new Chess(gameData.fen);
             if (chess.in_checkmate()) {
               const loser = chess.turn();
@@ -196,6 +228,17 @@ class App extends Component {
               }
             }
           }
+          }
+        }
+        
+        // Update timer information if available
+        if (gameData.timers && gameData.timeControl !== 'none') {
+          this.setState({
+            whiteTimeRemaining: gameData.timers.w,
+            blackTimeRemaining: gameData.timers.b,
+            activePlayer: gameData.activePlayer || 'w',
+            timeControl: gameData.timeControl
+          });
         }
         
         // Track opponent's selected piece
@@ -207,6 +250,32 @@ class App extends Component {
           this.setState({ opponentSelectedPiece: newSelectedPiece });
         }
       });
+    }
+  }
+
+  handleTimeUpdate = async (color, timeRemaining) => {
+    if (this.state.gameMode === 'multiplayer' && this.state.gameId && !this.state.gameOver) {
+      try {
+        // Update the timer in Firebase
+        await updatePlayerTimer(this.state.gameId, color, timeRemaining);
+        
+        // If time ran out, update game state
+        if (timeRemaining <= 0) {
+          const winnerColor = color === 'w' ? 'b' : 'w';
+          await declareTimeoutWin(this.state.gameId, winnerColor);
+          
+          if (this.state.userColor === winnerColor) {
+            setTimeout(() => {
+              alert('You won on time!');
+              this.setState({ gameOver: true });
+              // Show analysis confirmation
+              this.setState({ analysisConfirmationOpen: true });
+            }, 500);
+          }
+        }
+      } catch (error) {
+        console.error("Error updating timer:", error);
+      }
     }
   }
 
@@ -239,7 +308,7 @@ class App extends Component {
   };
 
   handleGameModeSubmit = async (options) => {
-    const { gameMode, joinGame: isJoining, gameId, playerColor } = options;
+    const { gameMode, joinGame: isJoining, gameId, playerColor, timeControl } = options;
     
     // Always reset game-related states first regardless of mode
     // This ensures clean state transition between game modes
@@ -269,10 +338,10 @@ class App extends Component {
         gameId: null,
         opponent: null,
         opponentSelectedPiece: null,
-        isSecondPlayer: false
+        isSecondPlayer: false,
+        timeControl: 'none'
       });
     } else if (gameMode === 'multiplayer') {
-      // Handle multiplayer game mode
       try {
         if (isJoining) {
           // Check if game exists
@@ -282,9 +351,15 @@ class App extends Component {
             return;
           }
 
-          // Get current game state including selected piece
+          // Get current game state including selected piece and timer info
           const gameData = await getGameData(gameId);
           const selectedPiece = gameData && gameData.selectedPiece ? gameData.selectedPiece : null;
+          
+          // Get time control and timer values
+          const retrievedTimeControl = gameData && gameData.timeControl ? gameData.timeControl : 'none';
+          const whiteTime = gameData && gameData.timers ? gameData.timers.w : parseInt(retrievedTimeControl) * 60;
+          const blackTime = gameData && gameData.timers ? gameData.timers.b : parseInt(retrievedTimeControl) * 60;
+          const activePlayer = gameData && gameData.activePlayer ? gameData.activePlayer : 'w';
 
           // Join existing game
           await joinGame(gameId, playerColor);
@@ -299,11 +374,18 @@ class App extends Component {
             gameOver: gameData && gameData.gameOver ? gameData.gameOver : false,
             isSecondPlayer: true,
             isWaitingForOpponent: false,
-            opponentSelectedPiece: selectedPiece
+            opponentSelectedPiece: selectedPiece,
+            timeControl: retrievedTimeControl,
+            whiteTimeRemaining: whiteTime,
+            blackTimeRemaining: blackTime,
+            activePlayer: activePlayer
           }, this.setupGameListener);
         } else {
-          // Create new game session
-          await createGameSession(gameId, startFen);
+          // Set time in seconds for both players
+          const timeInSeconds = timeControl === 'none' ? 0 : parseInt(timeControl) * 60;
+          
+          // Create new game session with time control
+          await createGameSession(gameId, startFen, timeControl);
           await joinGame(gameId, playerColor);
           
           // Set up listener and show waiting for opponent message
@@ -315,7 +397,11 @@ class App extends Component {
             isWaitingForOpponent: true,
             isSecondPlayer: false,
             opponentSelectedPiece: null,
-            opponent: null
+            opponent: null,
+            timeControl: timeControl,
+            whiteTimeRemaining: timeInSeconds,
+            blackTimeRemaining: timeInSeconds,
+            activePlayer: 'w'
           }, this.setupGameListener);
         }
       } catch (error) {
@@ -358,16 +444,21 @@ class App extends Component {
       historicalStates.push(fen);
     }
     
+    // Parse the FEN to determine whose turn it is next
+    const parts = fen.split(' ');
+    const nextPlayer = parts[1] === 'w' ? 'w' : 'b';
+    
     this.setState({ 
       boardIndex: historicalStates.length - 1, 
       historicalStates: historicalStates,
-      gameOver: gameOver
+      gameOver: gameOver,
+      activePlayer: nextPlayer
     });
     
     // In multiplayer mode, update the Firebase database
     if (this.state.gameMode === 'multiplayer' && this.state.gameId) {
       try {
-        await updateGameState(this.state.gameId, fen, gameOver);
+        await updateGameState(this.state.gameId, fen, gameOver, nextPlayer);
       } catch (error) {
         console.error("Error updating game state:", error);
       }
@@ -426,6 +517,10 @@ class App extends Component {
 
   closeAnalysisConfirmation = () => {
     this.setState({ analysisConfirmationOpen: false });
+  }
+  
+  showAnalysisConfirmation = () => {
+    this.setState({ analysisConfirmationOpen: true });
   }
   
   showAnalysis = () => {
@@ -559,6 +654,48 @@ class App extends Component {
     }
   }
 
+  renderTimers() {
+    // Only render timers in multiplayer mode with time control enabled
+    if (this.state.gameMode === 'multiplayer' && this.state.timeControl !== 'none') {
+      const { userColor, activePlayer, whiteTimeRemaining, blackTimeRemaining, gameOver } = this.state;
+      
+      return (
+        <div className="timers-container">
+          {/* When userColor is white, white pieces are at bottom, black at top */}
+          {/* When userColor is black, black pieces are at bottom, white at top */}
+          
+          {/* Top-left timer (opponent's timer) */}
+          <div className="side-timer-container top-left">
+            <Timer 
+              initialTime={this.state.timeControl}
+              timeLeft={userColor === 'w' ? blackTimeRemaining : whiteTimeRemaining}
+              isActive={(userColor === 'w' ? activePlayer === 'b' : activePlayer === 'w') && !gameOver}
+              playerName={userColor === 'w' ? 'Opponent (Black)' : 'Opponent (White)'}
+              onTimeUpdate={(time) => userColor === 'b' && this.handleTimeUpdate('w', time) || userColor === 'w' && this.handleTimeUpdate('b', time)}
+              onTimeUp={() => userColor === 'b' && this.handleTimeUpdate('w', 0) || userColor === 'w' && this.handleTimeUpdate('b', 0)}
+              className={userColor === 'w' ? 'black-timer' : 'white-timer'}
+            />
+          </div>
+          
+          {/* Bottom-left timer (player's timer) */}
+          <div className="side-timer-container bottom-left">
+            <Timer 
+              initialTime={this.state.timeControl}
+              timeLeft={userColor === 'w' ? whiteTimeRemaining : blackTimeRemaining}
+              isActive={(userColor === 'w' ? activePlayer === 'w' : activePlayer === 'b') && !gameOver}
+              playerName={userColor === 'w' ? 'You (White)' : 'You (Black)'}
+              onTimeUpdate={(time) => userColor === 'w' && this.handleTimeUpdate('w', time) || userColor === 'b' && this.handleTimeUpdate('b', time)}
+              onTimeUp={() => userColor === 'w' && this.handleTimeUpdate('w', 0) || userColor === 'b' && this.handleTimeUpdate('b', 0)}
+              className={userColor === 'w' ? 'white-timer' : 'black-timer'}
+            />
+          </div>
+        </div>
+      );
+    }
+    
+    return null;
+  }
+
   render() {
     const newGameActions = [
       <FlatButton label="Cancel" primary={true} style={{ color: '#333' }} onClick={this.requestCloseNewGame} />,
@@ -593,7 +730,10 @@ class App extends Component {
               <p>Share this game ID with your opponent: <strong>{this.state.gameId}</strong></p>
             </div>
           ) : (
-            this.renderChessBoard()
+            <div className="board-with-timers">
+              {this.renderTimers()}
+              {this.renderChessBoard()}
+            </div>
           )}
           
           <Dialog title="New Game" actions={newGameActions} modal={false} open={this.state.newGameDiaOpen} onRequestClose={this.handleClose} >

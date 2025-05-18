@@ -11,14 +11,28 @@ const firebaseConfig = {
 const dbBaseUrl = firebaseConfig.databaseURL || "https://chess-ed556-default-rtdb.firebaseio.com";
 
 // Create a new game session
-export const createGameSession = async (gameId, initialFen) => {
+export const createGameSession = async (gameId, initialFen, timeControl = 'none') => {
   try {
-    await axios.put(`${dbBaseUrl}/games/${gameId}.json`, {
+    const gameData = {
       fen: initialFen,
       createdAt: Date.now(),
       lastMoveAt: Date.now(),
-      gameOver: false
-    });
+      gameOver: false,
+      timeControl: timeControl
+    };
+    
+    // If time control is enabled, set up initial timers for both players
+    if (timeControl !== 'none') {
+      const timeInSeconds = parseInt(timeControl) * 60;
+      gameData.timers = {
+        w: timeInSeconds,
+        b: timeInSeconds
+      };
+      gameData.lastTimerUpdate = Date.now();
+      gameData.activePlayer = 'w'; // White starts
+    }
+    
+    await axios.put(`${dbBaseUrl}/games/${gameId}.json`, gameData);
     return true;
   } catch (error) {
     console.error("Error creating game session:", error);
@@ -30,8 +44,10 @@ export const createGameSession = async (gameId, initialFen) => {
 export const joinGame = async (gameId, playerColor) => {
   try {
     const updateData = {
-      [`players/${playerColor}`]: true,
-      lastJoinedAt: Date.now()
+      [`players/${playerColor}`]: {
+        joinedAt: Date.now(),
+        lastActive: Date.now()
+      }
     };
     await axios.patch(`${dbBaseUrl}/games/${gameId}.json`, updateData);
     return true;
@@ -59,16 +75,37 @@ export const listenToGameChanges = (gameId, callback) => {
 };
 
 // Update game state with new move
-export const updateGameState = async (gameId, newFen, gameOver = false) => {
+export const updateGameState = async (gameId, newFen, gameOver = false, nextPlayer = null) => {
   try {
-    await axios.patch(`${dbBaseUrl}/games/${gameId}.json`, {
+    const updateData = {
       fen: newFen,
       lastMoveAt: Date.now(),
       gameOver: gameOver
-    });
+    };
+    
+    // If we know which player's turn is next, update the active player
+    if (nextPlayer) {
+      updateData.activePlayer = nextPlayer;
+    }
+    
+    await axios.patch(`${dbBaseUrl}/games/${gameId}.json`, updateData);
     return true;
   } catch (error) {
     console.error("Error updating game state:", error);
+    return false;
+  }
+};
+
+// Update timer for a player
+export const updatePlayerTimer = async (gameId, color, timeRemaining) => {
+  try {
+    await axios.patch(`${dbBaseUrl}/games/${gameId}/timers.json`, {
+      [color]: timeRemaining,
+      lastUpdate: Date.now()
+    });
+    return true;
+  } catch (error) {
+    console.error("Error updating player timer:", error);
     return false;
   }
 };
@@ -124,4 +161,31 @@ export const checkGameExists = async (gameId) => {
   }
 };
 
-export default { createGameSession, joinGame, listenToGameChanges, updateGameState, updateSelectedPiece, getGameData, isColorTaken, generateGameId, checkGameExists }; 
+// Declare game over by timeout
+export const declareTimeoutWin = async (gameId, winnerColor) => {
+  try {
+    await axios.patch(`${dbBaseUrl}/games/${gameId}.json`, {
+      gameOver: true,
+      gameOverReason: 'timeout',
+      winner: winnerColor
+    });
+    return true;
+  } catch (error) {
+    console.error("Error declaring timeout win:", error);
+    return false;
+  }
+};
+
+export default { 
+  createGameSession, 
+  joinGame, 
+  listenToGameChanges, 
+  updateGameState, 
+  updateSelectedPiece, 
+  getGameData, 
+  isColorTaken, 
+  generateGameId, 
+  checkGameExists,
+  updatePlayerTimer,
+  declareTimeoutWin
+}; 

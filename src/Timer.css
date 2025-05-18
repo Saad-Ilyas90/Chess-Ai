@@ -1,0 +1,39 @@
+.timer {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  color: #333;
+  text-align: center;
+  border: 2px solid #ddd;
+  width: 120px;
+}
+
+.timer.active {
+  border-color: #4CAF50;
+  background-color: #e8f5e9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.timer.low-time {
+  color: #f44336;
+  animation: pulse 1s infinite;
+}
+
+.player-name {
+  font-size: 0.9em;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.time-display {
+  font-size: 1.2em;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.8; }
+  100% { opacity: 1; }
+} 
