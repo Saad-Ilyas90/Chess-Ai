@@ -176,6 +176,57 @@ export const declareTimeoutWin = async (gameId, winnerColor) => {
   }
 };
 
+// Send a chat message
+export const sendChatMessage = async (gameId, message) => {
+  try {
+    // Get current chat messages
+    const response = await axios.get(`${dbBaseUrl}/games/${gameId}/chat.json`);
+    let messages = response.data || [];
+    
+    // If messages is not an array, convert it to an array
+    if (!Array.isArray(messages)) {
+      messages = Object.values(messages);
+    }
+    
+    // Add new message
+    messages.push(message);
+    
+    // Keep only the last 50 messages to prevent the database from growing too large
+    if (messages.length > 50) {
+      messages = messages.slice(messages.length - 50);
+    }
+    
+    // Update the chat messages
+    await axios.put(`${dbBaseUrl}/games/${gameId}/chat.json`, messages);
+    return true;
+  } catch (error) {
+    console.error("Error sending chat message:", error);
+    return false;
+  }
+};
+
+// Listen to chat messages
+export const listenToChat = (gameId, callback) => {
+  const intervalId = setInterval(async () => {
+    try {
+      const response = await axios.get(`${dbBaseUrl}/games/${gameId}/chat.json`);
+      let messages = response.data || [];
+      
+      // If messages is not an array, convert it to an array
+      if (!Array.isArray(messages) && messages) {
+        messages = Object.values(messages);
+      }
+      
+      callback(messages);
+    } catch (error) {
+      console.error("Error polling chat messages:", error);
+    }
+  }, 1000); // Poll every second for more responsive chat
+  
+  // Return a function to stop polling
+  return () => clearInterval(intervalId);
+};
+
 export default { 
   createGameSession, 
   joinGame, 
@@ -187,5 +238,7 @@ export default {
   generateGameId, 
   checkGameExists,
   updatePlayerTimer,
-  declareTimeoutWin
+  declareTimeoutWin,
+  sendChatMessage,
+  listenToChat
 }; 
