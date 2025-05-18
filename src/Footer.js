@@ -38,6 +38,7 @@ class Footer extends Component {
                                 icon={aVFastRewind}
                                 style={{ color: '#333' }}
                                 onClick={() => { this.props.gotoPreviousState() }}
+                                disabled={!gameOver}
                             />
                             {isAIMode ? (
                                 <BottomNavigationItem
@@ -66,6 +67,7 @@ class Footer extends Component {
                                 icon={aVFastForward}
                                 style={{ color: '#333' }}
                                 onClick={() => { this.props.gotoNextState() }}
+                                disabled={!gameOver}
                             />
                         </BottomNavigation>
                     </Paper>

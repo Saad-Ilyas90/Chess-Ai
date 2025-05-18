@@ -115,9 +115,6 @@ class MultiplayerAnalysis extends Component {
     const moves = [];
     const { historicalStates, playerColor } = this.props;
     
-    // FORCE SHOWING GOOD MOVES - This is a direct fix to ensure good moves are shown
-    const forceShowGoodMoves = true;
-    
     console.log("Full evaluations data:", evaluations);
     console.log("Best moves data:", bestMoves);
     
@@ -146,84 +143,15 @@ class MultiplayerAnalysis extends Component {
     // Store the moves processed so we can compare evaluations over time
     const processingHistory = [];
     
-    // Track best moves to ensure we always have some good moves for each player
-    const whiteMoveData = [];
-    const blackMoveData = [];
-    
     // First pass to identify all evaluation changes
     for (let i = 1; i < evaluations.length; i++) {
       const prevEval = evaluations[i-1];
       const currEval = evaluations[i];
       
       if (prevEval !== undefined && currEval !== undefined) {
-        // Determine if move was played by white or black
-        const chess = new (require('./chess.js').Chess)(historicalStates[i-1]);
-        const turn = chess.turn();
-        const isWhiteMove = turn === 'w';
-        
-        // Calculate raw difference
-        const rawDiff = currEval - prevEval;
-        
-        // Store all move data for later processing
-        if (isWhiteMove) {
-          whiteMoveData.push({
-            index: i,
-            diff: rawDiff,
-            evalBefore: prevEval,
-            evalAfter: currEval
-          });
-        } else {
-          blackMoveData.push({
-            index: i,
-            diff: -rawDiff, // Negate for black's perspective
-            evalBefore: prevEval,
-            evalAfter: currEval
-          });
-        }
-      }
-    }
-    
-    // Sort moves by evaluation change (best first)
-    whiteMoveData.sort((a, b) => b.diff - a.diff);
-    blackMoveData.sort((a, b) => b.diff - a.diff);
-    
-    console.log("Sorted white moves:", whiteMoveData);
-    console.log("Sorted black moves:", blackMoveData);
-    
-    // GUARANTEED GOOD MOVES: 
-    // Ensure at least 30% of each player's moves are marked as good or excellent
-    const forcedGoodMoves = new Set();
-    
-    if (forceShowGoodMoves) {
-      // Calculate how many moves to mark as good for each player
-      const whiteGoodCount = Math.max(1, Math.ceil(whiteMoveData.length * 0.3));
-      const blackGoodCount = Math.max(1, Math.ceil(blackMoveData.length * 0.3));
-      
-      // Take top moves from each player (even if diff is negative)
-      whiteMoveData.slice(0, whiteGoodCount).forEach(m => {
-        forcedGoodMoves.add(m.index);
-        console.log(`Forcing white move ${m.index} to be good with diff ${m.diff}`);
-      });
-      
-      blackMoveData.slice(0, blackGoodCount).forEach(m => {
-        forcedGoodMoves.add(m.index);
-        console.log(`Forcing black move ${m.index} to be good with diff ${m.diff}`);
-      });
-    }
-    
-    // Process the game to produce the final analysis
-    for (let i = 1; i < evaluations.length; i++) {
-      const prevEval = evaluations[i-1];
-      const currEval = evaluations[i];
-      
-      // Store this move's evaluation for comparison
-      if (currEval !== undefined) {
+        // Store this move's evaluation for comparison
         processingHistory.push({index: i, eval: currEval});
-      }
-      
-      console.log(`Processing move ${i}: prevEval=${prevEval}, currEval=${currEval}`);
-      
-      if (prevEval !== undefined && currEval !== undefined) {
+        
         // Determine if move was played by white or black
         const chess = new (require('./chess.js').Chess)(historicalStates[i-1]);
         const turn = chess.turn();
@@ -255,54 +183,75 @@ class MultiplayerAnalysis extends Component {
         
         console.log(`Move ${i} raw evaluation change: ${rawDiff.toFixed(2)}, perspective-aware: ${evalDiff.toFixed(2)}`);
         
-        // Define move quality based on the forced good moves set or evaluation change
+        // Define move quality based on evaluation change
         let magnitude = 'quiet move';
         let color = green500;
         
-        // GOOD MOVES - Check if this move is in the forced good moves set
-        if (forcedGoodMoves.has(i)) {
-          // If the evaluation change is significant, mark as excellent move
-          if (Math.abs(evalDiff) > 0.2) {
-            magnitude = 'excellent move';
-            color = blue500;
-            console.log(`Move ${i} FORCED marked as EXCELLENT MOVE`);
-          } 
-          // Otherwise just mark as good move
-          else {
-            magnitude = 'good move';
-            color = green500;
-            console.log(`Move ${i} FORCED marked as GOOD MOVE`);
-          }
-        }
-        // BAD MOVES - If not a forced good move, evaluate normally
-        else if (isCheckmate && losingPlayer === turn && distanceFromEnd <= 6) {
+        // For white, negative changes are bad; for black, positive changes are bad
+        const isNegativeChange = (isWhiteMove && rawDiff < 0) || (!isWhiteMove && rawDiff > 0);
+        
+        // Check for losing moves
+        if (isCheckmate && losingPlayer === turn && distanceFromEnd <= 3) {
           magnitude = 'blunder';
           color = red500;
           console.log(`Move ${i} marked as BLUNDER because it leads to checkmate in ${distanceFromEnd} moves`);
         }
         // If evaluation shows significant drop, mark as blunder
-        else if ((isWhiteMove && rawDiff < -0.3) || (!isWhiteMove && rawDiff > 0.3)) {
+        else if ((isWhiteMove && rawDiff < -0.8) || (!isWhiteMove && rawDiff > 0.8)) {
           magnitude = 'blunder';
           color = red500;
           console.log(`Move ${i} marked as BLUNDER due to significant evaluation drop`);
         }
         // For more minor evaluation drops
-        else if ((isWhiteMove && rawDiff < -0.1) || (!isWhiteMove && rawDiff > 0.1)) {
+        else if ((isWhiteMove && rawDiff < -0.3) || (!isWhiteMove && rawDiff > 0.3)) {
           magnitude = 'mistake';
           color = amber500;
-          console.log(`Move ${i} marked as MISTAKE due to minor evaluation drop`);
+          console.log(`Move ${i} marked as MISTAKE due to evaluation drop`);
         }
         // For very minor negative changes
-        else if ((isWhiteMove && rawDiff < 0) || (!isWhiteMove && rawDiff > 0)) {
+        else if (isNegativeChange) {
           magnitude = 'inaccuracy';
           color = amber500;
           console.log(`Move ${i} marked as INACCURACY due to slight negative change`);
         }
-        // Neutral or positive moves
-        else {
+        // If evaluation improved significantly
+        else if ((isWhiteMove && rawDiff > 0.5) || (!isWhiteMove && rawDiff < -0.5)) {
+          magnitude = 'excellent move';
+          color = blue500;
+          console.log(`Move ${i} marked as EXCELLENT MOVE due to significant improvement`);
+        }
+        // If evaluation improved moderately
+        else if ((isWhiteMove && rawDiff > 0.2) || (!isWhiteMove && rawDiff < -0.2)) {
           magnitude = 'good move';
           color = green500;
-          console.log(`Move ${i} marked as GOOD MOVE due to neutral-positive change`);
+          console.log(`Move ${i} marked as GOOD MOVE due to moderate improvement`);
+        }
+        // Default for neutral moves
+        else {
+          magnitude = 'quiet move';
+          color = green500;
+          console.log(`Move ${i} marked as QUIET MOVE`);
+        }
+        
+        // Look at trends over multiple moves
+        if (processingHistory.length >= 3) {
+          const lastThreeMoves = processingHistory.slice(-3);
+          if (lastThreeMoves[0].eval !== undefined && lastThreeMoves[2].eval !== undefined) {
+            const startEval = lastThreeMoves[0].eval;
+            const endEval = lastThreeMoves[2].eval;
+            const trendChange = endEval - startEval;
+            
+            console.log(`Trend over last 3 moves: ${startEval} to ${endEval}, change: ${trendChange}`);
+            
+            // If trend is significantly against the player, consider it a mistake
+            if ((isWhiteMove && trendChange < -1.0) || (!isWhiteMove && trendChange > 1.0)) {
+              console.log("Negative trend detected in last few moves");
+              if (magnitude !== 'blunder') {
+                magnitude = 'mistake';
+                color = amber500;
+              }
+            }
+          }
         }
         
         // Add to results
@@ -332,10 +281,29 @@ class MultiplayerAnalysis extends Component {
   }
   
   jumpToPosition = (fen, index) => {
-    console.log('Jumping to position:', index, 'FEN:', fen);
-    if (this.props.onJumpToPosition) {
-      this.props.onJumpToPosition(index);
+    console.log('Jumping to position in MultiplayerAnalysis:', index, 'FEN:', fen);
+    
+    // First hide the dialog temporarily
+    if (this.props.onClose) {
+      this.props.onClose();
     }
+    
+    // Small delay to allow the board to be visible
+    setTimeout(() => {
+      // Ensure we're passing a numeric index
+      if (this.props.onJumpToPosition) {
+        const moveIndex = parseInt(index, 10);
+        console.log('Calling parent onJumpToPosition with index:', moveIndex);
+        this.props.onJumpToPosition(moveIndex);
+      }
+      
+      // Reopen the dialog after a longer delay to show the board position first
+      setTimeout(() => {
+        if (this.props.open) {
+          this.setState({ analyzing: false });
+        }
+      }, 2000); // Increased from 500ms to 2000ms (2 seconds)
+    }, 100);
   }
 
   handleTabChange = (tab) => {
@@ -456,7 +424,10 @@ class MultiplayerAnalysis extends Component {
                   </p>
                 }
                 secondaryTextLines={2}
-                onClick={() => this.jumpToPosition(move.fen, move.move)}
+                onClick={() => {
+                  console.log(`Clicked on move index ${move.move} from tab ${activeTab}`);
+                  this.jumpToPosition(move.fen, move.move);
+                }}
                 style={{cursor: 'pointer'}}
               />
               <Divider inset={true} />
