@@ -123,12 +123,20 @@ class App extends Component {
     // Stop any existing listener
     if (this.gameListener) {
       this.gameListener();
+      this.gameListener = null;
     }
 
     // Set up a new listener
     if (this.state.gameId) {
+      console.log(`Setting up game listener for game ID: ${this.state.gameId}, user color: ${this.state.userColor}`);
+      
       this.gameListener = listenToGameChanges(this.state.gameId, (gameData) => {
-        if (!gameData) return;
+        if (!gameData) {
+          console.log("No game data received");
+          return;
+        }
+        
+        console.log("Game data received:", gameData);
         
         // If position is locked, don't update the board position at all
         if (this.state.positionLocked) {
@@ -138,7 +146,20 @@ class App extends Component {
         
         // If we're reviewing a position in analysis mode, don't update the board
         if (this.state.isReviewingPosition) {
+          console.log("Reviewing position, ignoring board update");
           return;
+        }
+        
+        // Check if opponent joined - set isWaitingForOpponent to false
+        const opponentColor = this.state.userColor === 'w' ? 'b' : 'w';
+        if (gameData.players && gameData.players[opponentColor]) {
+          console.log(`Opponent (${opponentColor}) has joined the game`);
+          if (this.state.isWaitingForOpponent) {
+            this.setState({ 
+              isWaitingForOpponent: false,
+              opponent: gameData.players[opponentColor]
+            });
+          }
         }
         
         // Only update board if the FEN is different from our current one
@@ -177,11 +198,6 @@ class App extends Component {
           }
         }
         
-        // Check if opponent joined
-        if (gameData.players && gameData.players[this.state.userColor === 'w' ? 'b' : 'w']) {
-          this.setState({ isWaitingForOpponent: false });
-        }
-        
         // Track opponent's selected piece
         const currentSelectedPiece = this.state.opponentSelectedPiece;
         const newSelectedPiece = gameData.selectedPiece !== undefined ? gameData.selectedPiece : null;
@@ -199,8 +215,23 @@ class App extends Component {
   };
   
   requestOpenNewGame = () => {
-    // Open game mode dialog directly instead of the new game dialog
-    this.setState({ gameModeDialogOpen: true });
+    // Clean up any existing game state before opening the game mode dialog
+    
+    // Stop any existing Firebase listeners
+    if (this.gameListener) {
+      this.gameListener();
+      this.gameListener = null;
+    }
+    
+    // Reset the game state to ensure clean switching between modes
+    this.setState({ 
+      isWaitingForOpponent: false,
+      analysisOpen: false,
+      gameOver: false,
+      positionLocked: false,
+      isReviewingPosition: false,
+      gameModeDialogOpen: true  // Open the game mode dialog with fresh state
+    });
   };
 
   closeGameModeDialog = () => {
@@ -210,15 +241,35 @@ class App extends Component {
   handleGameModeSubmit = async (options) => {
     const { gameMode, joinGame: isJoining, gameId, playerColor } = options;
     
+    // Always reset game-related states first regardless of mode
+    // This ensures clean state transition between game modes
+    const baseResetState = {
+      gameModeDialogOpen: false,
+      analysisOpen: false,
+      gameOver: false,
+      isReviewingPosition: false,
+      positionLocked: false,
+      boardIndex: 0,
+      historicalStates: [startFen]
+    };
+    
+    // Clean up any listeners from previous games
+    if (this.gameListener) {
+      this.gameListener();
+      this.gameListener = null;
+    }
+    
     if (gameMode === 'ai') {
       // Handle AI game mode (existing functionality)
       this.setState({ 
-        gameModeDialogOpen: false,
+        ...baseResetState,
         gameMode: 'ai',
         userColor: 'w',
-        boardIndex: 0, 
-        historicalStates: [startFen], 
-        gameOver: false
+        isWaitingForOpponent: false,
+        gameId: null,
+        opponent: null,
+        opponentSelectedPiece: null,
+        isSecondPlayer: false
       });
     } else if (gameMode === 'multiplayer') {
       // Handle multiplayer game mode
@@ -240,14 +291,14 @@ class App extends Component {
           
           // Set up listener for the game
           this.setState({
-            gameModeDialogOpen: false,
+            ...baseResetState,
             gameMode: 'multiplayer',
             userColor: playerColor,
             gameId: gameId,
-            boardIndex: 0,
             historicalStates: [gameData && gameData.fen ? gameData.fen : startFen],
             gameOver: gameData && gameData.gameOver ? gameData.gameOver : false,
             isSecondPlayer: true,
+            isWaitingForOpponent: false,
             opponentSelectedPiece: selectedPiece
           }, this.setupGameListener);
         } else {
@@ -257,15 +308,14 @@ class App extends Component {
           
           // Set up listener and show waiting for opponent message
           this.setState({
-            gameModeDialogOpen: false,
+            ...baseResetState,
             gameMode: 'multiplayer',
             userColor: playerColor,
             gameId: gameId,
             isWaitingForOpponent: true,
-            boardIndex: 0,
-            historicalStates: [startFen],
-            gameOver: false,
-            isSecondPlayer: false
+            isSecondPlayer: false,
+            opponentSelectedPiece: null,
+            opponent: null
           }, this.setupGameListener);
         }
       } catch (error) {
@@ -386,7 +436,18 @@ class App extends Component {
   }
   
   closeAnalysis = () => {
-    // When closing analysis, return to the final position
+    // When closing analysis, we need to determine if this is a temporary close or a real close
+    
+    // If we're in review mode, it's likely a temporary close to show a position
+    if (this.state.isReviewingPosition) {
+      console.log("Temporarily closing analysis dialog to show position");
+      this.setState({ 
+        analysisOpen: false,
+      });
+      return;
+    }
+    
+    // Otherwise, this is a permanent close, so reset everything
     if (this.state.historicalStates.length > 0) {
       this.setState({ 
         analysisOpen: false,
@@ -428,6 +489,16 @@ class App extends Component {
   jumpToPosition = (index) => {
     console.log('App: Setting board index to', index, 'from current', this.state.boardIndex);
     
+    // Validate the index
+    if (index === undefined || index === null || isNaN(index)) {
+      console.error('Invalid index passed to jumpToPosition:', index);
+      return;
+    }
+    
+    // Ensure index is within bounds
+    const actualIndex = Math.max(0, Math.min(parseInt(index, 10), this.state.historicalStates.length - 1));
+    console.log('Using validated index:', actualIndex);
+    
     // Disable all Firebase listeners temporarily
     if (this.gameListener) {
       console.log("Disabling Firebase listeners to prevent auto-resets");
@@ -437,11 +508,16 @@ class App extends Component {
     
     // Set the board index directly without any listener complications
     this.setState({ 
-      boardIndex: index,
+      boardIndex: actualIndex,
       isReviewingPosition: true,
-      // Keep the analysis dialog open
-      analysisOpen: true
+      // Analysis dialog is closed temporarily, will be reopened by the child component
+      analysisOpen: false
     });
+    
+    // Reopen the analysis dialog after a delay to let the board render
+    setTimeout(() => {
+      this.setState({ analysisOpen: true });
+    }, 2500); // Increased from 800ms to 2500ms (2.5 seconds)
     
     // Don't restart listeners - this is key to preventing auto-resets
   }
