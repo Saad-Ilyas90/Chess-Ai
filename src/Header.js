@@ -9,6 +9,8 @@ import ImageAddToPhotos from 'material-ui/svg-icons/image/add-to-photos';
 import ActionVisibility from 'material-ui/svg-icons/action/visibility';
 import LinearProgress from 'material-ui/LinearProgress';
 import Chip from 'material-ui/Chip';
+import Avatar from 'material-ui/Avatar';
+import Badge from 'material-ui/Badge';
 
 class Header extends Component {
 
@@ -17,7 +19,7 @@ class Header extends Component {
     }
 
     render() {
-        const { gameMode, gameId } = this.props;
+        const { gameMode, gameId, currentUser, isGuest, onSignOut, onShowFriends, onShowProfile, friendRequestCount } = this.props;
         const isAIMode = gameMode === 'ai';
         
         const styles = {
@@ -31,8 +33,90 @@ class Header extends Component {
                 fontSize: '13px',
                 fontWeight: 'bold',
                 color: '#666'
+            },
+            userSection: {
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px'
+            },
+            avatar: {
+                width: 32,
+                height: 32
+            },
+            userName: {
+                fontSize: '14px',
+                color: '#333',
+                marginRight: '10px'
             }
         };
+
+        const userSection = currentUser ? (
+            <div style={styles.userSection}>
+                {!isGuest && (
+                    <div>
+                        <Badge
+                            badgeContent={friendRequestCount || 0}
+                            primary={true}
+                            badgeStyle={{ display: friendRequestCount > 0 ? 'block' : 'none' }}
+                        >
+                            <IconButton 
+                                title="Friends" 
+                                onClick={onShowFriends}
+                            >
+                                <span style={{ fontSize: '18px' }}>👥</span>
+                            </IconButton>
+                        </Badge>
+                        
+                        <IconButton 
+                            title="Profile" 
+                            onClick={onShowProfile}
+                        >
+                            {currentUser.photoURL ? (
+                                <Avatar 
+                                    src={currentUser.photoURL} 
+                                    size={32}
+                                    style={styles.avatar}
+                                />
+                            ) : (
+                                <Avatar 
+                                    size={32}
+                                    style={styles.avatar}
+                                >
+                                    {currentUser.displayName.charAt(0)}
+                                </Avatar>
+                            )}
+                        </IconButton>
+                    </div>
+                )}
+                
+                <span style={styles.userName}>
+                    {currentUser.displayName}{isGuest && ' (Guest)'}
+                </span>
+                
+                <IconMenu
+                    iconButtonElement={<IconButton><NavigationMoreVert /></IconButton>}
+                    anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+                    targetOrigin={{horizontal: 'right', vertical: 'top'}}
+                >
+                    {!isGuest && (
+                        <MenuItem 
+                            primaryText="Profile" 
+                            onClick={onShowProfile}
+                        />
+                    )}
+                    {!isGuest && (
+                        <MenuItem 
+                            primaryText="Friends" 
+                            onClick={onShowFriends}
+                        />
+                    )}
+                    <MenuItem 
+                        primaryText="Sign Out" 
+                        onClick={onSignOut}
+                    />
+                </IconMenu>
+            </div>
+        ) : null;
 
         const rightButtons = (
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -66,6 +150,8 @@ class Header extends Component {
                         </svg>
                     </IconButton>
                 )}
+                
+                {userSection}
             </div>
         );
 

@@ -402,3 +402,196 @@
     width: 980px !important; /* Wider container to fit chat */
   }
 }
+
+/* Loading spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Authentication UI styles */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  font-family: 'Roboto', sans-serif;
+}
+
+.auth-paper {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  max-width: 400px;
+  width: 100%;
+  margin: 20px;
+}
+
+.auth-title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+  font-size: 28px;
+  font-weight: 300;
+}
+
+.auth-subtitle {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #666;
+  font-size: 16px;
+}
+
+.auth-button {
+  width: 100%;
+  margin-bottom: 15px !important;
+  height: 48px !important;
+}
+
+.auth-input {
+  width: 100% !important;
+  margin-bottom: 15px !important;
+}
+
+.auth-divider {
+  margin: 20px 0 !important;
+}
+
+.auth-link {
+  color: #4CAF50;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+.auth-link:hover {
+  color: #45a049;
+}
+
+/* Fix Material-UI button visibility issues */
+.auth-container button[type="button"] {
+  color: white !important;
+}
+
+.auth-container .auth-button button {
+  width: 100% !important;
+  height: 48px !important;
+}
+
+/* Ensure all primary buttons have proper colors */
+.auth-container [class*="raisedButton"] {
+  min-height: 48px !important;
+}
+
+.auth-container [class*="raisedButton"] button {
+  color: white !important;
+  font-weight: 500 !important;
+}
+
+/* Friends panel styles */
+.friends-container {
+  padding: 20px;
+}
+
+.friends-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.friend-item {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.friend-info {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.friend-avatar {
+  margin-right: 15px;
+}
+
+.friend-details {
+  flex-grow: 1;
+}
+
+.friend-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.friend-stats {
+  color: #666;
+  font-size: 14px;
+}
+
+.friend-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.online-indicator {
+  width: 12px;
+  height: 12px;
+  background-color: #4CAF50;
+  border-radius: 50%;
+  margin-left: 10px;
+}
+
+.offline-indicator {
+  width: 12px;
+  height: 12px;
+  background-color: #999;
+  border-radius: 50%;
+  margin-left: 10px;
+}
+
+/* Profile styles */
+.profile-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.profile-avatar {
+  margin: 0 auto 20px auto;
+}
+
+.profile-stats {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.profile-stat {
+  margin: 5px;
+}
+
+/* Notification badge styles */
+.notification-badge {
+  position: relative;
+}
+
+.notification-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #f44336;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

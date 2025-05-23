@@ -3,12 +3,16 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import TextField from 'material-ui/TextField';
-import { generateGameId, isColorTaken, getGameData } from './firebase';
+import { generateGameId, isColorTaken, getGameData, getUserFriends, challengeFriend } from './firebase';
 import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
 import CircularProgress from 'material-ui/CircularProgress';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import List from 'material-ui/List/List';
+import ListItem from 'material-ui/List/ListItem';
+import Avatar from 'material-ui/Avatar';
+import Chip from 'material-ui/Chip';
 
 class GameModeDialog extends Component {
   constructor(props) {
@@ -22,7 +26,8 @@ class GameModeDialog extends Component {
       loading: false,
       oppositeColorSelected: false,
       gameData: null,
-      timeControl: 'none' // Default to no timer
+      timeControl: 'none', // Default to no timer
+      friends: []
     };
   }
 
@@ -138,9 +143,26 @@ class GameModeDialog extends Component {
     });
   };
 
+  componentDidMount() {
+    this.fetchFriends();
+  }
+
+  fetchFriends = async () => {
+    if (!this.props.currentUser || this.props.isGuest) {
+      return;
+    }
+    
+    try {
+      const friends = await getUserFriends(this.props.currentUser.id);
+      this.setState({ friends });
+    } catch (error) {
+      console.error("Error fetching friends:", error);
+    }
+  };
+
   render() {
     const { open, onClose } = this.props;
-    const { gameMode, joinGame, gameId, playerColor, error, loading, oppositeColorSelected, gameData, timeControl } = this.state;
+    const { gameMode, joinGame, gameId, playerColor, error, loading, oppositeColorSelected, gameData, timeControl, friends } = this.state;
     
     const actions = [
       <FlatButton
@@ -270,6 +292,58 @@ class GameModeDialog extends Component {
                 style={styles.radioButton}
               />
             </RadioButtonGroup>
+            
+            {/* Friends List Section */}
+            {this.props.currentUser && !this.props.isGuest && (
+              <div style={{ marginTop: '20px', marginBottom: '20px' }}>
+                <div style={{ ...styles.title, color: '#4CAF50' }}>Play with Friends</div>
+                {friends.length > 0 ? (
+                  <List style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid #e0e0e0', borderRadius: '4px' }}>
+                    {friends.map(friend => (
+                      <ListItem
+                        key={friend.id}
+                        leftAvatar={
+                          friend.photoURL ? (
+                            <Avatar src={friend.photoURL} />
+                          ) : (
+                            <Avatar>{friend.displayName.charAt(0)}</Avatar>
+                          )
+                        }
+                        primaryText={friend.displayName}
+                        secondaryText={
+                          <div>
+                            <span>Rating: {friend.rating || 'Unrated'}</span>
+                            <span style={{ marginLeft: '10px' }}>
+                              {friend.isOnline ? (
+                                <Chip backgroundColor="#4CAF50" labelColor="#fff" style={{ height: '20px' }}>
+                                  <span style={{ fontSize: '12px' }}>Online</span>
+                                </Chip>
+                              ) : (
+                                <span style={{ color: '#999', fontSize: '12px' }}>Offline</span>
+                              )}
+                            </span>
+                          </div>
+                        }
+                        onClick={() => {
+                          // Generate a game ID and use it to challenge this friend
+                          const newGameId = generateGameId();
+                          this.setState({ gameId: newGameId }, () => {
+                            // Challenge this friend with the game ID
+                            challengeFriend(this.props.currentUser.id, friend.id, this.state.timeControl, newGameId);
+                            // Start the game
+                            this.handleSubmit();
+                          });
+                        }}
+                      />
+                    ))}
+                  </List>
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                    No friends found. Add friends to challenge them directly!
+                  </div>
+                )}
+              </div>
+            )}
             
             {joinGame ? (
               <div>

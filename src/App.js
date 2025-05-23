@@ -1,8 +1,6 @@
 import './App.css';
 import React, { Component } from 'react';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Header from './Header.js';
 import Footer from './Footer.js';
 import ChessBoard from './ChessBoard.js';
@@ -17,6 +15,8 @@ import MultiplayerAnalysis from './MultiplayerAnalysis.js';
 import GameModeDialog from './GameModeDialog';
 import Timer from './Timer.js';
 import Chat from './Chat.js';
+import FriendsPanel from './Friends/FriendsPanel.js';
+import UserProfile from './Profile/UserProfile.js';
 // Firebase services
 import { 
   createGameSession, 
@@ -26,27 +26,15 @@ import {
   checkGameExists,
   getGameData,
   updatePlayerTimer,
-  declareTimeoutWin
+  declareTimeoutWin,
+  getUserNotifications,
+  firestore
 } from './firebase';
 
 // Use require for Chess because it uses CommonJS export
 const Chess = require('./chess.js').Chess;
 let startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 let sf = null;
-
-const chessLight = getMuiTheme({
-  palette: {
-    primary1Color: 'white',
-    textColor: '#333',
-  },
-  appBar: {
-    textColor: '#333',
-  },
-  slider: {
-    trackColor: '#aaa',
-    selectionColor: '#333'
-  },
-});
 
 function resized(w, h) {
   if (w < 700) {
@@ -106,7 +94,11 @@ class App extends Component {
       timeControl: 'none',
       whiteTimeRemaining: 0,
       blackTimeRemaining: 0,
-      activePlayer: 'w'
+      activePlayer: 'w',
+      // UI states for friends and profile
+      showFriendsPanel: false,
+      showUserProfile: false,
+      friendRequestCount: 0
     };
   }
 
@@ -133,6 +125,10 @@ class App extends Component {
     // Clean up any listeners
     if (this.gameListener) {
       this.gameListener();
+    }
+    
+    if (this.notificationListener) {
+      this.notificationListener();
     }
     
     // Remove event listener for analysis popup
@@ -172,9 +168,32 @@ class App extends Component {
         
         // Check if opponent joined - set isWaitingForOpponent to false
         const opponentColor = this.state.userColor === 'w' ? 'b' : 'w';
-        if (gameData.players && gameData.players[opponentColor]) {
-          console.log(`Opponent (${opponentColor}) has joined the game`);
+        
+        // Log players data for debugging
+        console.log(`[setupGameListener] Current players data:`, gameData.players || 'No players data');
+        console.log(`[setupGameListener] Looking for opponent color: ${opponentColor}`);
+        console.log(`[setupGameListener] Current waiting state: ${this.state.isWaitingForOpponent}`);
+        
+        // Check if both players have joined
+        const bothPlayersJoined = gameData.players && 
+                                 gameData.players.w && 
+                                 gameData.players.b;
+                                 
+        if (bothPlayersJoined) {
+          console.log(`[setupGameListener] Both players have joined the game`);
+          
           if (this.state.isWaitingForOpponent) {
+            console.log(`[setupGameListener] Updating state: no longer waiting for opponent`);
+            this.setState({ 
+              isWaitingForOpponent: false,
+              opponent: gameData.players[opponentColor]
+            });
+          }
+        } else if (gameData.players && gameData.players[opponentColor]) {
+          console.log(`[setupGameListener] Opponent (${opponentColor}) has joined the game`);
+          
+          if (this.state.isWaitingForOpponent) {
+            console.log(`[setupGameListener] Updating state: no longer waiting for opponent`);
             this.setState({ 
               isWaitingForOpponent: false,
               opponent: gameData.players[opponentColor]
@@ -698,6 +717,8 @@ class App extends Component {
   }
 
   render() {
+    const { currentUser, isGuest, onSignOut } = this.props;
+    
     const newGameActions = [
       <FlatButton label="Cancel" primary={true} style={{ color: '#333' }} onClick={this.requestCloseNewGame} />,
       <FlatButton label="OK" primary={true} style={{ color: '#333' }} onClick={this.requestCreateNewGame} />,
@@ -714,91 +735,271 @@ class App extends Component {
     ];
 
     return (
-      <MuiThemeProvider muiTheme={getMuiTheme(chessLight)}>
-        <div className="App">
-          <div id="thinking-bar"></div>
-          <Header 
-            requestOpenNewGame={this.requestOpenNewGame} 
-            requestOpenIntelligenceDia={this.requestOpenIntelligenceDia} 
-            gameMode={this.state.gameMode}
-            gameId={this.state.gameId}
-          />
-          <WindowResizeListener onResize={windowSize => { resized(windowSize.windowWidth, windowSize.windowHeight) }} />
-          
-          {this.state.isWaitingForOpponent ? (
-            <div className="waiting-message">
-              <h2>Waiting for opponent...</h2>
-              <p>Share this game ID with your opponent: <strong>{this.state.gameId}</strong></p>
-            </div>
-          ) : (
-            <div className="board-with-timers">
-              {this.renderTimers()}
-              {this.renderChessBoard()}
-              {this.state.gameMode === 'multiplayer' && !this.state.isWaitingForOpponent && (
-                <Chat
-                  gameId={this.state.gameId}
-                  playerColor={this.state.userColor}
-                  playerName={`Player (${this.state.userColor === 'w' ? 'White' : 'Black'})`}
-                />
-              )}
-            </div>
-          )}
-          
-          <Dialog title="New Game" actions={newGameActions} modal={false} open={this.state.newGameDiaOpen} onRequestClose={this.handleClose} >
-            Start a new game?
-          </Dialog>
-          
-          <GameModeDialog 
-            open={this.state.gameModeDialogOpen}
-            onClose={this.closeGameModeDialog}
-            onSubmit={this.handleGameModeSubmit}
-          />
-          
-          <Dialog title="Artificial Intelligence Settings" actions={intelligenceActions} modal={false} open={this.state.intelligenceDiaOpen} onRequestClose={this.requestCloseIntelligenceDia} >
-            <div className="label">Depth {this.state.intelligenceLevel}</div>
-            <Slider step={1} value={this.state.intelligenceLevel} min={1} max={20} defaultValue={this.state.intelligenceLevel} onChange={this.onChangeIntelligenceLevel} />
-          </Dialog>
-          
-          <Dialog 
-            title="Game Analysis" 
-            actions={analysisConfirmationActions} 
-            modal={false} 
-            open={this.state.analysisConfirmationOpen} 
-            onRequestClose={this.closeAnalysisConfirmation}
+      <div className="App">
+        <div id="thinking-bar"></div>
+        <Header 
+          requestOpenNewGame={this.requestOpenNewGame} 
+          requestOpenIntelligenceDia={this.requestOpenIntelligenceDia} 
+          gameMode={this.state.gameMode}
+          gameId={this.state.gameId}
+          currentUser={currentUser}
+          isGuest={isGuest}
+          onSignOut={onSignOut}
+          onShowFriends={this.handleShowFriends}
+          onShowProfile={this.handleShowProfile}
+          friendRequestCount={this.state.friendRequestCount}
+        />
+        <WindowResizeListener onResize={windowSize => { resized(windowSize.windowWidth, windowSize.windowHeight) }} />
+        
+        {/* Friends and Profile Panels */}
+        {this.state.showFriendsPanel && (
+          <Dialog
+            title="Friends"
+            modal={false}
+            open={this.state.showFriendsPanel}
+            onRequestClose={this.handleClosePanel}
+            autoScrollBodyContent={true}
+            contentStyle={{ width: '90%', maxWidth: '600px' }}
           >
-            Would you like to evaluate this game?
+            <FriendsPanel 
+              currentUser={currentUser}
+              isGuest={isGuest}
+              onGameChallengeAccepted={this.handleGameChallengeAccepted}
+            />
           </Dialog>
-          
-          {this.state.gameMode === 'multiplayer' ? (
-            <MultiplayerAnalysis 
-              open={this.state.analysisOpen} 
-              onClose={this.closeAnalysis}
-              historicalStates={this.state.historicalStates}
-              onJumpToPosition={this.jumpToPosition}
-              playerColor={this.state.userColor}
+        )}
+        
+        {this.state.showUserProfile && (
+          <Dialog
+            title="Profile"
+            modal={false}
+            open={this.state.showUserProfile}
+            onRequestClose={this.handleClosePanel}
+            autoScrollBodyContent={true}
+            contentStyle={{ width: '90%', maxWidth: '500px' }}
+          >
+            <UserProfile 
+              currentUser={currentUser}
+              isGuest={isGuest}
             />
-          ) : (
-            <Analysis 
-              open={this.state.analysisOpen} 
-              onClose={this.closeAnalysis}
-              historicalStates={this.state.historicalStates}
-              onJumpToPosition={this.jumpToPosition}
-              userColor={this.state.userColor}
-            />
-          )}
-          
-          <Footer 
-            fallenOnes={this.getFallenOnes()} 
-            playForHuman={this.handlePlayForHuman} 
-            gotoPreviousState={this.handleGotoPreviousState} 
-            gotoNextState={this.handleGotoNextState}
-            gameMode={this.state.gameMode}
-            gameOver={this.state.gameOver}
-            showAnalysis={this.showAnalysis}
+          </Dialog>
+        )}
+        
+        {this.state.isWaitingForOpponent ? (
+          <div className="waiting-message">
+            <h2>Waiting for opponent...</h2>
+            <p>Share this game ID with your opponent: <strong>{this.state.gameId}</strong></p>
+          </div>
+        ) : (
+          <div className="board-with-timers">
+            {this.renderTimers()}
+            {this.renderChessBoard()}
+            {this.state.gameMode === 'multiplayer' && !this.state.isWaitingForOpponent && (
+              <Chat
+                gameId={this.state.gameId}
+                playerColor={this.state.userColor}
+                playerName={`Player (${this.state.userColor === 'w' ? 'White' : 'Black'})`}
+              />
+            )}
+          </div>
+        )}
+        
+        <Dialog title="New Game" actions={newGameActions} modal={false} open={this.state.newGameDiaOpen} onRequestClose={this.handleClose} >
+          Start a new game?
+        </Dialog>
+        
+        <GameModeDialog 
+          open={this.state.gameModeDialogOpen}
+          onClose={this.closeGameModeDialog}
+          onSubmit={this.handleGameModeSubmit}
+          currentUser={this.props.currentUser}
+          isGuest={this.props.isGuest}
+        />
+        
+        <Dialog title="Artificial Intelligence Settings" actions={intelligenceActions} modal={false} open={this.state.intelligenceDiaOpen} onRequestClose={this.requestCloseIntelligenceDia} >
+          <div className="label">Depth {this.state.intelligenceLevel}</div>
+          <Slider step={1} value={this.state.intelligenceLevel} min={1} max={20} defaultValue={this.state.intelligenceLevel} onChange={this.onChangeIntelligenceLevel} />
+        </Dialog>
+        
+        <Dialog 
+          title="Game Analysis" 
+          actions={analysisConfirmationActions} 
+          modal={false} 
+          open={this.state.analysisConfirmationOpen} 
+          onRequestClose={this.closeAnalysisConfirmation}
+        >
+          Would you like to evaluate this game?
+        </Dialog>
+        
+        {this.state.gameMode === 'multiplayer' ? (
+          <MultiplayerAnalysis 
+            open={this.state.analysisOpen} 
+            onClose={this.closeAnalysis}
+            historicalStates={this.state.historicalStates}
+            onJumpToPosition={this.jumpToPosition}
+            playerColor={this.state.userColor}
           />
-        </div>
-      </MuiThemeProvider>
+        ) : (
+          <Analysis 
+            open={this.state.analysisOpen} 
+            onClose={this.closeAnalysis}
+            historicalStates={this.state.historicalStates}
+            onJumpToPosition={this.jumpToPosition}
+            userColor={this.state.userColor}
+          />
+        )}
+        
+        <Footer 
+          fallenOnes={this.getFallenOnes()} 
+          playForHuman={this.handlePlayForHuman} 
+          gotoPreviousState={this.handleGotoPreviousState} 
+          gotoNextState={this.handleGotoNextState}
+          gameMode={this.state.gameMode}
+          gameOver={this.state.gameOver}
+          showAnalysis={this.showAnalysis}
+        />
+      </div>
     );
+  }
+
+  // Friends and Profile UI methods
+  handleShowFriends = () => {
+    this.setState({ showFriendsPanel: true, showUserProfile: false });
+  }
+
+  handleShowProfile = () => {
+    this.setState({ showUserProfile: true, showFriendsPanel: false });
+  }
+
+  handleClosePanel = () => {
+    this.setState({ showFriendsPanel: false, showUserProfile: false });
+  }
+  
+  handleGameChallengeAccepted = async (gameId, playerColor = 'w') => {
+    // Close the friends panel
+    console.log('[handleGameChallengeAccepted] Received gameId:', gameId, 'playerColor:', playerColor);
+    
+    try {
+      // Get current game state
+      const gameData = await getGameData(gameId);
+      console.log('[handleGameChallengeAccepted] Game data:', gameData);
+      
+      if (!gameData) {
+        console.error('[handleGameChallengeAccepted] No game data found for ID:', gameId);
+        alert('Error: Could not find the game. Please try again.');
+        return;
+      }
+      
+      // Only join the game if we haven't already (when accepting a challenge)
+      // If we're the creator (from handleDirectChallenge), we've already joined
+      const opponentColor = playerColor === 'w' ? 'b' : 'w';
+      let hasPlayerJoined = gameData.players && gameData.players[playerColor];
+      let hasOpponentJoined = gameData.players && gameData.players[opponentColor];
+      
+      console.log('[handleGameChallengeAccepted] Player color:', playerColor);
+      console.log('[handleGameChallengeAccepted] Opponent color:', opponentColor);
+      console.log('[handleGameChallengeAccepted] Has player joined:', hasPlayerJoined);
+      console.log('[handleGameChallengeAccepted] Has opponent joined:', hasOpponentJoined);
+      
+      // If this player hasn't joined yet, join the game
+      if (!hasPlayerJoined) {
+        await joinGame(gameId, playerColor);
+        console.log(`[handleGameChallengeAccepted] Successfully joined game as ${playerColor === 'w' ? 'white' : 'black'} player`);
+        hasPlayerJoined = true;
+      } else {
+        console.log(`[handleGameChallengeAccepted] Already joined as ${playerColor === 'w' ? 'white' : 'black'} player`);
+      }
+      
+      // Fetch updated game data after joining with a small delay to ensure database consistency
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const updatedGameData = await getGameData(gameId);
+      console.log('[handleGameChallengeAccepted] Updated game data after joining:', updatedGameData);
+      
+      // Update the opponent joined status based on the refreshed data
+      hasOpponentJoined = updatedGameData.players && updatedGameData.players[opponentColor];
+      console.log('[handleGameChallengeAccepted] Updated opponent joined status:', hasOpponentJoined);
+      
+      // Get time control and timer values
+      const retrievedTimeControl = updatedGameData.timeControl || 'none';
+      const whiteTime = updatedGameData.timers ? updatedGameData.timers.w : (retrievedTimeControl !== 'none' ? parseInt(retrievedTimeControl) * 60 : 0);
+      const blackTime = updatedGameData.timers ? updatedGameData.timers.b : (retrievedTimeControl !== 'none' ? parseInt(retrievedTimeControl) * 60 : 0);
+      const activePlayer = updatedGameData.activePlayer || 'w';
+      
+      // Start with waiting state false to fix the initial display
+      // The game listener will correctly update this if needed
+      const isWaitingForOpponent = false;
+      console.log('[handleGameChallengeAccepted] Setting initial waiting for opponent state to false');
+      
+      // Update state and set up game
+      this.setState({ 
+        showFriendsPanel: false,
+        gameId: gameId,
+        gameMode: 'multiplayer',
+        userColor: playerColor,
+        gameOver: updatedGameData.gameOver || false,
+        isWaitingForOpponent: isWaitingForOpponent,
+        historicalStates: [updatedGameData.fen || startFen],
+        boardIndex: 0,
+        timeControl: retrievedTimeControl,
+        whiteTimeRemaining: whiteTime,
+        blackTimeRemaining: blackTime,
+        activePlayer: activePlayer
+      }, () => {
+        console.log('[handleGameChallengeAccepted] State updated with gameId:', this.state.gameId, 'userColor:', this.state.userColor);
+        // Set up game listener
+        this.setupGameListener();
+      });
+    } catch (error) {
+      console.error('[handleGameChallengeAccepted] Error setting up game:', error);
+      alert('Error setting up the game. Please try again.');
+    }
+  }
+
+  setupNotificationListener = () => {
+    const { currentUser, isGuest } = this.props;
+    
+    if (!currentUser || isGuest) return;
+
+    // Clean up existing listener
+    if (this.notificationListener) {
+      this.notificationListener();
+    }
+
+    this.notificationListener = getUserNotifications(
+      currentUser.id,
+      (snapshot) => {
+        const notifications = [];
+        snapshot.forEach((doc) => {
+          notifications.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+        
+        // Count friend requests
+        const friendRequests = notifications.filter(n => n.type === 'friend_request' && !n.read);
+        this.setState({ friendRequestCount: friendRequests.length });
+      }
+    );
+  }
+
+  // Call this when user changes (from AuthWrapper)
+  componentDidUpdate(prevProps) {
+    const { currentUser, isGuest } = this.props;
+    
+    // Setup notification listener when user signs in
+    if (currentUser && !isGuest && (!prevProps.currentUser || prevProps.isGuest)) {
+      this.setupNotificationListener();
+    }
+    
+    // Clean up when user signs out
+    if ((!currentUser || isGuest) && prevProps.currentUser && !prevProps.isGuest) {
+      if (this.notificationListener) {
+        this.notificationListener();
+        this.notificationListener = null;
+      }
+      this.setState({ friendRequestCount: 0 });
+    }
   }
 }
 

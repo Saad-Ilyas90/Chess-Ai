@@ -2,15 +2,6 @@ import React, { Component } from 'react';
 import {fenToBoard} from './Fen.js';
 const Chess = require('./chess.js').Chess;
 
-// Simple function to show or hide the thinking bar
-function showThinkingBar(value){
-    const bar = document.getElementById('thinking-bar');
-    if (bar) {
-        bar.style.height = "2px";
-        bar.style.opacity = value ? "1" : "0";
-    }
-}
-
 class ChessBoardMultiplayer extends Component {
     constructor(props) {
         super(props);
@@ -231,7 +222,6 @@ class ChessBoardMultiplayer extends Component {
 
     renderBoard() {
         // Determine if board should be flipped based on player color
-        const isFlipped = this.props.userColor === 'b';
         const rows = [];
         const boardArray = fenToBoard(this.props.board);
         
