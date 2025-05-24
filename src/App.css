@@ -1,11 +1,11 @@
 
 /* Auto-scroll prevention for mobile devices */
-html, body {
+/* html, body {
   touch-action: manipulation;
   -webkit-overflow-scrolling: touch;
   overflow-x: hidden;
   position: relative;
-}
+} */
 
 .App {
   color: #333;
@@ -115,43 +115,73 @@ html, body {
   .top-left {
     position: absolute;
     top: -70px;
-    left: 0;
+    left: 5px;
     transform: none;
-    z-index: 300;
+    z-index: 1500;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   /* Top right timer position */
   .top-right {
     position: absolute;
     top: -70px;
-    right: 0;
+    right: 5px;
     transform: none;
-    z-index: 300;
+    z-index: 1500;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   /* Bottom left timer position */
   .bottom-left {
     position: absolute;
-    bottom: -70px;
-    left: 0;
+    bottom: 25%; /* Moved up to prevent going too far down */
+    left: 5px;
     transform: none;
-    z-index: 300;
+    z-index: 2500; /* Higher z-index to ensure visibility */
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
   }
 
   /* Bottom right timer position */
   .bottom-right {
     position: absolute;
-    bottom: -70px;
-    right: 0;
+    bottom: -45px; /* Moved up to prevent going too far down */
+    right: 5px;
     transform: none;
-    z-index: 300;
+    z-index: 2500; /* Higher z-index to ensure visibility */
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
   }
   
   /* Ensure timers don't overlap with other content */
   .timer {
     margin: 0 5px;
     background: rgba(240, 240, 240, 0.95);
-    border: 2px solid #ccc;
+    border: 2px solid #4CAF50;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  
+  /* Improved timer positions for multiplayer mode */
+  .multiplayer .timer {
+    width: auto;
+    min-width: 100px;
+    padding: 8px 10px;
+    font-weight: bold;
+    display: block !important;
+  }
+  
+  .multiplayer .top-left,
+  .multiplayer .top-right {
+    top: -60px;
+  }
+  
+  .multiplayer .bottom-left,
+  .multiplayer .bottom-right {
+    bottom: -50px;
   }
 }
 
@@ -167,6 +197,8 @@ html, body {
   box-shadow: 0 3px 6px rgba(0,0,0,0.16);
   pointer-events: auto;
   position: relative;
+  display: block !important;
+  visibility: visible !important;
 }
 
 @media screen and (max-width: 768px) {
@@ -175,6 +207,71 @@ html, body {
     min-width: 80px;
     padding: 6px 8px;
     font-size: 14px;
+  }
+  
+  /* Chat behavior on small screens only */
+  @media screen and (max-width: 768px) {
+    .chat-container {
+      position: fixed;
+      bottom: 70px; /* Moved up to avoid overlapping with bottom timer */
+      right: 0;
+      width: 300px;
+      max-width: 100%;
+      height: 300px;
+      max-height: 60vh;
+      z-index: 1000;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+      background: white;
+      transform: translateY(100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+  }
+  
+  /* Display chat toggle button only on smaller screens */
+  .chat-toggle-button {
+    display: flex !important;
+  }
+  
+  .chat-container.visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .chat-toggle-button {
+    display: flex;
+  }
+  
+  /* Improved timer positions for multiplayer on smaller screens */
+  .multiplayer .timer {
+    min-width: 70px;
+    font-size: 13px;
+    padding: 5px 6px;
+    background-color: rgba(240, 240, 240, 0.95) !important;
+    z-index: 2500 !important; /* Higher z-index to ensure visibility */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    display: block !important;
+    border: 2px solid #4CAF50 !important; /* Ensure border is visible */
+    position: absolute !important;
+  }
+  
+  /* Ensure bottom timers never disappear */
+  .multiplayer .bottom-left,
+  .multiplayer .bottom-right {
+    bottom: -40px !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* Additional style for when chat is visible on mobile */
+  body.chat-visible .multiplayer .bottom-left,
+  body.chat-visible .multiplayer .bottom-right {
+    bottom: -40px !important;
+    position: absolute !important;
+    display: block !important;
   }
 }
 
@@ -984,6 +1081,32 @@ html, body {
   .multiplayer-container .footer {
     display: none !important;
   }
+  
+  /* Ensure proper spacing for multiplayer board on mobile */
+  .board-with-timers.multiplayer {
+    margin: 80px auto 70px auto;
+  }
+  
+  /* Make timers more visible on smaller screens */
+  .board-with-timers .timers-container {
+    z-index: 1500;
+  }
+  
+  /* Fix overlapping issues */
+  .multiplayer-container {
+    position: relative;
+    padding-top: 70px;
+    padding-bottom: 70px; /* Increased to make room for bottom timers */
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Adjust game info for multiplayer on mobile */
+  .multiplayer .game-info {
+    padding: 5px;
+    margin: 5px 0;
+  }
 }
 
 /* Prevent body scrolling in multiplayer mode on mobile */
@@ -992,6 +1115,91 @@ body.multiplayer-active {
   position: fixed !important;
   width: 100% !important;
   height: 100% !important;
+}
+
+/* Chat styling */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+  background: white;
+  width: 100%;
+}
+
+/* Default chat position for large screens (right side) */
+@media screen and (min-width: 769px) {
+  .chat-container {
+    position: absolute;
+    right: -320px;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    border: 1px solid #ddd;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  
+  /* Adjust container layout for large screens */
+  .board-with-timers.multiplayer {
+    margin-right: 0;
+    position: relative;
+  }
+  
+  /* Keep multiplayer container centered */
+  .multiplayer-container {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+  }
+  
+  /* Position the chat wrapper properly */
+  .chat-wrapper {
+    position: absolute !important;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 320px;
+  }
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  background: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+}
+
+.chat-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.message-form {
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  background: #f9f9f9;
+}
+
+.no-messages {
+  color: #888;
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
 }
 
 /* Chat message styling */
@@ -1018,4 +1226,45 @@ body.multiplayer-active {
   font-size: 14px;
   line-height: 1.3;
   word-wrap: break-word;
+}
+
+/* Chat toggle button for mobile */
+.chat-toggle-button {
+  display: none;
+  position: fixed;
+  bottom: 80px; /* Moved higher to avoid overlap with bottom timer */
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #4caf50;
+  color: white;
+  box-shadow: 0 3px 5px rgba(0,0,0,0.3);
+  z-index: 1000;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.chat-toggle-button:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+.chat-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #f44336;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

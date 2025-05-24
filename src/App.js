@@ -1,6 +1,5 @@
 import './App.css';
 import React, { Component } from 'react';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import Header from './Header.js';
 import Footer from './Footer.js';
 import ChessBoard from './ChessBoard.js';
@@ -28,7 +27,6 @@ import {
   updatePlayerTimer,
   declareTimeoutWin,
   getUserNotifications,
-  firestore
 } from './firebase';
 
 // Use require for Chess because it uses CommonJS export
@@ -63,7 +61,7 @@ class App extends Component {
     try {
       const posStr = sessionStorage.getItem('lockedPosition');
       if (posStr) {
-        savedPosition = parseInt(posStr);
+        savedPosition = parseInt(posStr, 10);
       }
     } catch (e) {
       console.error("Error reading from session storage:", e);
@@ -382,8 +380,8 @@ class App extends Component {
           
           // Get time control and timer values
           const retrievedTimeControl = gameData && gameData.timeControl ? gameData.timeControl : 'none';
-          const whiteTime = gameData && gameData.timers ? gameData.timers.w : parseInt(retrievedTimeControl) * 60;
-          const blackTime = gameData && gameData.timers ? gameData.timers.b : parseInt(retrievedTimeControl) * 60;
+          const whiteTime = gameData && gameData.timers ? gameData.timers.w : parseInt(retrievedTimeControl, 10) * 60;
+          const blackTime = gameData && gameData.timers ? gameData.timers.b : parseInt(retrievedTimeControl, 10) * 60;
           const activePlayer = gameData && gameData.activePlayer ? gameData.activePlayer : 'w';
 
           // Join existing game
@@ -407,7 +405,7 @@ class App extends Component {
           }, this.setupGameListener);
         } else {
           // Set time in seconds for both players
-          const timeInSeconds = timeControl === 'none' ? 0 : parseInt(timeControl) * 60;
+          const timeInSeconds = timeControl === 'none' ? 0 : parseInt(timeControl, 10) * 60;
           
           // Create new game session with time control
           await createGameSession(gameId, startFen, timeControl);
@@ -520,11 +518,11 @@ class App extends Component {
     }
     
     if (sf == null) {
-      sf = eval('stockfish');
+      sf = window.stockfish;
     }
     sf.postMessage(`position fen ${this.state.historicalStates[this.state.boardIndex]}`);
     sf.postMessage(`go depth ${this.state.intelligenceLevel}`);
-    this.state.historicalStates = this.state.historicalStates.slice(0, this.state.boardIndex + 1);
+    this.setState({ historicalStates: this.state.historicalStates.slice(0, this.state.boardIndex + 1) });
   }
   handleGotoNextState = () => {
     if (this.state.boardIndex < this.state.historicalStates.length - 1) {
@@ -823,7 +821,7 @@ class App extends Component {
         
         <Dialog title="Artificial Intelligence Settings" actions={intelligenceActions} modal={false} open={this.state.intelligenceDiaOpen} onRequestClose={this.requestCloseIntelligenceDia} >
           <div className="label">Depth {this.state.intelligenceLevel}</div>
-          <Slider step={1} value={this.state.intelligenceLevel} min={1} max={20} defaultValue={this.state.intelligenceLevel} onChange={this.onChangeIntelligenceLevel} />
+          <Slider step={1} value={parseInt(this.state.intelligenceLevel, 10)} min={1} max={20} defaultValue={parseInt(this.state.intelligenceLevel, 10)} onChange={this.onChangeIntelligenceLevel} />
         </Dialog>
         
         <Dialog 

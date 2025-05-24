@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-import ContentUndo from 'material-ui/svg-icons/content/undo';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
+
 import { BottomNavigation, BottomNavigationItem } from 'material-ui/BottomNavigation';
 import Paper from 'material-ui/Paper';
 import AVPlayArrow from 'material-ui/svg-icons/av/play-arrow';
 import AVFastRewind from 'material-ui/svg-icons/av/fast-rewind';
 import AVFastForward from 'material-ui/svg-icons/av/fast-forward';
 import ActionAssessment from 'material-ui/svg-icons/action/assessment';
-import FlatButton from 'material-ui/FlatButton';
 
 const aVPlayArrow = <AVPlayArrow />;
 const aVFastForward = <AVFastForward />;

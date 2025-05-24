@@ -1,22 +1,15 @@
 import React, { Component } from 'react';
 import AppBar from 'material-ui/AppBar';
-import FlatButton from 'material-ui/FlatButton';
 import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton';
 import MenuItem from 'material-ui/MenuItem';
 import NavigationMoreVert from 'material-ui/svg-icons/navigation/more-vert';
-import ImageAddToPhotos from 'material-ui/svg-icons/image/add-to-photos';
-import ActionVisibility from 'material-ui/svg-icons/action/visibility';
 import LinearProgress from 'material-ui/LinearProgress';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
 import Badge from 'material-ui/Badge';
 
 class Header extends Component {
-
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         const { gameMode, gameId, currentUser, isGuest, onSignOut, onShowFriends, onShowProfile, friendRequestCount } = this.props;

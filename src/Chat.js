@@ -3,6 +3,8 @@ import './Chat.css';
 import { sendChatMessage, listenToChat } from './firebase';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
+import ChatIcon from 'material-ui/svg-icons/communication/chat';
+import CloseIcon from 'material-ui/svg-icons/navigation/close';
 
 class Chat extends Component {
   constructor(props) {
@@ -10,7 +12,9 @@ class Chat extends Component {
     this.state = {
       messages: [],
       newMessage: '',
-      error: null
+      error: null,
+      isChatVisible: false,
+      unreadCount: 0
     };
     this.chatEndRef = null;
     this.setChatEndRef = (element) => {
@@ -23,23 +27,44 @@ class Chat extends Component {
     if (this.props.gameId) {
       this.setupChatListener();
     }
+    
+    // Set default chat visibility based on screen size
+    const isSmallScreen = window.innerWidth <= 768;
+    if (!isSmallScreen) {
+      // On larger screens, chat should be visible by default
+      this.setState({ isChatVisible: true });
+    }
+    
+    // Add window resize listener
+    window.addEventListener('resize', this.handleResize);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     // Set up new listener if game ID changes
     if (prevProps.gameId !== this.props.gameId && this.props.gameId) {
       this.setupChatListener();
     }
     
-    // Scroll to bottom when new messages arrive
-    this.scrollToBottom();
+    // Scroll to bottom when new messages arrive or when chat becomes visible
+    if (prevState.messages.length !== this.state.messages.length || 
+        (!prevState.isChatVisible && this.state.isChatVisible)) {
+      this.scrollToBottom();
+    }
+    
+    // Update unread count when new messages arrive and chat is not visible
+    if (prevState.messages.length !== this.state.messages.length && !this.state.isChatVisible) {
+      this.setState(prevState => ({
+        unreadCount: prevState.unreadCount + (this.state.messages.length - prevState.messages.length)
+      }));
+    }
   }
 
   componentWillUnmount() {
-    // Clean up listener
+    // Clean up listeners
     if (this.chatListener) {
       this.chatListener();
     }
+    window.removeEventListener('resize', this.handleResize);
   }
 
   setupChatListener = () => {
@@ -51,7 +76,15 @@ class Chat extends Component {
     // Set up new listener
     this.chatListener = listenToChat(this.props.gameId, (messages) => {
       if (messages) {
+        const currentMsgCount = this.state.messages.length;
         this.setState({ messages });
+        
+        // If chat is not visible and there are new messages, increment unread count
+        if (!this.state.isChatVisible && messages.length > currentMsgCount) {
+          this.setState(prevState => ({
+            unreadCount: prevState.unreadCount + (messages.length - currentMsgCount)
+          }));
+        }
       }
     });
   }
@@ -83,6 +116,7 @@ class Chat extends Component {
       });
       
       this.setState({ newMessage: '', error: null });
+      this.scrollToBottom();
     } catch (error) {
       console.error("Error sending message:", error);
       this.setState({ error: "Failed to send message. Please try again." });
@@ -93,53 +127,112 @@ class Chat extends Component {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
+  
+  toggleChat = () => {
+    this.setState(prevState => ({
+      isChatVisible: !prevState.isChatVisible,
+      unreadCount: 0 // Reset unread count when opening chat
+    }));
+    console.log('Chat visibility toggled:', !this.state.isChatVisible);
+  }
+  
+  handleResize = () => {
+    const isSmallScreen = window.innerWidth <= 768;
+    
+    // On larger screens, chat should always be visible
+    if (!isSmallScreen && !this.state.isChatVisible) {
+      this.setState({ isChatVisible: true });
+    }
+  }
 
   render() {
-    const { messages, newMessage, error } = this.state;
+    const { messages, newMessage, error, isChatVisible, unreadCount } = this.state;
+    // Check if we're on a small screen to determine behavior
+    const isSmallScreen = window.innerWidth <= 768;
+    
+    // Only show toggle button on small screens
+    const showChatButton = isSmallScreen;
+    
+    // On small screens, use the visible class to toggle display
+    // On large screens, always show the chat container
+    let chatContainerClass = 'chat-container';
+    if (isSmallScreen) {
+      chatContainerClass = `chat-container ${isChatVisible ? 'visible' : ''}`;
+    }
+    
+    // Add a class to the body to adjust timer positions
+    if (isSmallScreen && isChatVisible) {
+      document.body.classList.add('chat-visible');
+    } else {
+      document.body.classList.remove('chat-visible');
+    }
 
     return (
-      <div className="chat-container">
-        <div className="chat-header">
-          <h3>Chat</h3>
-        </div>
-        
-        <div className="messages-container">
-          {messages.length === 0 ? (
-            <div className="no-messages">
-              No messages yet. Start the conversation!
-            </div>
-          ) : (
-            messages.map((msg, index) => (
-              <div 
-                key={index} 
-                className={`message ${msg.color === this.props.playerColor ? 'own-message' : 'other-message'}`}
-              >
-                <div className="message-sender">{msg.sender}</div>
-                <div className="message-text">{msg.text}</div>
-                <div className="message-time">{this.formatTimestamp(msg.timestamp)}</div>
+      <div className="chat-wrapper" style={{ position: 'relative' }}>
+        {/* Chat container */}
+        <div className={chatContainerClass}>
+          <div className="chat-header">
+            <h3>Chat</h3>
+            {isSmallScreen && (
+              <FlatButton 
+                icon={<CloseIcon />}
+                onClick={this.toggleChat}
+              />)
+            }
+          </div>
+          
+          <div className="messages-container">
+            {messages.length === 0 ? (
+              <div className="no-messages">
+                No messages yet. Start the conversation!
               </div>
-            ))
-          )}
-          <div ref={this.setChatEndRef} />
+            ) : (
+              messages.map((msg, index) => (
+                <div 
+                  key={index} 
+                  className={`chat-message ${msg.color === this.props.playerColor ? 'own-message' : 'other-message'}`}
+                >
+                  <div className="message-sender">{msg.sender}</div>
+                  <div className="message-text">{msg.text}</div>
+                  <div className="message-time">{this.formatTimestamp(msg.timestamp)}</div>
+                </div>
+              ))
+            )}
+            <div ref={this.setChatEndRef} />
+          </div>
+          
+          <form className="message-form" onSubmit={this.handleSendMessage}>
+            {error && <div className="error-message">{error}</div>}
+            <TextField
+              hintText="Type a message..."
+              fullWidth
+              value={newMessage}
+              onChange={this.handleMessageChange}
+              style={{ marginBottom: 10 }}
+            />
+            <FlatButton 
+              label="Send" 
+              primary={true} 
+              type="submit"
+              disabled={!newMessage.trim()}
+              style={{ width: '100%' }}
+            />
+          </form>
         </div>
         
-        <form className="message-form" onSubmit={this.handleSendMessage}>
-          {error && <div className="error-message">{error}</div>}
-          <TextField
-            hintText="Type a message..."
-            fullWidth
-            value={newMessage}
-            onChange={this.handleMessageChange}
-            style={{ marginBottom: 10 }}
-          />
-          <FlatButton 
-            label="Send" 
-            primary={true} 
-            type="submit"
-            disabled={!newMessage.trim()}
-            style={{ width: '100%' }}
-          />
-        </form>
+        {/* Chat toggle button for mobile */}
+        {showChatButton && (
+          <button 
+            className="chat-toggle-button"
+            onClick={this.toggleChat}
+            aria-label="Toggle chat"
+          >
+            <ChatIcon color="white" />
+            {unreadCount > 0 && (
+              <span className="chat-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
+            )}
+          </button>
+        )}
       </div>
     );
   }

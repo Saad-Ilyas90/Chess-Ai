@@ -13,7 +13,7 @@ class ChessBoard extends Component {
     constructor(props) {
         super(props);
         var chess = new Chess();
-        this.state = { selectMode: false, userColor: 'w' };
+        this.state = { selectMode: false, userColor: 'w', selectedPiece: null };
         if (this.state.userColor === 'b') {
             // make AI do the first move
             var moves = chess.moves();
@@ -27,7 +27,7 @@ class ChessBoard extends Component {
     refreshBoard(board) {
         for (var row = 0; row < board.length; row++) {
             for (var col = 0; col < board[row].length; col++) {
-                if (board[row][col] != null)
+                if (board[row][col] !== null)
                     if (board[row][col].color === this.state.userColor) {
                         var cellId = "cell-" + (String.fromCharCode(97 + col)) + (-1 * (row - 8));
                         document.getElementById(cellId).classList.add("selectable");
@@ -95,8 +95,8 @@ class ChessBoard extends Component {
 
     nextState(cellCode) {
         var chess = new Chess(this.props.board);
-        if(sf==null){
-            sf = eval('stockfish');
+        if(sf===null){
+            sf = window.stockfish;
             sf.onmessage = (event) => { 
                 let message = event.data ? event.data : event;
                 console.log(message);
@@ -229,6 +229,7 @@ class ChessBoard extends Component {
 class Cell extends Component {
     constructor(props) {
         super(props);
+        this.state = {};
     }
 
     onCellClick() {
