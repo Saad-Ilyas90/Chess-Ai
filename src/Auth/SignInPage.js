@@ -20,35 +20,119 @@ class SignInPage extends Component {
       showError: false,
       loading: false,
       showForgotPassword: false,
-      resetEmail: ''
+      resetEmail: '',
+      // Validation states
+      emailError: '',
+      passwordError: '',
+      confirmPasswordError: '',
+      displayNameError: '',
+      resetEmailError: ''
     };
   }
 
   handleInputChange = (field) => (event) => {
-    this.setState({ [field]: event.target.value });
+    const value = event.target.value;
+    this.setState({ [field]: value }, () => {
+      // Run validation as user types
+      this.validateField(field, value);
+    });
+  }
+  
+  validateField = (field, value) => {
+    let error = '';
+    
+    switch (field) {
+      case 'email':
+      case 'resetEmail':
+        // Email validation
+        if (!value) {
+          error = 'Email is required';
+        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
+          error = 'Invalid email address';
+        }
+        this.setState({ [field + 'Error']: error });
+        break;
+        
+      case 'password':
+        // Password validation
+        if (!value) {
+          error = 'Password is required';
+        } else if (value.length < 6) {
+          error = 'Password must be at least 6 characters';
+        } else if (this.state.isSignUp && !/[0-9]/.test(value)) {
+          error = 'Password must contain at least one number';
+        }
+        this.setState({ passwordError: error });
+        
+        // Check confirmation password match if already entered
+        if (this.state.confirmPassword && this.state.isSignUp) {
+          const confirmError = value !== this.state.confirmPassword ? 'Passwords do not match' : '';
+          this.setState({ confirmPasswordError: confirmError });
+        }
+        break;
+        
+      case 'confirmPassword':
+        // Confirm password validation
+        if (this.state.isSignUp) {
+          if (!value) {
+            error = 'Please confirm your password';
+          } else if (value !== this.state.password) {
+            error = 'Passwords do not match';
+          }
+          this.setState({ confirmPasswordError: error });
+        }
+        break;
+        
+      case 'displayName':
+        // Display name validation
+        if (this.state.isSignUp && !value) {
+          error = 'Display name is required';
+        } else if (value && value.length < 2) {
+          error = 'Display name must be at least 2 characters';
+        }
+        this.setState({ displayNameError: error });
+        break;
+        
+      default:
+        break;
+    }
+    
+    return !error; // Return true if valid, false if invalid
   }
 
   handleEmailPasswordAuth = async () => {
     const { isSignUp, email, password, confirmPassword, displayName } = this.state;
     
-    if (!email || !password) {
-      this.showError('Please fill in all required fields');
+    // Validate all fields first
+    const isEmailValid = this.validateField('email', email);
+    const isPasswordValid = this.validateField('password', password);
+    let isConfirmPasswordValid = true;
+    let isDisplayNameValid = true;
+    
+    if (isSignUp) {
+      isConfirmPasswordValid = this.validateField('confirmPassword', confirmPassword);
+      isDisplayNameValid = this.validateField('displayName', displayName);
+    }
+    
+    // Show the first validation error encountered
+    if (!isEmailValid) {
+      this.showError(this.state.emailError || 'Please enter a valid email');
       return;
     }
     
-    if (isSignUp) {
-      if (password !== confirmPassword) {
-        this.showError('Passwords do not match');
-        return;
-      }
-      if (!displayName) {
-        this.showError('Please enter a display name');
-        return;
-      }
-      if (password.length < 6) {
-        this.showError('Password must be at least 6 characters');
-        return;
-      }
+    if (!isPasswordValid) {
+      this.showError(this.state.passwordError || 'Please enter a valid password');
+      return;
+    }
+    
+    if (isSignUp && !isConfirmPasswordValid) {
+      this.showError(this.state.confirmPasswordError || 'Please confirm your password');
+      return;
+    }
+    
+    if (isSignUp && !isDisplayNameValid) {
+      this.showError(this.state.displayNameError || 'Please enter a valid display name');
+      return;
     }
 
     this.setState({ loading: true });
@@ -116,17 +200,59 @@ class SignInPage extends Component {
   handleForgotPassword = async () => {
     const { resetEmail } = this.state;
     
-    if (!resetEmail) {
-      this.showError('Please enter your email address');
+    const isResetEmailValid = this.validateField('resetEmail', resetEmail);
+    
+    if (!isResetEmailValid) {
+      this.showError(this.state.resetEmailError || 'Please enter a valid email address');
       return;
     }
 
+    this.setState({ loading: true });
+    
     try {
+      // First check if the user exists before sending a reset email
+      let userExists = false;
+      try {
+        // Try to sign in with an empty password to trigger a specific error
+        // that confirms the email exists (but obviously with wrong password)
+        await auth.signInWithEmailAndPassword(resetEmail, 'temp-password-for-check');
+        userExists = true; // This would rarely execute as the password should be wrong
+      } catch (checkError) {
+        // If error is 'wrong-password', then user exists
+        userExists = checkError.code === 'auth/wrong-password';
+        
+        // If user doesn't exist, show error and return
+        if (checkError.code === 'auth/user-not-found') {
+          this.showError('No account exists with this email address');
+          this.setState({ loading: false });
+          return;
+        }
+      }
+      
+      // If we get here, either the user exists or we couldn't determine
+      // In either case, attempt to send the reset email
       await auth.sendPasswordResetEmail(resetEmail);
       this.showError('Password reset email sent! Check your inbox.');
-      this.setState({ showForgotPassword: false, resetEmail: '' });
+      this.setState({ showForgotPassword: false, resetEmail: '', loading: false });
     } catch (error) {
-      this.showError('Failed to send reset email: ' + error.message);
+      let errorMessage = 'Failed to send reset email';
+      
+      switch (error.code) {
+        case 'auth/user-not-found':
+          errorMessage = 'No account exists with this email address';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Invalid email address';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many attempts. Please try again later';
+          break;
+        default:
+          errorMessage = error.message;
+      }
+      
+      this.showError(errorMessage);
+      this.setState({ loading: false });
     }
   }
 
@@ -142,7 +268,12 @@ class SignInPage extends Component {
       email: '',
       password: '',
       confirmPassword: '',
-      displayName: ''
+      displayName: '',
+      // Reset validation errors
+      emailError: '',
+      passwordError: '',
+      confirmPasswordError: '',
+      displayNameError: ''
     });
   }
 
@@ -151,7 +282,8 @@ class SignInPage extends Component {
       showForgotPassword: !this.state.showForgotPassword,
       error: '',
       showError: false,
-      resetEmail: ''
+      resetEmail: '',
+      resetEmailError: ''
     });
   }
 
@@ -224,10 +356,10 @@ class SignInPage extends Component {
             
             <TextField
               hintText="Email"
-              type="email"
               value={resetEmail}
               onChange={this.handleInputChange('resetEmail')}
               style={textFieldStyle}
+              errorText={this.state.resetEmailError}
             />
             
             <RaisedButton
@@ -284,6 +416,7 @@ class SignInPage extends Component {
               value={displayName}
               onChange={this.handleInputChange('displayName')}
               style={textFieldStyle}
+              errorText={this.state.displayNameError}
             />
           )}
           
@@ -293,6 +426,7 @@ class SignInPage extends Component {
             value={email}
             onChange={this.handleInputChange('email')}
             style={textFieldStyle}
+            errorText={this.state.emailError}
           />
           
           <TextField
@@ -301,6 +435,7 @@ class SignInPage extends Component {
             value={password}
             onChange={this.handleInputChange('password')}
             style={textFieldStyle}
+            errorText={this.state.passwordError}
           />
           
           {isSignUp && (
@@ -310,6 +445,7 @@ class SignInPage extends Component {
               value={confirmPassword}
               onChange={this.handleInputChange('confirmPassword')}
               style={textFieldStyle}
+              errorText={this.state.confirmPasswordError}
             />
           )}
           

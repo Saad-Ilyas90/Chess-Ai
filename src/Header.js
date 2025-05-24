@@ -82,7 +82,7 @@ class Header extends Component {
                                     size={32}
                                     style={styles.avatar}
                                 >
-                                    {currentUser.displayName.charAt(0)}
+                                    {(currentUser.displayName || 'U').charAt(0)}
                                 </Avatar>
                             )}
                         </IconButton>
@@ -130,7 +130,7 @@ class Header extends Component {
                 )}
                 
                 <IconButton title="New Game" onClick={this.props.requestOpenNewGame}><svg style={{ 'width': '24px', 'height': '24px' }} viewBox="0 0 24 24">
-                    <path fill="#000000" d="M3,3H21V21H3V3M5,5V12H12V19H19V12H12V5H5Z" fill="#333" />
+                    <path d="M3,3H21V21H3V3M5,5V12H12V19H19V12H12V5H5Z" fill="#333" />
                 </svg></IconButton>
                 
                 {isAIMode && (

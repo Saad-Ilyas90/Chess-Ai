@@ -11,7 +11,6 @@ class ChessBoardMultiplayer extends Component {
             to: ''
         };
     }
-
     refreshBoard() {
         // Clear all cell classes first
         const cells = document.getElementsByClassName("cell");
