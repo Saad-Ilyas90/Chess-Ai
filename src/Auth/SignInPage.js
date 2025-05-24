@@ -209,46 +209,34 @@ class SignInPage extends Component {
 
     this.setState({ loading: true });
     
+    // Skip the email verification step entirely
+    // Firebase will automatically handle sending reset emails only to valid accounts
+    // But we'll show a generic message that doesn't reveal account existence
     try {
-      // First check if the user exists before sending a reset email
-      let userExists = false;
-      try {
-        // Try to sign in with an empty password to trigger a specific error
-        // that confirms the email exists (but obviously with wrong password)
-        await auth.signInWithEmailAndPassword(resetEmail, 'temp-password-for-check');
-        userExists = true; // This would rarely execute as the password should be wrong
-      } catch (checkError) {
-        // If error is 'wrong-password', then user exists
-        userExists = checkError.code === 'auth/wrong-password';
-        
-        // If user doesn't exist, show error and return
-        if (checkError.code === 'auth/user-not-found') {
-          this.showError('No account exists with this email address');
-          this.setState({ loading: false });
-          return;
-        }
-      }
-      
-      // If we get here, either the user exists or we couldn't determine
-      // In either case, attempt to send the reset email
       await auth.sendPasswordResetEmail(resetEmail);
-      this.showError('Password reset email sent! Check your inbox.');
+      this.showError('If an account exists with this email, a password reset link has been sent.');
       this.setState({ showForgotPassword: false, resetEmail: '', loading: false });
     } catch (error) {
-      let errorMessage = 'Failed to send reset email';
+      console.error('Password reset error:', error);
+      
+      // For security reasons, we'll show a generic message for most errors
+      // This prevents account enumeration attacks
+      let errorMessage;
       
       switch (error.code) {
-        case 'auth/user-not-found':
-          errorMessage = 'No account exists with this email address';
-          break;
         case 'auth/invalid-email':
-          errorMessage = 'Invalid email address';
+          errorMessage = 'Invalid email format. Please check and try again.';
           break;
         case 'auth/too-many-requests':
-          errorMessage = 'Too many attempts. Please try again later';
+          errorMessage = 'Too many attempts. Please try again later.';
+          break;
+        case 'auth/user-not-found':
+          // For security, use the same message as success
+          errorMessage = 'If an account exists with this email, a password reset link has been sent.';
           break;
         default:
-          errorMessage = error.message;
+          // Generic error without revealing if an account exists
+          errorMessage = 'Unable to process your request. Please try again later.';
       }
       
       this.showError(errorMessage);

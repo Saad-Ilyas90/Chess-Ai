@@ -22,7 +22,6 @@ export const createTestFriendRequest = async (fromUserId, toUserId) => {
       read: false
     });
     
-    console.log('[DEBUG] Created test friend request notification:', notificationRef.id);
     return notificationRef.id;
   } catch (error) {
     console.error('[DEBUG] Error creating test friend request:', error);
@@ -45,7 +44,6 @@ export const resetFriendRequestsReadStatus = async (userId) => {
       .get();
     
     if (snapshot.empty) {
-      console.log('[DEBUG] No friend requests found to reset');
       return 0;
     }
     
@@ -58,7 +56,6 @@ export const resetFriendRequestsReadStatus = async (userId) => {
     });
     
     await batch.commit();
-    console.log(`[DEBUG] Reset read status for ${count} friend requests`);
     return count;
   } catch (error) {
     console.error('[DEBUG] Error resetting friend request read status:', error);
@@ -88,7 +85,6 @@ export const getAllFriendRequests = async (userId) => {
       });
     });
     
-    console.log(`[DEBUG] Found ${requests.length} friend requests for user ${userId}`);
     return requests;
   } catch (error) {
     console.error('[DEBUG] Error getting friend requests:', error);
@@ -143,7 +139,6 @@ export const validateNotifications = async (userId) => {
       }
     }
     
-    console.log('[DEBUG] Notification validation report:', report);
     return report;
   } catch (error) {
     console.error('[DEBUG] Error validating notifications:', error);

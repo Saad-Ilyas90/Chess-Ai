@@ -35,17 +35,13 @@ const dbBaseUrl = firebaseConfig.databaseURL || "https://chess-ed556-default-rtd
 // Sign in anonymously if needed
 export const ensureAuthenticated = async () => {
   if (!auth.currentUser) {
-    console.log('[ensureAuthenticated] No user is signed in, attempting anonymous sign in');
     try {
       await auth.signInAnonymously();
-      console.log('[ensureAuthenticated] Anonymous authentication successful');
       return true;
     } catch (error) {
-      console.error('[ensureAuthenticated] Anonymous authentication failed:', error);
       return false;
     }
   }
-  console.log('[ensureAuthenticated] User is already signed in');
   return true;
 };
 
@@ -56,7 +52,6 @@ const getAuthToken = async () => {
   
   const currentUser = auth.currentUser;
   if (!currentUser) {
-    console.warn("[getAuthToken] No user is currently signed in, even after authentication attempt");
     return null;
   }
   
@@ -64,7 +59,6 @@ const getAuthToken = async () => {
     const token = await currentUser.getIdToken();
     return token;
   } catch (error) {
-    console.error("[getAuthToken] Error getting auth token:", error);
     return null;
   }
 };
@@ -111,14 +105,12 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
           ...additionalData
         });
       } catch (error) {
-        console.warn('Could not create user profile in Firestore:', error.message);
         return null; // Return null if we can't create the profile
       }
     }
     
     return userRef;
   } catch (error) {
-    console.warn('Firestore connection error:', error.message);
     return null; // Return null if Firestore is not available
   }
 };
@@ -133,17 +125,14 @@ export const updateUserOnlineStatus = async (userId, isOnline) => {
       lastSeen: new Date()
     });
   } catch (error) {
-    console.error('Error updating online status:', error);
+    // Silently fail
   }
 };
 
 // Friend System Functions
 export const sendFriendRequest = async (fromUserId, toUserId) => {
   try {
-    console.log('[sendFriendRequest] Sending request from', fromUserId, 'to', toUserId);
-    
     if (!firestore) {
-      console.error('[sendFriendRequest] Firestore is not available');
       throw new Error('Database connection error');
     }
     
@@ -157,12 +146,10 @@ export const sendFriendRequest = async (fromUserId, toUserId) => {
     ]);
     
     if (!fromUserDoc.exists) {
-      console.error('[sendFriendRequest] From user does not exist:', fromUserId);
       throw new Error('Sender account not found');
     }
     
     if (!toUserDoc.exists) {
-      console.error('[sendFriendRequest] To user does not exist:', toUserId);
       throw new Error('Recipient account not found');
     }
     
@@ -175,26 +162,17 @@ export const sendFriendRequest = async (fromUserId, toUserId) => {
     const sentRequests = (fromUserData.friendRequests && fromUserData.friendRequests.sent) || [];
     const receivedRequests = (toUserData.friendRequests && toUserData.friendRequests.received) || [];
     
-    console.log('[sendFriendRequest] From user friends:', fromFriends);
-    console.log('[sendFriendRequest] Sent requests:', sentRequests);
-    console.log('[sendFriendRequest] To user received requests:', receivedRequests);
-    
     if (fromFriends.includes(toUserId)) {
-      console.log('[sendFriendRequest] Users are already friends');
       throw new Error('You are already friends with this user');
     }
     
     if (sentRequests.includes(toUserId)) {
-      console.log('[sendFriendRequest] Friend request already sent from', fromUserId, 'to', toUserId);
       throw new Error('Friend request already sent to this user');
     }
     
     if (receivedRequests.includes(fromUserId)) {
-      console.log('[sendFriendRequest] Friend request already exists from', fromUserId, 'to', toUserId);
       throw new Error('Friend request already pending for this user');
     }
-    
-    console.log('[sendFriendRequest] Both users exist, creating transaction');
     
     // Use transaction to ensure atomicity
     const result = await firestore.runTransaction(async (transaction) => {
@@ -220,9 +198,6 @@ export const sendFriendRequest = async (fromUserId, toUserId) => {
       
       const fromSentRequests = (fromData.friendRequests && fromData.friendRequests.sent) || [];
       const toReceivedRequests = (toData.friendRequests && toData.friendRequests.received) || [];
-      
-      console.log('[sendFriendRequest] Transaction - From sent requests:', fromSentRequests);
-      console.log('[sendFriendRequest] Transaction - To received requests:', toReceivedRequests);
       
       if (fromSentRequests.includes(toUserId)) {
         throw new Error('Friend request already sent to this user');
@@ -252,15 +227,11 @@ export const sendFriendRequest = async (fromUserId, toUserId) => {
         read: false
       });
       
-      console.log('[sendFriendRequest] Notification created with ID:', notificationRef.id);
-      
       return true;
     });
     
-    console.log('[sendFriendRequest] Transaction completed successfully');
     return result;
   } catch (error) {
-    console.error('[sendFriendRequest] Error sending friend request:', error);
     // Re-throw the error with the specific message for UI handling
     throw error;
   }
@@ -268,10 +239,7 @@ export const sendFriendRequest = async (fromUserId, toUserId) => {
 
 export const acceptFriendRequest = async (userId, friendId) => {
   try {
-    console.log('[acceptFriendRequest] Accepting request from', friendId, 'for user', userId);
-    
     if (!firestore) {
-      console.error('[acceptFriendRequest] Firestore is not available');
       return false;
     }
     
@@ -285,12 +253,10 @@ export const acceptFriendRequest = async (userId, friendId) => {
     ]);
     
     if (!userDoc.exists) {
-      console.error('[acceptFriendRequest] User does not exist:', userId);
       return false;
     }
     
     if (!friendDoc.exists) {
-      console.error('[acceptFriendRequest] Friend does not exist:', friendId);
       return false;
     }
     
@@ -299,11 +265,9 @@ export const acceptFriendRequest = async (userId, friendId) => {
     if (!userData.friendRequests || 
         !userData.friendRequests.received || 
         !userData.friendRequests.received.includes(friendId)) {
-      console.error('[acceptFriendRequest] No friend request found from', friendId, 'to', userId);
       return false;
     }
     
-    console.log('[acceptFriendRequest] Creating batch');
     const batch = firestore.batch();
     
     // Add to both users' friends lists
@@ -317,22 +281,16 @@ export const acceptFriendRequest = async (userId, friendId) => {
       'friendRequests.sent': firebase.firestore.FieldValue.arrayRemove(userId)
     });
     
-    console.log('[acceptFriendRequest] Committing batch');
     await batch.commit();
-    console.log('[acceptFriendRequest] Friend request accepted successfully');
     return true;
   } catch (error) {
-    console.error('[acceptFriendRequest] Error accepting friend request:', error);
     return false;
   }
 };
 
 export const rejectFriendRequest = async (userId, friendId) => {
   try {
-    console.log('[rejectFriendRequest] Rejecting request from', friendId, 'for user', userId);
-    
     if (!firestore) {
-      console.error('[rejectFriendRequest] Firestore is not available');
       return false;
     }
     
@@ -346,16 +304,13 @@ export const rejectFriendRequest = async (userId, friendId) => {
     ]);
     
     if (!userDoc.exists) {
-      console.error('[rejectFriendRequest] User does not exist:', userId);
       return false;
     }
     
     if (!friendDoc.exists) {
-      console.error('[rejectFriendRequest] Friend does not exist:', friendId);
       return false;
     }
     
-    console.log('[rejectFriendRequest] Creating batch');
     const batch = firestore.batch();
     
     // Remove from both users' request lists
@@ -367,12 +322,9 @@ export const rejectFriendRequest = async (userId, friendId) => {
       'friendRequests.sent': firebase.firestore.FieldValue.arrayRemove(userId)
     });
     
-    console.log('[rejectFriendRequest] Committing batch');
     await batch.commit();
-    console.log('[rejectFriendRequest] Friend request rejected successfully');
     return true;
   } catch (error) {
-    console.error('[rejectFriendRequest] Error rejecting friend request:', error);
     return false;
   }
 };
@@ -396,19 +348,16 @@ export const removeFriend = async (userId, friendId) => {
     await batch.commit();
     return true;
   } catch (error) {
-    console.error('Error removing friend:', error);
     return false;
   }
 };
 
 export const searchUsers = async (searchTerm) => {
   if (!firestore) {
-    console.error('Firestore is not available');
     return [];
   }
   
   try {
-    console.log('[searchUsers] Searching users with displayName containing:', searchTerm);
     const usersRef = firestore.collection('users');
     
     // Get all users and filter them client-side
@@ -427,36 +376,29 @@ export const searchUsers = async (searchTerm) => {
       }
     });
     
-    console.log('[searchUsers] Found', results.length, 'results');
     return results;
   } catch (error) {
-    console.error('[searchUsers] Error searching users by username:', error);
     return [];
   }
 };
 
 export const searchUsersByEmail = async (email) => {
   if (!firestore) {
-    console.error('[searchUsersByEmail] Firestore is not available');
     return [];
   }
   
   try {
-    console.log('[searchUsersByEmail] Searching users with email containing:', email);
     const usersRef = firestore.collection('users');
     
     // Get all users and filter them client-side
     // This is necessary because we need case-insensitive search
     const snapshot = await usersRef.get();
-    console.log('[searchUsersByEmail] Total users in database:', snapshot.size);
     
     const results = [];
     snapshot.forEach(doc => {
       const userData = doc.data();
-      console.log('[searchUsersByEmail] Checking user:', userData.email);
       if (userData.email && 
           userData.email.toLowerCase().includes(email.toLowerCase())) {
-        console.log('[searchUsersByEmail] Found match:', userData.email);
         results.push({
           id: doc.id,
           ...userData
@@ -464,10 +406,8 @@ export const searchUsersByEmail = async (email) => {
       }
     });
     
-    console.log('[searchUsersByEmail] Found', results.length, 'results');
     return results;
   } catch (error) {
-    console.error('[searchUsersByEmail] Error searching users by email:', error);
     return [];
   }
 };
@@ -495,22 +435,15 @@ export const getUserFriends = async (userId) => {
     
     return friendsData;
   } catch (error) {
-    console.error('Error getting user friends:', error);
     return [];
   }
 };
 
 export const challengeFriend = async (fromUserId, toUserId, timeControl = 'none', gameId = null, challengerColor = 'w') => {
   try {
-    console.log('[challengeFriend] Creating challenge from', fromUserId, 'to', toUserId);
-    console.log('[challengeFriend] Time control:', timeControl);
-    console.log('[challengeFriend] Game ID provided:', gameId);
-    console.log('[challengeFriend] Challenger color:', challengerColor);
-    
     // If no gameId is provided, generate one
     if (!gameId) {
       gameId = generateGameId();
-      console.log('[challengeFriend] Generated new game ID:', gameId);
     }
     
     const challengeRef = firestore.collection('challenges').doc();
@@ -523,9 +456,6 @@ export const challengeFriend = async (fromUserId, toUserId, timeControl = 'none'
       gameId: gameId,
       challengerColor: challengerColor // Store the challenger's color preference
     });
-    
-    console.log('[challengeFriend] Created challenge document with ID:', challengeRef.id);
-    console.log('[challengeFriend] Challenge data includes gameId:', gameId, 'and challengerColor:', challengerColor);
     
     // Create notification
     const notificationRef = firestore.collection('notifications').doc();
@@ -541,19 +471,13 @@ export const challengeFriend = async (fromUserId, toUserId, timeControl = 'none'
       read: false
     });
     
-    console.log('[challengeFriend] Created notification document with ID:', notificationRef.id);
-    console.log('[challengeFriend] Notification data includes gameId:', gameId, 'and challengerColor:', challengerColor);
-    
     return challengeRef.id;
   } catch (error) {
-    console.error('[challengeFriend] Error challenging friend:', error);
     return null;
   }
 };
 
 export const getUserNotifications = (userId, callback) => {
-  console.log('[getUserNotifications] Setting up listener for user:', userId);
-  
   return firestore
     .collection('notifications')
     .where('toUserId', '==', userId)
@@ -561,14 +485,10 @@ export const getUserNotifications = (userId, callback) => {
     .orderBy('createdAt', 'desc')
     .onSnapshot(
       (snapshot) => {
-        console.log('[getUserNotifications] Received snapshot with', snapshot.size, 'notifications');
-        snapshot.forEach((doc) => {
-          console.log('[getUserNotifications] Notification:', doc.id, doc.data());
-        });
         callback(snapshot);
       },
       (error) => {
-        console.error('[getUserNotifications] Error in notification listener:', error);
+        // Silently fail
       }
     );
 };
@@ -590,7 +510,6 @@ export const saveGameResult = async (gameData) => {
     
     return gameRef.id;
   } catch (error) {
-    console.error('Error saving game result:', error);
     return null;
   }
 };
@@ -617,7 +536,7 @@ export const updatePlayerStats = async (userId, won) => {
       });
     }
   } catch (error) {
-    console.error('Error updating player stats:', error);
+    // Silently fail
   }
 };
 
@@ -645,10 +564,8 @@ export const createGameSession = async (gameId, initialFen, timeControl = 'none'
     
     const url = await getUrlWithAuth(`${dbBaseUrl}/games/${gameId}.json`);
     await axios.put(url, gameData);
-    console.log('[createGameSession] Successfully created game with ID:', gameId);
     return true;
   } catch (error) {
-    console.error("Error creating game session:", error);
     return false;
   }
 };
@@ -656,21 +573,16 @@ export const createGameSession = async (gameId, initialFen, timeControl = 'none'
 // Join an existing game
 export const joinGame = async (gameId, playerColor) => {
   try {
-    console.log(`[joinGame] Joining game ${gameId} as ${playerColor}`);
-    
     // Ensure user is authenticated before trying to join
     const authSuccess = await ensureAuthenticated();
     if (!authSuccess) {
-      console.error("[joinGame] Authentication failed");
       throw new Error("Authentication failed");
     }
     
     const token = await getAuthToken();
     if (!token) {
-      console.error("[joinGame] Failed to get auth token");
       throw new Error("Failed to get auth token");
     }
-    console.log("[joinGame] Auth token obtained successfully");
     
     // First check if this player has already joined the game
     const gameUrl = await getUrlWithAuth(`${dbBaseUrl}/games/${gameId}.json`);
@@ -678,7 +590,6 @@ export const joinGame = async (gameId, playerColor) => {
     const gameData = gameResponse.data;
     
     if (gameData && gameData.players && gameData.players[playerColor]) {
-      console.log(`[joinGame] Already joined game ${gameId} as ${playerColor}`);
       return true;
     }
     
@@ -690,10 +601,8 @@ export const joinGame = async (gameId, playerColor) => {
     };
     
     const url = await getUrlWithAuth(`${dbBaseUrl}/games/${gameId}.json`);
-    console.log(`[joinGame] Using authenticated URL: ${url.replace(/auth=.*/, 'auth=REDACTED')}`);
     
     const response = await axios.patch(url, updateData);
-    console.log(`[joinGame] Successfully joined game ${gameId} as ${playerColor}`, response.status);
     
     // Verify the join was successful by checking the updated game data
     const verifyUrl = await getUrlWithAuth(`${dbBaseUrl}/games/${gameId}.json`);
@@ -701,20 +610,11 @@ export const joinGame = async (gameId, playerColor) => {
     const updatedGameData = verifyResponse.data;
     
     if (updatedGameData && updatedGameData.players && updatedGameData.players[playerColor]) {
-      console.log(`[joinGame] Successfully verified join for game ${gameId} as ${playerColor}`);
-      console.log(`[joinGame] Game now has players:`, updatedGameData.players);
       return true;
     } else {
-      console.error(`[joinGame] Join verification failed for game ${gameId} as ${playerColor}`);
-      console.error(`[joinGame] Updated game data:`, updatedGameData);
       return false;
     }
   } catch (error) {
-    console.error("Error joining game:", error);
-    if (error.response) {
-      console.error("Response status:", error.response.status);
-      console.error("Response data:", error.response.data);
-    }
     return false;
   }
 };
@@ -729,7 +629,7 @@ export const listenToGameChanges = (gameId, callback) => {
         callback(response.data);
       }
     } catch (error) {
-      console.error("Error polling game changes:", error);
+      // Silently fail
     }
   }, 2000); // Poll every 2 seconds
   
@@ -755,7 +655,6 @@ export const updateGameState = async (gameId, newFen, gameOver = false, nextPlay
     await axios.patch(url, updateData);
     return true;
   } catch (error) {
-    console.error("Error updating game state:", error);
     return false;
   }
 };
@@ -770,7 +669,6 @@ export const updatePlayerTimer = async (gameId, color, timeRemaining) => {
     });
     return true;
   } catch (error) {
-    console.error("Error updating player timer:", error);
     return false;
   }
 };
@@ -784,33 +682,26 @@ export const updateSelectedPiece = async (gameId, selectedPiece) => {
     });
     return true;
   } catch (error) {
-    console.error("Error updating selected piece:", error);
     return false;
   }
 };
 
 // Get game data directly with retry mechanism
 export const getGameData = async (gameId, retryCount = 3, retryDelay = 500) => {
-  console.log(`[getGameData] Attempting to get game data for ID: ${gameId}, retry: ${retryCount}`);
   try {
     const url = await getUrlWithAuth(`${dbBaseUrl}/games/${gameId}.json`);
     const response = await axios.get(url);
-    console.log(`[getGameData] Response for game ${gameId}:`, response.data);
     
     // If data is null but we have retries left, try again after a delay
     if (!response.data && retryCount > 0) {
-      console.log(`[getGameData] No data found for game ${gameId}, retrying...`);
       await new Promise(resolve => setTimeout(resolve, retryDelay));
       return getGameData(gameId, retryCount - 1, retryDelay * 1.5);
     }
     
     return response.data;
   } catch (error) {
-    console.error(`[getGameData] Error getting game data for ID: ${gameId}:`, error);
-    
     // Retry on network/server errors if we have retries left
     if (retryCount > 0) {
-      console.log(`[getGameData] Retrying after error for game ${gameId}...`);
       await new Promise(resolve => setTimeout(resolve, retryDelay));
       return getGameData(gameId, retryCount - 1, retryDelay * 1.5);
     }
@@ -826,7 +717,6 @@ export const isColorTaken = async (gameId, color) => {
     const response = await axios.get(url);
     return !!response.data;
   } catch (error) {
-    console.error("Error checking if color is taken:", error);
     return false;
   }
 };
@@ -843,7 +733,6 @@ export const checkGameExists = async (gameId) => {
     const response = await axios.get(url);
     return !!response.data;
   } catch (error) {
-    console.error("Error checking game exists:", error);
     return false;
   }
 };
@@ -859,7 +748,6 @@ export const declareTimeoutWin = async (gameId, winnerColor) => {
     });
     return true;
   } catch (error) {
-    console.error("Error declaring timeout win:", error);
     return false;
   }
 };
@@ -890,7 +778,6 @@ export const sendChatMessage = async (gameId, message) => {
     await axios.put(putUrl, messages);
     return true;
   } catch (error) {
-    console.error("Error sending chat message:", error);
     return false;
   }
 };
@@ -910,7 +797,7 @@ export const listenToChat = (gameId, callback) => {
       
       callback(messages);
     } catch (error) {
-      console.error("Error polling chat messages:", error);
+      // Silently fail
     }
   }, 1000); // Poll every second for more responsive chat
   
@@ -921,12 +808,10 @@ export const listenToChat = (gameId, callback) => {
 // Test Firestore permissions
 export const testFirestorePermissions = async () => {
   if (!firestore) {
-    console.error('[testFirestorePermissions] Firestore is not available');
     return false;
   }
   
   try {
-    console.log('[testFirestorePermissions] Testing write permissions...');
     // Try to write to a test document
     const testRef = firestore.collection('_test_permissions').doc('test');
     await testRef.set({
@@ -934,15 +819,11 @@ export const testFirestorePermissions = async () => {
       test: true
     });
     
-    console.log('[testFirestorePermissions] Write successful');
-    
     // Clean up the test document
     await testRef.delete();
-    console.log('[testFirestorePermissions] Test document deleted');
     
     return true;
   } catch (error) {
-    console.error('[testFirestorePermissions] Write permission denied:', error);
     return false;
   }
 };
@@ -950,33 +831,25 @@ export const testFirestorePermissions = async () => {
 // Clear stale friend requests for debugging purposes
 export const clearStaleRequests = async (userId) => {
   if (!firestore) {
-    console.error('[clearStaleRequests] Firestore is not available');
     return false;
   }
   
   try {
-    console.log('[clearStaleRequests] Clearing stale requests for user:', userId);
-    
     const userRef = firestore.doc(`users/${userId}`);
     const userDoc = await userRef.get();
     
     if (!userDoc.exists) {
-      console.error('[clearStaleRequests] User does not exist:', userId);
       return false;
     }
     
     const userData = userDoc.data();
     const friendRequests = userData.friendRequests || { sent: [], received: [] };
     
-    console.log('[clearStaleRequests] Current friend requests:', friendRequests);
-    
     // Clear all sent and received requests
     await userRef.update({
       'friendRequests.sent': [],
       'friendRequests.received': []
     });
-    
-    console.log('[clearStaleRequests] Cleared all friend requests for user:', userId);
     
     // Also clean up related notifications
     const notificationsQuery = firestore
@@ -993,12 +866,10 @@ export const clearStaleRequests = async (userId) => {
     
     if (!notificationsSnapshot.empty) {
       await batch.commit();
-      console.log('[clearStaleRequests] Deleted', notificationsSnapshot.size, 'friend request notifications');
     }
     
     return true;
   } catch (error) {
-    console.error('[clearStaleRequests] Error clearing stale requests:', error);
     return false;
   }
 };

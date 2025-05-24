@@ -597,7 +597,6 @@ class FriendsPanel extends Component {
       console.log('[handleAcceptGameChallenge] Notification received:', notification);
       console.log('[handleAcceptGameChallenge] Notification keys:', Object.keys(notification));
       console.log('[handleAcceptGameChallenge] gameId property:', notification.gameId);
-      console.log('[handleAcceptGameChallenge] Full notification data:', JSON.stringify(notification, null, 2));
       
       // Mark notification as read
       await firestore.collection('notifications').doc(notification.id).update({
@@ -787,8 +786,24 @@ class FriendsPanel extends Component {
     const friendRequests = notifications.filter(n => n.type === 'friend_request' && !n.read);
     const otherNotifications = notifications.filter(n => n.type !== 'friend_request' && !n.read);
     
-    console.log('[DEBUG] Current Friend Requests:', friendRequests);
-    console.log('[DEBUG] Current Notifications:', notifications);
+    const notificationActions = [
+      <FlatButton
+        label="Accept"
+        primary={true}
+        onClick={() => this.handleAcceptFriendRequest(challengingFriendId, notifications.find(n => n.fromUserId === challengingFriendId).id)}
+        style={{ marginRight: '10px' }}
+        disabled={isProcessingRequest}
+        labelStyle={{ fontWeight: 'bold' }}
+        backgroundColor="#4267B2"
+      />,
+      <FlatButton
+        label="Reject"
+        onClick={() => this.handleRejectFriendRequest(challengingFriendId, notifications.find(n => n.fromUserId === challengingFriendId).id)}
+        disabled={isProcessingRequest}
+        style={{ backgroundColor: '#f0f2f5' }}
+        labelStyle={{ color: '#4b4f56' }}
+      />
+    ];
 
     return (
       <div>
@@ -1109,50 +1124,6 @@ class FriendsPanel extends Component {
               </div>
             )}
 
-            {/* Debug section - only visible in development */}
-            {process.env.NODE_ENV !== 'production' && (
-              <div style={{ 
-                marginBottom: '20px', 
-                marginTop: '20px',
-                padding: '10px', 
-                backgroundColor: '#f5f5f5', 
-                border: '1px solid #ddd',
-                borderRadius: '4px'
-              }}>
-                <h4>Debug Information</h4>
-                <div>
-                  <strong>Search mode:</strong> {searchByEmail ? 'Email' : 'Username'}
-                </div>
-                <div>
-                  <strong>Search term:</strong> "{searchTerm}"
-                </div>
-                <div>
-                  <strong>Results found:</strong> {searchResults.length}
-                </div>
-                <div>
-                  <strong>Current user ID:</strong> {this.props.currentUser ? this.props.currentUser.id : 'Not logged in'}
-                </div>
-                <div>
-                  <strong>Friends count:</strong> {this.state.friends.length}
-                </div>
-                {searchResults.length > 0 && (
-                  <div>
-                    <strong>Search results:</strong>
-                    <pre style={{ 
-                      overflow: 'auto', 
-                      maxHeight: '150px',
-                      fontSize: '12px',
-                      backgroundColor: '#eee',
-                      padding: '8px',
-                      borderRadius: '4px'
-                    }}>
-                      {JSON.stringify(searchResults, null, 2)}
-                    </pre>
-                  </div>
-                )}
-              </div>
-            )}
-
             {successMessage && (
               <div style={{ 
                 backgroundColor: successMessage.startsWith('Error') ? '#ffebee' : '#4CAF50', 
@@ -1461,17 +1432,7 @@ class FriendsPanel extends Component {
           modal={false}
           open={!!challengingFriendId}
           onRequestClose={() => this.setState({ challengingFriendId: null })}
-          actions={[
-            <FlatButton
-              label="Cancel"
-              onClick={() => this.setState({ challengingFriendId: null })}
-            />,
-            <FlatButton
-              label="Send Challenge"
-              primary={true}
-              onClick={() => this.handleChallengeFriend(challengingFriendId)}
-            />
-          ]}
+          actions={notificationActions}
         >
           <div style={{ padding: '20px' }}>
             <h4>Select Time Control:</h4>
