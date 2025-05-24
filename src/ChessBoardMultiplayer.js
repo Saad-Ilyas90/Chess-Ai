@@ -46,6 +46,37 @@ class ChessBoardMultiplayer extends Component {
                 }
             }
         }
+        
+        // Highlight king if in check
+        this.highlightKingInCheck();
+    }
+
+    // New method to highlight king in check
+    highlightKingInCheck() {
+        const chess = new Chess(this.props.board);
+        if (chess.in_check()) {
+            // Get the king's square for the current turn
+            const color = chess.turn();
+            const board = chess.board();
+
+            // Find the king on the board
+            for (let row = 0; row < board.length; row++) {
+                for (let col = 0; col < board[row].length; col++) {
+                    const piece = board[row][col];
+                    if (piece && piece.type === 'k' && piece.color === color) {
+                        // Convert position to algebraic notation
+                        const square = String.fromCharCode(97 + col) + (8 - row);
+                        const cellId = "cell-" + square;
+                        const kingCell = document.getElementById(cellId);
+                        if (kingCell) {
+                            kingCell.classList.add("king-in-check");
+                            console.log("King in check highlighted:", square);
+                        }
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     componentDidMount() {
@@ -68,7 +99,7 @@ class ChessBoardMultiplayer extends Component {
             // Clear visual highlights
             const cells = document.getElementsByClassName("cell");
             for (let i = 0; i < cells.length; i++) {
-                cells[i].classList.remove("selected", "legalnext");
+                cells[i].classList.remove("selected", "legalnext", "king-in-check");
             }
             
             this.refreshBoard();
@@ -139,7 +170,7 @@ class ChessBoardMultiplayer extends Component {
             // Clear visual highlights
             const cells = document.getElementsByClassName("cell");
             for (let i = 0; i < cells.length; i++) {
-                cells[i].classList.remove("selected", "legalnext");
+                cells[i].classList.remove("selected", "legalnext", "king-in-check");
             }
         } else {
             // We're selecting a piece to move

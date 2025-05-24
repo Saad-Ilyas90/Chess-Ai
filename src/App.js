@@ -349,6 +349,9 @@ class App extends Component {
     }
     
     if (gameMode === 'ai') {
+      // Remove multiplayer body class for AI mode
+      document.body.classList.remove('multiplayer-active');
+      
       // Handle AI game mode (existing functionality)
       this.setState({ 
         ...baseResetState,
@@ -362,6 +365,8 @@ class App extends Component {
         timeControl: 'none'
       });
     } else if (gameMode === 'multiplayer') {
+      // Add multiplayer body class for auto-scroll prevention
+      document.body.classList.add('multiplayer-active');
       try {
         if (isJoining) {
           // Check if game exists
