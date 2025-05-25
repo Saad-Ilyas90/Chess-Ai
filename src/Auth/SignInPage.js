@@ -289,79 +289,36 @@ class SignInPage extends Component {
       resetEmail
     } = this.state;
 
-    const containerStyle = {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      backgroundColor: '#f5f5f5',
-      padding: '20px'
-    };
-
-    const paperStyle = {
-      padding: '40px',
-      maxWidth: '400px',
-      width: '100%',
-      textAlign: 'center'
-    };
-
-    const titleStyle = {
-      fontSize: '28px',
-      marginBottom: '10px',
-      color: '#333',
-      fontFamily: 'ultraminimal, sans-serif'
-    };
-
-    const subtitleStyle = {
-      fontSize: '16px',
-      color: '#666',
-      marginBottom: '30px'
-    };
-
-    const buttonStyle = {
-      width: '100%',
-      marginBottom: '15px'
-    };
-
-    const textFieldStyle = {
-      width: '100%',
-      marginBottom: '15px'
-    };
-
-    const linkStyle = {
-      color: '#4CAF50',
-      cursor: 'pointer',
-      textDecoration: 'underline',
-      fontSize: '14px'
-    };
-
     if (showForgotPassword) {
       return (
-        <div style={containerStyle} className="auth-container">
-          <Paper style={paperStyle}>
-            <h1 style={titleStyle}>Reset Password</h1>
-            <p style={subtitleStyle}>Enter your email to receive a password reset link</p>
+        <div className="auth-container">
+          <Paper className="login-paper">
+            <div className="login-logo">
+              <span className="login-logo-icon">♟</span>
+              CHESS
+            </div>
+            <p className="login-subtitle">Enter your email to receive a password reset link</p>
             
             <TextField
               hintText="Email"
               value={resetEmail}
               onChange={this.handleInputChange('resetEmail')}
-              style={textFieldStyle}
+              className="login-text-field"
+              fullWidth={true}
               errorText={this.state.resetEmailError}
+              errorStyle={{color: '#ffccbc'}}
+              underlineFocusStyle={{borderColor: '#e0c9a6'}}
             />
             
             <RaisedButton
               label="Send Reset Email"
-              primary={true}
               onClick={this.handleForgotPassword}
-              style={buttonStyle}
+              className="login-button"
               disabled={loading}
-              backgroundColor="#4CAF50"
-              labelColor="#fff"
             />
             
             <div style={{ marginTop: '20px' }}>
-              <span style={linkStyle} onClick={this.toggleForgotPassword}>
+              <span className="login-link" onClick={this.toggleForgotPassword}>
                 Back to Sign In
               </span>
             </div>
@@ -378,24 +335,19 @@ class SignInPage extends Component {
     }
 
     return (
-      <div style={containerStyle} className="auth-container">
-        <Paper style={paperStyle}>
-          <h1 style={titleStyle}>Chess AI</h1>
-          <p style={subtitleStyle}>
+      <div className="auth-container">
+        <Paper className="login-paper">
+          <div className="login-logo">
+            <span className="login-logo-icon">♛</span>
+            CHE
+            <span className="login-logo-knights">
+              <span className="login-logo-knight-left">♘</span>
+              <span className="login-logo-knight-right">♘</span>
+            </span>
+          </div>
+          <p className="login-subtitle">
             {isSignUp ? 'Create an account to play with friends' : 'Sign in to play with friends'}
           </p>
-          
-          {/* Google Sign In */}
-          <RaisedButton
-            label="Continue with Google"
-            onClick={this.handleGoogleSignIn}
-            style={buttonStyle}
-            disabled={loading}
-            backgroundColor="#4285f4"
-            labelColor="#fff"
-          />
-          
-          <Divider style={{ margin: '20px 0' }} />
           
           {/* Email/Password Form */}
           {isSignUp && (
@@ -403,8 +355,11 @@ class SignInPage extends Component {
               hintText="Display Name"
               value={displayName}
               onChange={this.handleInputChange('displayName')}
-              style={textFieldStyle}
+              className="login-text-field"
+              fullWidth={true}
               errorText={this.state.displayNameError}
+              errorStyle={{color: '#ffccbc'}}
+              underlineFocusStyle={{borderColor: '#e0c9a6'}}
             />
           )}
           
@@ -413,8 +368,11 @@ class SignInPage extends Component {
             type="email"
             value={email}
             onChange={this.handleInputChange('email')}
-            style={textFieldStyle}
+            className="login-text-field"
+            fullWidth={true}
             errorText={this.state.emailError}
+            errorStyle={{color: '#ffccbc'}}
+            underlineFocusStyle={{borderColor: '#e0c9a6'}}
           />
           
           <TextField
@@ -422,8 +380,11 @@ class SignInPage extends Component {
             type="password"
             value={password}
             onChange={this.handleInputChange('password')}
-            style={textFieldStyle}
+            className="login-text-field"
+            fullWidth={true}
             errorText={this.state.passwordError}
+            errorStyle={{color: '#ffccbc'}}
+            underlineFocusStyle={{borderColor: '#e0c9a6'}}
           />
           
           {isSignUp && (
@@ -432,47 +393,63 @@ class SignInPage extends Component {
               type="password"
               value={confirmPassword}
               onChange={this.handleInputChange('confirmPassword')}
-              style={textFieldStyle}
+              className="login-text-field"
+              fullWidth={true}
               errorText={this.state.confirmPasswordError}
+              errorStyle={{color: '#ffccbc'}}
+              underlineFocusStyle={{borderColor: '#e0c9a6'}}
             />
           )}
           
           <RaisedButton
             label={isSignUp ? 'Sign Up' : 'Sign In'}
-            primary={true}
             onClick={this.handleEmailPasswordAuth}
-            style={buttonStyle}
+            className="login-button"
             disabled={loading}
-            backgroundColor="#4CAF50"
-            labelColor="#fff"
           />
           
           {!isSignUp && (
             <div style={{ marginBottom: '20px' }}>
-              <span style={linkStyle} onClick={this.toggleForgotPassword}>
+              <span className="login-link" onClick={this.toggleForgotPassword}>
                 Forgot Password?
               </span>
             </div>
           )}
           
-          <Divider style={{ margin: '20px 0' }} />
+          <Divider style={{ margin: '20px 0', backgroundColor: 'rgba(224, 201, 166, 0.3)' }} />
+          
+          {/* Google Sign In */}
+          <RaisedButton
+            label={<span>
+              <img 
+                src="https://developers.google.com/identity/images/g-logo.png" 
+                alt="Google" 
+                className="login-google-icon" 
+              />
+              Continue with Google
+            </span>}
+            onClick={this.handleGoogleSignIn}
+            className="login-google-button"
+            disabled={loading}
+          />
           
           {/* Play as Guest */}
           <RaisedButton
-            label="Play as Guest"
+            label={<span>
+              <span className="login-guest-icon">♚</span>
+              Play as Guest
+            </span>}
             onClick={this.props.onPlayAsGuest}
-            style={buttonStyle}
+            className="login-guest-button"
             disabled={loading}
-            backgroundColor="#757575"
-            labelColor="#fff"
           />
           
           {/* Toggle between sign in/up */}
           <div style={{ marginTop: '20px' }}>
-            <span style={{ color: '#666', fontSize: '14px' }}>
+            <span style={{ color: '#e0c9a6', fontSize: '14px' }}>
               {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
             </span>
-            <span style={linkStyle} onClick={this.toggleAuthMode}>
+            <span className="login-link" onClick={this.toggleAuthMode}>
               {isSignUp ? 'Sign In' : 'Sign Up'}
             </span>
           </div>
@@ -482,6 +459,7 @@ class SignInPage extends Component {
           open={showError}
           message={error}
           autoHideDuration={4000}
+          bodyStyle={{ backgroundColor: '#5d4037', color: '#e0c9a6' }}
           onRequestClose={() => this.setState({ showError: false })}
         />
       </div>
