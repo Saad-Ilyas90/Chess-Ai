@@ -82,6 +82,7 @@
     top: 10px;
     left: -170px;
     transform: none;
+    pointer-events: none; /* Allow clicks to pass through */
   }
 
   /* Top right timer position - not currently used but kept for flexibility */
@@ -90,6 +91,7 @@
     top: 10px;
     right: -170px;
     transform: none;
+    pointer-events: none; /* Allow clicks to pass through */
   }
 
   /* Bottom left timer position - not currently used but kept for flexibility */
@@ -98,6 +100,7 @@
     bottom: 10px;
     left: -170px;
     transform: none;
+    pointer-events: none; /* Allow clicks to pass through */
   }
 
   /* Bottom right timer position */
@@ -106,6 +109,7 @@
     bottom: 10px;
     right: -170px;
     transform: none;
+    pointer-events: none; /* Allow clicks to pass through */
   }
 }
 
@@ -117,9 +121,10 @@
     top: -70px;
     left: 5px;
     transform: none;
-    z-index: 1500;
+    z-index: 10; /* Lower z-index to avoid blocking board interaction */
     visibility: visible !important;
     opacity: 1 !important;
+    pointer-events: none; /* Allow clicks to pass through to the board */
   }
 
   /* Top right timer position */
@@ -128,9 +133,10 @@
     top: -70px;
     right: 5px;
     transform: none;
-    z-index: 1500;
+    z-index: 10;
     visibility: visible !important;
     opacity: 1 !important;
+    pointer-events: none; /* Allow clicks to pass through to the board */
   }
 
   /* Bottom left timer position */
@@ -139,10 +145,11 @@
     bottom: 25%; /* Moved up to prevent going too far down */
     left: 5px;
     transform: none;
-    z-index: 2500; /* Higher z-index to ensure visibility */
+    z-index: 10; /* Lower z-index to prevent blocking board interaction */
     visibility: visible !important;
     opacity: 1 !important;
     display: block !important;
+    pointer-events: none; /* Allow clicks to pass through to the board */
   }
 
   /* Bottom right timer position */
@@ -151,10 +158,11 @@
     bottom: -45px; /* Moved up to prevent going too far down */
     right: 5px;
     transform: none;
-    z-index: 2500; /* Higher z-index to ensure visibility */
+    z-index: 10; /* Lower z-index to prevent blocking board interaction */
     visibility: visible !important;
     opacity: 1 !important;
     display: block !important;
+    pointer-events: none; /* Allow clicks to pass through to the board */
   }
   
   /* Ensure timers don't overlap with other content */
@@ -250,11 +258,12 @@
     font-size: 13px;
     padding: 5px 6px;
     background-color: rgba(240, 240, 240, 0.95) !important;
-    z-index: 2500 !important; /* Higher z-index to ensure visibility */
+    z-index: 10 !important; /* Lower z-index to prevent blocking board interaction */
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     display: block !important;
     border: 2px solid #4CAF50 !important; /* Ensure border is visible */
     position: absolute !important;
+    pointer-events: auto; /* Re-enable pointer events for the timer itself */
   }
   
   /* Ensure bottom timers never disappear */
@@ -264,6 +273,8 @@
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
+    pointer-events: none; /* Allow clicks to pass through */
+    z-index: 10 !important; /* Lower z-index to prevent blocking board interaction */
   }
   
   /* Additional style for when chat is visible on mobile */
@@ -363,6 +374,8 @@
     bottom: -60px;
     left: 0;
     right: auto;
+    z-index: 10; /* Lower z-index to prevent blocking board interaction */
+    pointer-events: none; /* Allow clicks to pass through to the board */
   }
   
   .flipped .white-timer-container {
@@ -370,6 +383,8 @@
     top: -60px;
     right: 0;
     left: auto;
+    z-index: 10; /* Lower z-index to prevent blocking board interaction */
+    pointer-events: none; /* Allow clicks to pass through to the board */
   }
 }
 
@@ -397,6 +412,8 @@
   user-select: none;
   max-width: 100%;
   height: auto;
+  z-index: 20; /* Ensure board is above timers */
+  pointer-events: auto; /* Ensure the board can receive pointer events */
 }
 
 @media screen and (max-width: 768px) {
