@@ -6,10 +6,18 @@ class AuthWrapper extends Component {
   constructor(props) {
     super(props);
     
+    // Check if we need to show sign-in page from landing page navigation
+    const needsAuth = localStorage.getItem('needsAuth') === 'true';
+    if (needsAuth) {
+      // Clear the flag
+      localStorage.removeItem('needsAuth');
+    }
+    
     this.state = {
       currentUser: null,
       loading: true,
-      isGuest: false
+      isGuest: false,
+      forceSignIn: needsAuth
     };
   }
 
@@ -143,7 +151,7 @@ class AuthWrapper extends Component {
   }
 
   render() {
-    const { loading, currentUser, isGuest } = this.state;
+    const { loading, currentUser, isGuest, forceSignIn } = this.state;
     
     if (loading) {
       return (
@@ -167,7 +175,7 @@ class AuthWrapper extends Component {
       );
     }
 
-    if (!currentUser && !isGuest) {
+    if (!currentUser && !isGuest || forceSignIn) {
       return <SignInPage onPlayAsGuest={this.handlePlayAsGuest} />;
     }
 

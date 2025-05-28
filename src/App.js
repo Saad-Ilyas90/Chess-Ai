@@ -16,6 +16,7 @@ import Timer from './Timer.js';
 import Chat from './Chat.js';
 import FriendsPanel from './Friends/FriendsPanel.js';
 import UserProfile from './Profile/UserProfile.js';
+import LandingPage from './LandingPage.js';
 // Firebase services
 import { 
   createGameSession, 
@@ -68,6 +69,7 @@ class App extends Component {
     }
     
     this.state = {
+      showLandingPage: true, // Start with landing page
       boardIndex: 0,
       newGameDiaOpen: false,
       intelligenceDiaOpen: false,
@@ -720,6 +722,7 @@ class App extends Component {
   }
 
   render() {
+    const { showLandingPage, opponentSelectedPiece, showUserProfile, showFriendsPanel, isWaitingForOpponent, gameMode } = this.state;
     const { currentUser, isGuest, onSignOut } = this.props;
     
     const newGameActions = [
@@ -736,20 +739,30 @@ class App extends Component {
       <FlatButton label="No" primary={true} style={{ color: '#333' }} onClick={this.closeAnalysisConfirmation} />,
       <FlatButton label="Yes" primary={true} style={{ color: '#333' }} onClick={this.showAnalysis} />,
     ];
-
+      
+    // If showLandingPage is true, render the landing page, otherwise render the game
+    if (showLandingPage) {
+      return <LandingPage 
+        onStartGame={() => this.setState({ showLandingPage: false, gameModeDialogOpen: true })}
+        onSignIn={() => {
+          // Set auth state in localStorage to indicate we need to sign in
+          localStorage.setItem('needsAuth', 'true');
+          // Force a page reload to trigger the AuthWrapper's authentication check
+          window.location.href = '/';
+        }}
+      />;
+    }
+    
     return (
       <div className="App">
-        <div id="thinking-bar"></div>
-        <Header 
-          requestOpenNewGame={this.requestOpenNewGame} 
-          requestOpenIntelligenceDia={this.requestOpenIntelligenceDia} 
-          gameMode={this.state.gameMode}
-          gameId={this.state.gameId}
-          currentUser={currentUser}
-          isGuest={isGuest}
-          onSignOut={onSignOut}
-          onShowFriends={this.handleShowFriends}
-          onShowProfile={this.handleShowProfile}
+        <WindowResizeListener onResize={windowSize => {
+          resized(windowSize.windowWidth, windowSize.windowHeight);
+        }}/>
+        <Header
+          onNewGameClick={this.openNewGameDia}
+          onAnalysisClick={this.openAnalysisConfirmation}
+          onOpenUserProfile={() => this.setState({ showUserProfile: true })}
+          onOpenFriends={() => this.setState({ showFriendsPanel: true })}
           friendRequestCount={this.state.friendRequestCount}
         />
         <WindowResizeListener onResize={windowSize => { resized(windowSize.windowWidth, windowSize.windowHeight) }} />
