@@ -530,7 +530,7 @@ h3 + div button {
   font-weight: 500;
   background-color: #3e2723;
   margin: 10px auto 25px;
-  right: 82%;
+  right: 80%;
   border-radius: 8px;
   max-width: 90%;
   box-shadow: none;
@@ -619,5 +619,55 @@ h3 + div button {
   border-color: #5d4037 !important;
   outline: none !important;
   box-shadow: 0 0 5px rgba(93, 64, 55, 0.3) !important;
+}
+
+/* Friend list layout adjustments */
+.friend-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-start !important;
+  gap: 16px !important;
+  margin-top: 16px !important;
+}
+
+.friend-card {
+  flex: 1 1 calc(33.333% - 16px) !important;
+  max-width: calc(33.333% - 16px) !important;
+  background-color: #1a1a1a;
+  color: #e0c9a6;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.friend-avatar {
+  width: 64px !important;
+  height: 64px !important;
+  border: 2px solid #4CAF50 !important;
+  margin-bottom: 12px;
+}
+
+.friend-details {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.friend-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.friend-stats {
+  font-size: 14px;
+  color: #cccccc;
+  margin: 2px 0;
+}
+
+.friend-actions {
+  margin-top: auto;
 }
 

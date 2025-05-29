@@ -37,6 +37,7 @@ import Dialog from 'material-ui/Dialog';
 import Divider from 'material-ui/Divider';
 import Chip from 'material-ui/Chip';
 import IconButton from 'material-ui/IconButton';
+import PersonIcon from 'material-ui/svg-icons/social/person';
 
 class FriendsPanel extends Component {
   constructor(props) {
@@ -73,6 +74,10 @@ class FriendsPanel extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    // Reload friends when user or guest status changes
+    if (prevProps.currentUser !== this.props.currentUser || prevProps.isGuest !== this.props.isGuest) {
+      this.loadFriends();
+    }
     if (prevState.searchByEmail !== this.state.searchByEmail) {
       console.log('Search mode changed to:', this.state.searchByEmail ? 'Email' : 'Username');
     }
@@ -253,6 +258,7 @@ class FriendsPanel extends Component {
 
     try {
       const friends = await getUserFriends(this.props.currentUser.id);
+      console.log('[FriendsPanel] getUserFriends returned:', friends);
       this.setState({ friends });
     } catch (error) {
       console.warn('Could not load friends (Firestore offline):', error);
@@ -756,6 +762,7 @@ class FriendsPanel extends Component {
 
   render() {
     const { currentUser, isGuest } = this.props;
+    console.log('[FriendsPanel] render, state.friends:', this.state.friends);
     const { 
       friends, 
       searchResults, 
@@ -1059,65 +1066,32 @@ class FriendsPanel extends Component {
           )}
           
           {friends.length > 0 && (
-            <List>
-              {friends.map((friend) => (
-                <ListItem
-                  key={friend.id}
-                  leftAvatar={
-                    <Avatar 
-                      src={friend.photoURL} 
-                      style={{ 
-                        border: friend.isOnline ? '2px solid #4CAF50' : '2px solid #ccc'
-                      }}
-                    >
-                      {!friend.photoURL && friend.displayName.charAt(0)}
+            <div className="friend-grid">
+              {friends.map(friend => (
+                <Paper key={friend.id} className="friend-card">
+                  {friend.photoURL ? (
+                    <Avatar src={friend.photoURL} className="friend-avatar" />
+                  ) : (
+                    <Avatar className="friend-avatar">
+                      <PersonIcon color="#e0c9a6" />
                     </Avatar>
-                  }
-                  primaryText={
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <span style={{ color: '#e0c9a6' }}>{friend.displayName}</span>
-                      {friend.isOnline && (
-                        <Chip 
-                          style={{ marginLeft: '10px', height: '20px', backgroundColor: '#5d4037' }}
-                          labelStyle={{ fontSize: '10px', lineHeight: '20px', color: '#e0c9a6' }}
-                        >
-                          Online
-                        </Chip>
-                      )}
-                    </div>
-                  }
-                  secondaryText={
-                    <div style={{ color: '#cccccc' }}>
-                      <div style={{ color: '#cccccc' }}>Rating: {friend.rating || 'Unrated'}</div>
-                      <div style={{ color: '#cccccc' }}>Games: {friend.gamesPlayed || 0} | Wins: {friend.gamesWon || 0}</div>
-                      <div style={{ color: '#cccccc' }}>Last seen: {this.formatLastSeen(friend.lastSeen)}</div>
-                    </div>
-                  }
-                  onClick={() => this.handleDirectChallenge(friend.id)}
-                  style={{ cursor: 'pointer' }}
-                  rightIconButton={
-                    <div>
-                      <FlatButton
-                        label="Challenge"
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent triggering the ListItem onClick
-                          this.setState({ challengingFriendId: friend.id });
-                        }}
-                        style={{ marginRight: '5px' }}
-                      />
-                      <FlatButton
-                        label="Remove"
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent triggering the ListItem onClick
-                          this.handleRemoveFriend(friend.id);
-                        }}
-                        secondary={true}
-                      />
-                    </div>
-                  }
-                />
+                  )}
+                  <div className="friend-details">
+                    <div className="friend-name">{friend.displayName}</div>
+                    <div className="friend-stats">Rating: {friend.rating || 'Unrated'}</div>
+                    <div className="friend-stats">Games: {friend.gamesPlayed || 0} | Wins: {friend.gamesWon || 0}</div>
+                    <div className="friend-stats">Last seen: {this.formatLastSeen(friend.lastSeen)}</div>
+                  </div>
+                  <div className="friend-actions">
+                    <FlatButton
+                      label="Remove"
+                      secondary={true}
+                      onClick={e => { e.stopPropagation(); this.handleRemoveFriend(friend.id); }}
+                    />
+                  </div>
+                </Paper>
               ))}
-            </List>
+            </div>
           )}
         </Paper>
 
