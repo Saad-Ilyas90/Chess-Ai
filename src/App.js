@@ -1,5 +1,6 @@
 import './App.css';
 import './dropdown-fix.css';
+import './button-fix.css';
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Switch, withRouter } from 'react-router-dom';
 import Header from './Header.js';

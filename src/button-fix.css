@@ -1,0 +1,154 @@
+/* Fix for the search button white line issue */
+
+/* Target the exact "SEARCH" button from the image - precise matching */
+div[style*="display: inline-block"] {
+  position: relative !important;
+  overflow: hidden !important;
+  border: 0 !important;
+}
+
+/* Cover the white line with a pseudo-element the same color as the button */
+div[style*="display: inline-block"]::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px; /* Cover the white line */
+  background-color: rgb(93, 64, 55); /* Same as button background */
+  z-index: 10;
+}
+
+/* Chess-themed button class for reusability
+.chess-themed-button {
+  background-color: rgb(93, 64, 55) !important;
+  color: rgb(224, 201, 166) !important;
+  border: 1px solid rgb(224, 201, 166) !important;
+  border-radius: 4px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+} */
+
+/* .chess-themed-button:hover {
+  background-color: rgb(110, 75, 65) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  transform: translateY(-1px) !important;
+} */
+
+/* Add Friend button styling - replace green with Chess AI theme colors */
+button[style*="background-color: rgb(76, 175, 80)"],
+div[style*="border: 1px solid rgb(224, 201, 166)"] button,
+button[tabindex="0"][type="button"] {
+  background-color: rgb(93, 64, 55) !important; /* Brown background to match theme */
+  transition: all 0.3s ease !important;
+  border-radius: 4px !important; /* Consistent corner radius */
+}
+
+/* Style the text inside the Add Friend button */
+button[style*="background-color: rgb(76, 175, 80)"] span,
+div[style*="border: 1px solid rgb(224, 201, 166)"] button span,
+button[tabindex="0"][type="button"] span {
+  color: rgb(224, 201, 166) !important; /* Gold text to match theme */
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) !important; /* Subtle text shadow */
+}
+
+/* Add a sophisticated hover effect */
+button[style*="background-color: rgb(76, 175, 80)"]:hover,
+div[style*="border: 1px solid rgb(224, 201, 166)"] button:hover,
+button[tabindex="0"][type="button"]:hover {
+  background-color: rgb(110, 75, 65) !important; /* Slightly lighter brown on hover */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  transform: translateY(-1px) !important; /* Slight raise effect */
+  cursor: pointer !important; /* Ensure cursor changes to pointer */
+  border-color: rgb(235, 215, 180) !important; /* Lighter border on hover */
+}
+
+/* Active state for better interaction feedback */
+button[style*="background-color: rgb(76, 175, 80)"]:active,
+div[style*="border: 1px solid rgb(224, 201, 166)"] button:active,
+button[tabindex="0"][type="button"]:active {
+  background-color: rgb(80, 55, 45) !important; /* Darker when pressed */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important; /* Reduced shadow when pressed */
+  transform: translateY(0) !important; /* Reset the raise effect */
+  transition: all 0.1s ease-out !important; /* Quicker transition for better feedback */
+}
+
+/* Additional styling for inner button divs to ensure proper appearance */
+button[style*="background-color: rgb(76, 175, 80)"] > div,
+div[style*="border: 1px solid rgb(224, 201, 166)"] button > div,
+button[tabindex="0"][type="button"] > div {
+  background-color: transparent !important; /* Ensure no background interference */
+}
+
+/* Specifically target Friend List "Add Friend" buttons */
+div[style*="padding: 15px; border-bottom: none; display: flex"] button,
+div[style*="display: flex; align-items: center"] button {
+  background-color: rgb(93, 64, 55) !important;
+  color: rgb(224, 201, 166) !important;
+  border: 1px solid rgb(224, 201, 166) !important;
+}
+
+div[style*="padding: 15px; border-bottom: none; display: flex"] button span,
+div[style*="display: flex; align-items: center"] button span {
+  color: rgb(224, 201, 166) !important;
+}
+
+/* Make sure the Add Friend text is clearly visible */
+span[style*="color: rgb(255, 255, 255)"] {
+  color: rgb(224, 201, 166) !important;
+  font-weight: 500 !important;
+}
+
+/* Remove all borders from the button */
+button[disabled][type="button"],
+button[disabled][type="button"][style*="border: 1px solid rgb(224, 201, 166)"],
+button[disabled][type="button"][style*="background-color: rgb(93, 64, 55)"] {
+  border: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+  overflow: hidden !important;
+}
+
+/* Create a clean background with no gaps */
+button[disabled][type="button"] {
+  background-color: rgb(93, 64, 55) !important;
+  border-radius: 4px !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Fix the inner div height to be exact */
+button[disabled][type="button"] > div {
+  height: 36px !important;
+  border-radius: 4px !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  background-color: rgb(93, 64, 55) !important;
+}
+
+/* Ensure text is styled correctly */
+button[disabled][type="button"] > div > span {
+  color: rgb(224, 201, 166) !important;
+  font-weight: 500 !important;
+}
+
+/* Fix for Material-UI specific rendering */
+div[style*="min-width: 88px"] {
+  border: 0 !important;
+  overflow: hidden !important;
+  border-radius: 4px !important;
+}
+
+/* Remove background from any parent that might be showing through */
+div[style*="background-color: rgb(255, 255, 255)"] {
+  background-color: transparent !important;
+}
+
+/* Additional hack: Add a border to the bottom of the button the same color as the background */
+button[disabled][type="button"] {
+  border-bottom: 2px solid rgb(93, 64, 55) !important;
+}

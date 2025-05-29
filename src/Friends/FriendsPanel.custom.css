@@ -2,16 +2,15 @@
 
 .friend-request-icon, .notification-icon {
   background-color: #8d6050 !important;
-  box-shadow: 0 0 3px rgba(255, 221, 153, 0.5) !important;
+  box-shadow: 0 0 2px rgba(224, 201, 166, 0.3) !important;
   padding: 4px !important;
-  box-shadow: 0 0 4px rgba(224, 201, 166, 0.4) !important;
   overflow: visible !important;
   position: relative !important;
   z-index: 0 !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 80px !important;
+  width: 20px !important;
   height: 64px !important;
   margin: 0 10px !important;
   vertical-align: middle !important;
@@ -70,12 +69,11 @@
 
 .add-friends-button {
   background-color: #8d6050 !important;
-  box-shadow: 0 0 3px rgba(255, 221, 153, 0.5) !important;
+  box-shadow: 0 0 2px rgba(224, 201, 166, 0.3) !important;
   border-radius: 4px !important;
-  box-shadow: 0 0 4px rgba(224, 201, 166, 0.4) !important;
   padding: 0 !important;
   height: 50px !important;
-  min-width: 200px !important;
+  min-width: 100px !important;
   overflow: visible !important;
   position: relative !important;
   z-index: 0 !important;
@@ -94,19 +92,25 @@
 }
 
 .add-friends-button:hover .add-friends-label {
-  text-shadow: 0 0 3px rgba(255, 221, 153, 0.5) !important;
+  text-shadow: 0 0 2px rgba(255, 221, 153, 0.2) !important;
 }
 
 .add-friends-label {
   color: #ffdd99 !important;
   font-size: 16px !important;
   font-weight: bold !important;
-  text-shadow: 0 0 2px rgba(255, 221, 153, 0.4) !important;
-  letter-spacing: 0.5px !important;
-  display: inline-block !important;
-  padding: 8px 16px !important;
-  text-transform: uppercase !important;
 }
+
+/* .no-friends-message - REMOVED: Now using inline styles */
+/*
+.no-friends-message {
+  padding: 40px 20px;
+  text-align: center;
+  color: #e0c9a6;
+  font-size: 16px;
+  font-style: italic;
+}
+*/
 
 /* Fix for internal button styling to prevent overflow */
 .add-friends-button button {
@@ -130,6 +134,7 @@
   text-align: center !important;
   align-items: center !important;
   justify-content: center !important;
+ 
 }
 
 /* Fix button internal structure */
@@ -167,7 +172,7 @@
 /* More specific fix for the add friends button text */
 .add-friends-button span {
   color: #ffdd99 !important;
-  text-shadow: 0 0 2px rgba(255, 221, 153, 0.4) !important;
+  text-shadow: 0 0 1px rgba(255, 221, 153, 0.2) !important;
   padding: 0 8px !important;
   background-color: transparent !important;
 }
@@ -182,7 +187,7 @@ button.friend-request-icon {
   overflow: visible !important;
   margin: 0 6px !important;
   background-color: #8d6050 !important;
-  box-shadow: 0 0 3px rgba(255, 221, 153, 0.5) !important;
+  box-shadow: 0 0 2px rgba(255, 221, 153, 0.2) !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -219,8 +224,8 @@ button.friend-request-icon span:nth-child(2) {
   width: 64px !important;
   height: 64px !important;
   background-color: #8d6050 !important;
-  box-shadow: 0 0 3px rgba(255, 221, 153, 0.5) !important;
-  box-shadow: 0 0 5px rgba(255, 221, 153, 0.5) !important;
+  box-shadow: 0 0 2px rgba(255, 221, 153, 0.2) !important;
+  box-shadow: 0 0 3px rgba(255, 221, 153, 0.2) !important;
   padding: 4px !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -280,13 +285,13 @@ button span {
   margin: 0 10px !important;
 }
 
-/* Notification Button Fix */
+/* Notificatiofn Button Fix */
 button[title="Notifications"] {
   width: 60px !important;
   height: 60px !important;
   background-color: #8d6050 !important;
   border: 3px solid #ffdd99 !important;
-  box-shadow: 0 0 15px rgba(255, 221, 153, 0.9), 0 0 30px rgba(255, 221, 153, 0.5) !important;
+  box-shadow: 0 0 8px rgba(255, 221, 153, 0.3), 0 0 15px rgba(255, 221, 153, 0.2) !important;
   overflow: visible !important;
   display: inline-flex !important;
   flex-direction: column !important;
@@ -312,7 +317,7 @@ button[title="Notifications"] {
 
 /* Reset any box-shadow overrides */
 .friends-content [style*="box-shadow"] {
-  box-shadow: 0 0 15px rgba(255, 221, 153, 0.9), 0 0 30px rgba(255, 221, 153, 0.5) !important;
+  box-shadow: 0 0 8px rgba(255, 221, 153, 0.3), 0 0 15px rgba(255, 221, 153, 0.2) !important;
 }
 
 /* Container layout fixes */
@@ -355,6 +360,13 @@ input[placeholder*="Search"],
 input[type="text"] {
   flex: 1 !important;
   min-width: 200px !important;
+}
+
+/* Transparent background and remove border for search input */
+input[placeholder*="Search"] {
+  background-color: transparent !important;
+  border: none !important;
+  color: #e0c9a6 !important;
 }
 
 /* Make sure all icon texts are visible */
@@ -455,9 +467,8 @@ button[title*="Test"],
 .friend-request-icon,
 .notification-icon,
 .add-friends-button {
-  box-shadow: 0 0 4px rgba(224, 201, 166, 0.4) !important;
+  box-shadow: 0 0 2px rgba(224, 201, 166, 0.3) !important;
   text-shadow: none !important;
-  box-shadow: 0 0 3px rgba(255, 221, 153, 0.5) !important;
 }
 
 /* Ensure text is fully visible and properly cased */
@@ -495,35 +506,118 @@ button.friend-request-icon span.icon-label::after {
   display: none !important;
 }
 
-/* Hide the debug button near the title */
+/* Remove global hide-debug rule that hides buttons after h3 titles to allow dialog buttons to function */
+/*
 h3 + button,
 h3 + span + button,
 h3 + div button {
   display: none !important;
 }
+*/
 
 /* Remove container glow if present */
 .friends-content > div {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* No friends message styling */
+/* No friends message styling - REMOVED: Now using inline styles */
+
 .no-friends-message {
-  padding: 25px 20px;
+  padding: 20px 20px;
   text-align: center;
-  color: #f5f5f5;
-  font-size: 18px;
+  color: #ffdd99;
+  font-size: 16px;
   font-weight: 500;
-  background-color: #3e302b;
-  margin: 30px auto;
-  border-radius: 12px;
-  border: 2px solid #5d4037;
-  max-width: 400px;
+  background-color: #3e2723;
+  margin: 10px auto 25px;
+  right: 82%;
+  border-radius: 8px;
+  max-width: 90%;
   box-shadow: none;
-  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #8d6e63;
+  letter-spacing: 0.2px;
+  top: 10rem;
 }
 
 .no-friends-message:hover {
-  background-color: #4a3c37;
-  transform: translateY(-2px);
+  background-color: rgba(74, 60, 55, 0.9);
+  transform: translateY(-1px);
 }
+
+/* Search button styling */
+.friends-content button[label="Search"],
+.friends-content button[label="Searching..."] {
+  background-color: #5d4037 !important;
+  color: #e0c9a6 !important;
+  border: 1px solid #e0c9a6 !important;
+  border-radius: 4px !important;
+  min-width: 88px !important;
+}
+
+.friends-content button[label="Search"]:disabled,
+.friends-content button[label="Searching..."]:disabled {
+  background-color: rgba(93, 64, 55, 0.3) !important;
+  color: rgba(224, 201, 166, 0.3) !important;
+  border: 1px solid rgba(224, 201, 166, 0.2) !important;
+}
+
+.friends-content button[label="Search"] span,
+.friends-content button[label="Searching..."] span {
+  color: #e0c9a6 !important;
+  font-weight: bold !important;
+}
+
+.friends-content button[label="Search"]:disabled span,
+.friends-content button[label="Searching..."]:disabled span {
+  color: rgba(224, 201, 166, 0.3) !important;
+}
+
+/* Better search dialog styling */
+.friends-content .MuiDialog-root .MuiDialog-paper,
+.friends-content > div > div[role="dialog"] {
+  background-color: #2a2a2a !important;
+  color: #e0c9a6 !important;
+}
+
+.friends-content .MuiDialog-root .MuiDialog-paper h3,
+.friends-content > div > div[role="dialog"] h3 {
+  color: #e0c9a6 !important;
+  border-bottom: 1px solid rgba(224, 201, 166, 0.2) !important;
+  padding-bottom: 10px !important;
+}
+
+/* Search toggle buttons styling */
+.friends-content button[label="Search by Email"],
+.friends-content button[label="Search by Username"] {
+  min-width: 140px !important;
+  margin: 0 5px !important;
+  transition: all 0.3s ease !important;
+}
+
+.friends-content button[label="Search by Email"] span,
+.friends-content button[label="Search by Username"] span {
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  font-size: 12px !important;
+}
+
+/* Search input field styling */
+.friends-content input[type="text"] {
+  color: #333 !important;
+  background-color: #fff !important;
+  padding: 8px 12px !important;
+  border-radius: 4px !important;
+  border: 1px solid #ccc !important;
+}
+
+.friends-content input[type="text"]:focus {
+  border-color: #5d4037 !important;
+  outline: none !important;
+  box-shadow: 0 0 5px rgba(93, 64, 55, 0.3) !important;
+}
+

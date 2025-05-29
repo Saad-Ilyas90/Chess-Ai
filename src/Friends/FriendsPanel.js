@@ -810,13 +810,13 @@ class FriendsPanel extends Component {
         onClick={() => this.handleRejectFriendRequest(challengingFriendId, notifications.find(n => n.fromUserId === challengingFriendId).id)}
         disabled={isProcessingRequest}
         style={{ backgroundColor: '#2a2a2a' }}
-        labelStyle={{ color: '#e0c9a6' }}
+        labelStyle={{ color: 'rgba(255, 221, 153, 0.4)' }}
       />
     ];
 
     return (
       <div>
-        <Paper style={{ padding: '30px', margin: '20px auto', maxWidth: '800px', backgroundColor: '#2a2a2a', color: '#e0c9a6', borderRadius: '8px', boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)' }}>
+        <Paper style={{ padding: '20px', margin: '20px auto', maxWidth: '800px', backgroundColor: '#2a2a2a', color: '#e0c9a6', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <h3 style={{ margin: 0, color: '#e0c9a6', fontSize: '22px', fontWeight: 'bold' }}>Friends ({friends.length})</h3>
@@ -833,7 +833,7 @@ class FriendsPanel extends Component {
               )}
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              {/* Friend Requests Icon */}
+              {/* Friend Requests Icon - Redesigned */}
               {friendRequests.length > 0 ? (
                 <Badge
                   badgeContent={friendRequests.length}
@@ -847,8 +847,11 @@ class FriendsPanel extends Component {
                     minWidth: '22px',
                     height: '22px',
                     borderRadius: '11px',
-                    border: '2px solid #8d6050',
-                    boxShadow: '0 0 8px #ffdd99'
+                    border: '1px solid #8d6050',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 0 3px rgba(255, 221, 153, 0.4)' 
                   }}
                   style={{ marginRight: '15px' }}
                 >
@@ -857,14 +860,14 @@ class FriendsPanel extends Component {
                     title="Friend Requests"
                     style={{ 
                       backgroundColor: '#5d4037', 
-                      border: '3px solid #e0c9a6', 
+                      border: '2px solid #8d6e63', 
                       padding: '8px',
-                      boxShadow: '0 0 10px rgba(224, 201, 166, 0.7)'
+                      boxShadow: 'none'
                     }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <span className="icon-text">👥</span>
-                      <span className="icon-label">REQUESTS</span>
+                      <span style={{ fontSize: '28px', color: '#ffdd99', textShadow: 'none' }}>👥</span>
+                      <span style={{ fontSize: '11px', color: '#ffdd99', fontWeight: 'bold', marginTop: '3px', textAlign: 'center' }}>REQUESTS</span>
                     </div>
                   </IconButton>
                 </Badge>
@@ -921,9 +924,15 @@ class FriendsPanel extends Component {
               <RaisedButton
                 label="ADD FRIENDS"
                 primary={true}
-                backgroundColor="#8d6050"
+                backgroundColor="#3e2723"
                 labelColor="#ffdd99"
-                labelStyle={{ fontSize: '22px', fontWeight: 'bold' }}
+                labelStyle={{ fontSize: '18px', fontWeight: 'bold', letterSpacing: '0.5px' }}
+                style={{
+                  height: '45px',
+                  borderRadius: '6px',
+                  border: '2px solid #8d6e63',
+                  boxShadow: 'none'
+                }}
                 className="add-friends-button"
                 labelClassName="add-friends-label"
                 onClick={() => this.setState({ showSearchDialog: true })}
@@ -1042,13 +1051,16 @@ class FriendsPanel extends Component {
             </div>
           )}
 
-          <List>
-            {friends.length === 0 ? (
-              <div className="no-friends-message">
-                No friends yet. Add some friends to start playing!
-              </div>
-            ) : (
-              friends.map((friend) => (
+          {friends.length === 0 && (
+            <div className="no-friends-message">
+              <span style={{ marginRight: '10px', fontSize: '24px' }}>👋</span>
+              <span>No friends yet. Add some friends to start playing!</span>
+            </div>
+          )}
+          
+          {friends.length > 0 && (
+            <List>
+              {friends.map((friend) => (
                 <ListItem
                   key={friend.id}
                   leftAvatar={
@@ -1104,9 +1116,9 @@ class FriendsPanel extends Component {
                     </div>
                   }
                 />
-              ))
-            )}
-          </List>
+              ))}
+            </List>
+          )}
         </Paper>
 
         <Dialog
@@ -1114,7 +1126,7 @@ class FriendsPanel extends Component {
           modal={false}
           open={showSearchDialog}
           onRequestClose={() => this.setState({ showSearchDialog: false, searchResults: [], searchTerm: '', emailError: null })}
-          contentStyle={{ backgroundColor: '#2a2a2a', color: '#e0c9a6', maxWidth: '500px', width: '90%' }}
+          contentStyle={{ backgroundColor: '#2a2a2a', color: '#e0c9a6', maxWidth: '600px', width: '90%' }}
           titleStyle={{ backgroundColor: '#5d4037', color: '#e0c9a6', padding: '15px' }}
           bodyStyle={{ backgroundColor: '#2a2a2a', padding: '0' }}
         >
@@ -1178,12 +1190,12 @@ class FriendsPanel extends Component {
                 label={isSearching ? "Searching..." : "Search"}
                 onClick={this.handleSearch}
                 disabled={isSearching || !searchTerm.trim()}
-                primary={true}
                 backgroundColor="#5d4037"
                 labelColor="#e0c9a6"
                 disabledBackgroundColor="rgba(93, 64, 55, 0.5)"
                 disabledLabelColor="rgba(224, 201, 166, 0.5)"
-                style={{ border: '1px solid #e0c9a6', borderRadius: '4px' }}
+                buttonStyle={{ backgroundColor: '#5d4037', border: '1px solid #e0c9a6', borderRadius: '4px' }}
+                labelStyle={{ color: '#e0c9a6' }}
               />
             </div>
 
