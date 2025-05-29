@@ -1,0 +1,529 @@
+/* Enhanced styles for the Friends Panel */
+
+.friend-request-icon, .notification-icon {
+  background-color: #8d6050 !important;
+  box-shadow: 0 0 3px rgba(255, 221, 153, 0.5) !important;
+  padding: 4px !important;
+  box-shadow: 0 0 4px rgba(224, 201, 166, 0.4) !important;
+  overflow: visible !important;
+  position: relative !important;
+  z-index: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 80px !important;
+  height: 64px !important;
+  margin: 0 10px !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+}
+
+.badge-style {
+  background-color: #ffdd99 !important;
+  color: #5d4037 !important;
+  font-weight: bold !important;
+  font-size: 12px !important;
+  padding: 0 4px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  border-radius: 9px !important;
+  border: 1px solid #8d6050 !important;
+  box-shadow: 0 0 2px rgba(255, 221, 153, 0.3) !important;
+  position: absolute !important;
+  top: -6px !important;
+  right: -6px !important;
+  z-index: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.icon-text {
+  font-size: 22px !important;
+  color: #ffdd99 !important;
+  text-shadow: 0 0 1px rgba(255, 221, 153, 0.2) !important;
+  display: block !important;
+  overflow: visible !important;
+  line-height: 22px !important;
+  margin-bottom: 3px !important;
+  background-color: transparent !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+.icon-label {
+  font-size: 10px !important;
+  color: #ffdd99 !important;
+  font-weight: bold !important;
+  margin-top: 3px !important;
+  text-shadow: none !important;
+  background-color: transparent !important;
+  display: block !important;
+  overflow: visible !important;
+  line-height: 12px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0px !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+.add-friends-button {
+  background-color: #8d6050 !important;
+  box-shadow: 0 0 3px rgba(255, 221, 153, 0.5) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 0 4px rgba(224, 201, 166, 0.4) !important;
+  padding: 0 !important;
+  height: 50px !important;
+  min-width: 200px !important;
+  overflow: visible !important;
+  position: relative !important;
+  z-index: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important; 
+  margin: 0 10px !important;
+  vertical-align: middle !important;
+}
+
+/* Add controlled hover effects */
+.add-friends-button:hover {
+  box-shadow: 0 2px 5px rgba(255, 221, 153, 0.4) !important;
+  transform: translateY(-1px) !important;
+  transition: all 0.2s ease !important;
+}
+
+.add-friends-button:hover .add-friends-label {
+  text-shadow: 0 0 3px rgba(255, 221, 153, 0.5) !important;
+}
+
+.add-friends-label {
+  color: #ffdd99 !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  text-shadow: 0 0 2px rgba(255, 221, 153, 0.4) !important;
+  letter-spacing: 0.5px !important;
+  display: inline-block !important;
+  padding: 8px 16px !important;
+  text-transform: uppercase !important;
+}
+
+/* Fix for internal button styling to prevent overflow */
+.add-friends-button button {
+  border: none !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  font-family: Roboto, sans-serif !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  outline: none !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  position: relative !important;
+  height: 100% !important;
+  line-height: 36px !important;
+  width: 100% !important;
+  border-radius: 2px !important;
+  background-color: transparent !important;
+  text-align: center !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Fix button internal structure */
+.add-friends-button button > div {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+  background-color: transparent !important;
+}
+
+.add-friends-button button > div > div {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+}
+
+/* Ensure all nested elements stay contained */
+.add-friends-button * {
+  overflow: hidden !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.add-friends-button div {
+  overflow: hidden !important;
+  contain: content !important;
+}
+
+/* More specific fix for the add friends button text */
+.add-friends-button span {
+  color: #ffdd99 !important;
+  text-shadow: 0 0 2px rgba(255, 221, 153, 0.4) !important;
+  padding: 0 8px !important;
+  background-color: transparent !important;
+}
+
+/* Specific fixes for friend request button */
+button.friend-request-icon {
+  width: 80px !important;
+  height: 64px !important;
+  border-radius: 4px !important;
+  box-shadow: 0 0 4px rgba(224, 201, 166, 0.4) !important;
+  padding: 4px !important;
+  overflow: visible !important;
+  margin: 0 6px !important;
+  background-color: #8d6050 !important;
+  box-shadow: 0 0 3px rgba(255, 221, 153, 0.5) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+button.friend-request-icon > div {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 2px !important;
+  background-color: transparent !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Specific fix for REQUEST text */
+button.friend-request-icon span:nth-child(2) {
+  content: "REQUESTS";
+  font-size: 11px !important;
+  letter-spacing: 0 !important;
+  font-weight: bold !important;
+  width: 100% !important;
+  text-align: center !important;
+  text-shadow: none !important;
+  display: block !important;
+  color: #ffdd99 !important;
+  padding: 0 !important;
+}
+
+/* Fix Bell Icon (notification icon) */
+[title="Notifications"] {
+  width: 64px !important;
+  height: 64px !important;
+  background-color: #8d6050 !important;
+  box-shadow: 0 0 3px rgba(255, 221, 153, 0.5) !important;
+  box-shadow: 0 0 5px rgba(255, 221, 153, 0.5) !important;
+  padding: 4px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-direction: column !important;
+  position: relative !important;
+}
+
+/* Make bell icon visible */
+[title="Notifications"] span.material-icons,
+[title="Notifications"] .icon-text {
+  font-size: 24px !important;
+  color: #ffdd99 !important;
+  text-shadow: 0 0 3px rgba(255, 221, 153, 0.4) !important;
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+/* Stop text from being cut off */
+button span {
+  display: block !important;
+  width: auto !important;
+  white-space: normal !important;
+  text-align: center !important;
+  overflow: visible !important;
+  font-size: 11px !important;
+}
+
+/* Position the badge properly */
+.badge-style {
+  position: absolute !important;
+  top: -6px !important;
+  right: -6px !important;
+  z-index: 5 !important;
+  box-shadow: 0 0 4px rgba(255, 221, 153, 0.3) !important;
+}
+
+/* Make ADD FRIENDS text clearly visible */
+.add-friends-button span {
+  color: #ffdd99 !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  text-shadow: 0 0 3px rgba(255, 221, 153, 0.5) !important;
+  letter-spacing: 1px !important;
+  padding: 0 12px !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  background-color: transparent !important;
+}
+
+/* Make sure buttons have appropriate sizes */
+.friends-content button,
+.friends-content .friend-request-icon,
+.friends-content .notification-icon {
+  flex-shrink: 0 !important;
+  margin: 0 10px !important;
+}
+
+/* Notification Button Fix */
+button[title="Notifications"] {
+  width: 60px !important;
+  height: 60px !important;
+  background-color: #8d6050 !important;
+  border: 3px solid #ffdd99 !important;
+  box-shadow: 0 0 15px rgba(255, 221, 153, 0.9), 0 0 30px rgba(255, 221, 153, 0.5) !important;
+  overflow: visible !important;
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8px !important;
+  flex-shrink: 0 !important;
+  margin: 0 10px !important;
+  position: relative !important;
+  vertical-align: middle !important;
+}
+
+/* Remove any overflow constraints */
+.friends-content button,
+.friends-content div {
+  overflow: visible !important;
+}
+
+/* Reset Material UI overrides */
+.friends-content [style*="overflow"] {
+  overflow: visible !important;
+}
+
+/* Reset any box-shadow overrides */
+.friends-content [style*="box-shadow"] {
+  box-shadow: 0 0 15px rgba(255, 221, 153, 0.9), 0 0 30px rgba(255, 221, 153, 0.5) !important;
+}
+
+/* Container layout fixes */
+.friends-content > div > div {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-wrap: nowrap !important;
+  gap: 10px !important;
+  padding: 10px 15px !important;
+  width: 100% !important;
+  min-height: 80px !important;
+  background-color: #2a2a2a !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure the component renders correctly when buttons are placed in line */
+.friends-content > div > div {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 10px !important;
+  gap: 15px !important;
+  flex-wrap: nowrap !important;
+  width: auto !important;
+  min-width: 500px !important;
+  overflow-x: visible !important;
+  background-color: #2a2a2a !important;
+}
+
+/* Fix content spacing */
+.friends-content > div > div > * {
+  margin: 0 5px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Fix the search input width */
+input[placeholder*="Search"],
+input[type="text"] {
+  flex: 1 !important;
+  min-width: 200px !important;
+}
+
+/* Make sure all icon texts are visible */
+.icon-text {
+  color: #ffdd99 !important;
+  text-shadow: 0 0 3px rgba(255, 221, 153, 0.4) !important;
+  width: 100% !important;
+  text-align: center !important;
+  display: block !important;
+  margin: 0 auto 2px auto !important;
+}
+
+/* Override any inline styles that might be causing issues */
+[style*="font-size: 30px"] {
+  font-size: 24px !important;
+}
+
+[style*="font-size: 12px"] {
+  font-size: 10px !important;
+}
+
+/* Make sure all content is visible */
+.friends-content button {
+  overflow: visible !important;
+}
+
+.friends-content input {
+  height: 50px !important;
+  margin: 0 10px !important;
+  flex-grow: 1 !important;
+}
+
+/* Fix notification and request button height */
+[title="Notifications"],
+button.friend-request-icon {
+  align-self: center !important;
+  vertical-align: middle !important;
+}
+
+/* Fix for button text */
+button.friend-request-icon span:nth-child(2) {
+  content: "REQUESTS";
+  font-size: 11px !important;
+  letter-spacing: 0 !important;
+  font-weight: bold !important;
+}
+
+/* Fix for alerts button */
+[title="Notifications"] span.icon-label {
+  font-size: 11px !important;
+  letter-spacing: 0 !important;
+  font-weight: bold !important;
+}
+
+/* Hide debug icons */
+.friends-content h1 + span, 
+.friends-content h1 + span + span, 
+.friends-content h1 + span + span + span {
+  display: none !important;
+}
+
+/* Hide debug button near Friends (0) title */
+.friends-content h1 + button,
+.friends-content h1 + div {
+  display: none !important;
+}
+
+/* Hide debugger button next to Friends title */
+button[title*="Debug"],
+button[title*="debug"],
+button[title*="test"],
+button[title*="Test"],
+.friends-content > h1 ~ button:first-of-type,
+.friend-debug-button {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Better text contrast for buttons */
+.add-friends-button span {
+  color: #ffdd99 !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.3) !important;
+  letter-spacing: 1px !important;
+}
+
+/* Improve the labels text - content handled by JSX */
+
+/* Final adjustments to reduce glow */
+.friend-request-icon,
+.notification-icon,
+.add-friends-button {
+  box-shadow: 0 0 4px rgba(224, 201, 166, 0.4) !important;
+  text-shadow: none !important;
+  box-shadow: 0 0 3px rgba(255, 221, 153, 0.5) !important;
+}
+
+/* Ensure text is fully visible and properly cased */
+button.friend-request-icon span.icon-label,
+[title="Notifications"] span.icon-label {
+  text-transform: uppercase !important;
+  font-size: 9px !important;
+  letter-spacing: 0 !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  width: 100% !important;
+  display: block !important;
+}
+
+/* Set the exact text content for buttons */
+button.friend-request-icon span.icon-label::after {
+  content: "REQUESTS";
+  display: block;
+}
+
+/* Text content for notifications is handled by JSX */
+
+/* Enhanced container for icons and button */
+.friends-content > div > div:first-of-type {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 0 !important;
+}
+
+/* Remove any debug elements */
+.debug-panel, 
+[style*="debug"],
+.friends-content > div[style*="debug"] {
+  display: none !important;
+}
+
+/* Hide the debug button near the title */
+h3 + button,
+h3 + span + button,
+h3 + div button {
+  display: none !important;
+}
+
+/* Remove container glow if present */
+.friends-content > div {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* No friends message styling */
+.no-friends-message {
+  padding: 25px 20px;
+  text-align: center;
+  color: #f5f5f5;
+  font-size: 18px;
+  font-weight: 500;
+  background-color: #3e302b;
+  margin: 30px auto;
+  border-radius: 12px;
+  border: 2px solid #5d4037;
+  max-width: 400px;
+  box-shadow: none;
+  transition: all 0.3s ease;
+}
+
+.no-friends-message:hover {
+  background-color: #4a3c37;
+  transform: translateY(-2px);
+}

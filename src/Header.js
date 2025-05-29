@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import AppBar from 'material-ui/AppBar';
 import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton';
@@ -54,7 +55,7 @@ class Header extends Component {
                         >
                             <IconButton 
                                 title="Friends" 
-                                onClick={onShowFriends}
+                                onClick={() => this.props.history.push('/friends')}
                             >
                                 <span style={{ fontSize: '18px' }}>👥</span>
                             </IconButton>
@@ -62,7 +63,7 @@ class Header extends Component {
                         
                         <IconButton 
                             title="Profile" 
-                            onClick={onShowProfile}
+                            onClick={() => this.props.history.push('/profile')}
                         >
                             {currentUser.photoURL ? (
                                 <Avatar 
@@ -94,13 +95,13 @@ class Header extends Component {
                     {!isGuest && (
                         <MenuItem 
                             primaryText="Profile" 
-                            onClick={onShowProfile}
+                            onClick={() => this.props.history.push('/profile')}
                         />
                     )}
                     {!isGuest && (
                         <MenuItem 
                             primaryText="Friends" 
-                            onClick={onShowFriends}
+                            onClick={() => this.props.history.push('/friends')}
                         />
                     )}
                     <MenuItem 
@@ -156,4 +157,4 @@ class Header extends Component {
     }
 }
 
-export default Header;
+export default withRouter(Header);

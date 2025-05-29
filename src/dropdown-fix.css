@@ -1,0 +1,79 @@
+/* Material-UI MenuItem Hover Effects for Chess AI */
+
+/* Target Material-UI MenuItem components in dropdowns */
+div[role="menu"] > div,
+[class*="MenuItem-root"],
+[class*="menuItem"],
+div[data-mui-internal-clone-element] {
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+/* Hover effects for dropdown menu items */
+div[role="menu"] > div:hover,
+[class*="MenuItem-root"]:hover,
+[class*="menuItem"]:hover,
+div[data-mui-internal-clone-element]:hover {
+  background-color: #5d4037 !important;
+  color: #e0c9a6 !important;
+  cursor: pointer !important;
+}
+
+/* Specific targeting for Material-UI v0.x MenuItem components */
+div[role="menuitem"]:hover,
+li[role="menuitem"]:hover {
+  background-color: #5d4037 !important;
+  color: #e0c9a6 !important;
+}
+
+/* Header dropdown menu items (IconMenu in Header.js) */
+div[data-mui-test="IconMenu"] div:hover,
+div[style*="position: absolute"] div[role="menu"] > div:hover {
+  background-color: #5d4037 !important;
+  color: #e0c9a6 !important;
+}
+
+/* Landing page profile dropdown menu items (Popover in LandingPage.js) */
+div[class*="Popover"] div[role="menu"] > div:hover,
+div[style*="backgroundColor: #2d2d2d"] div:hover {
+  background-color: #5d4037 !important;
+  color: #e0c9a6 !important;
+}
+
+/* Additional Material-UI specific selectors */
+.MuiMenuItem-root:hover,
+.MuiListItem-button:hover {
+  background-color: #5d4037 !important;
+  color: #e0c9a6 !important;
+}
+
+/* Override any existing hover styles */
+div[role="menu"] > div:hover,
+div[role="menuitem"]:hover {
+  background-color: #5d4037 !important;
+  color: #e0c9a6 !important;
+  background: #5d4037 !important;
+}
+
+/* Focus effects for accessibility */
+div[role="menu"] > div:focus,
+div[role="menuitem"]:focus,
+[class*="MenuItem-root"]:focus {
+  background-color: #5d4037 !important;
+  color: #e0c9a6 !important;
+  outline: 2px solid #e0c9a6 !important;
+  outline-offset: -2px !important;
+}
+
+/* Ensure text color changes on hover */
+div[role="menu"] > div:hover span,
+div[role="menuitem"]:hover span,
+[class*="MenuItem-root"]:hover span {
+  color: #e0c9a6 !important;
+}
+
+/* Style the dividers in dropdown menus */
+div[role="menu"] hr,
+div[role="menu"] [class*="Divider"] {
+  background-color: rgba(224, 201, 166, 0.2) !important;
+  border-color: rgba(224, 201, 166, 0.2) !important;
+}

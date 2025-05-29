@@ -1,5 +1,7 @@
 import './App.css';
+import './dropdown-fix.css';
 import React, { Component } from 'react';
+import { BrowserRouter, Route, Switch, withRouter } from 'react-router-dom';
 import Header from './Header.js';
 import Footer from './Footer.js';
 import ChessBoard from './ChessBoard.js';
@@ -117,8 +119,12 @@ class App extends Component {
       this.setupGameListener();
     }
     
-    // Open the game mode dialog automatically when the app starts
-    this.setState({ gameModeDialogOpen: true });
+    // If user is authenticated, don't show the game mode dialog automatically
+    // This allows the landing page to display properly for authenticated users
+    if (!this.props.currentUser) {
+      // Open the game mode dialog automatically when the app starts for non-authenticated users
+      this.setState({ gameModeDialogOpen: true });
+    }
   }
 
   componentWillUnmount() {
@@ -722,8 +728,13 @@ class App extends Component {
   }
 
   render() {
-    const { showLandingPage, opponentSelectedPiece, showUserProfile, showFriendsPanel, isWaitingForOpponent, gameMode } = this.state;
-    const { currentUser, isGuest, onSignOut } = this.props;
+    const { showLandingPage, opponentSelectedPiece, isWaitingForOpponent, gameMode } = this.state;
+    const { currentUser, isGuest, onSignOut, history, location } = this.props;
+    
+    // Check current path to determine what page we're on
+    const currentPath = location.pathname;
+    const showUserProfile = currentPath === '/profile';
+    const showFriendsPanel = currentPath === '/friends';
     
     const newGameActions = [
       <FlatButton label="Cancel" primary={true} style={{ color: '#333' }} onClick={this.requestCloseNewGame} />,
@@ -741,7 +752,7 @@ class App extends Component {
     ];
       
     // If showLandingPage is true, render the landing page, otherwise render the game
-    if (showLandingPage) {
+    if (showLandingPage && currentPath === '/') {
       return <LandingPage 
         onStartGame={() => this.setState({ showLandingPage: false, gameModeDialogOpen: true })}
         onSignIn={() => {
@@ -750,6 +761,10 @@ class App extends Component {
           // Force a page reload to trigger the AuthWrapper's authentication check
           window.location.href = '/';
         }}
+        currentUser={currentUser}
+        onOpenUserProfile={() => history.push('/profile')}
+        onOpenFriends={() => history.push('/friends')}
+        onSignOut={onSignOut}
       />;
     }
     
@@ -767,38 +782,26 @@ class App extends Component {
         />
         <WindowResizeListener onResize={windowSize => { resized(windowSize.windowWidth, windowSize.windowHeight) }} />
         
-        {/* Friends and Profile Panels */}
-        {this.state.showFriendsPanel && (
-          <Dialog
-            title="Friends"
-            modal={false}
-            open={this.state.showFriendsPanel}
-            onRequestClose={this.handleClosePanel}
-            autoScrollBodyContent={true}
-            contentStyle={{ width: '90%', maxWidth: '600px' }}
-          >
+        {/* Friends and Profile content (now handled by routes) */}
+        {showFriendsPanel && (
+          <div className="page-container">
             <FriendsPanel 
               currentUser={currentUser}
               isGuest={isGuest}
               onGameChallengeAccepted={this.handleGameChallengeAccepted}
+              onBack={() => history.push('/')}
             />
-          </Dialog>
+          </div>
         )}
         
-        {this.state.showUserProfile && (
-          <Dialog
-            title="Profile"
-            modal={false}
-            open={this.state.showUserProfile}
-            onRequestClose={this.handleClosePanel}
-            autoScrollBodyContent={true}
-            contentStyle={{ width: '90%', maxWidth: '500px' }}
-          >
+        {showUserProfile && (
+          <div className="page-container">
             <UserProfile 
               currentUser={currentUser}
               isGuest={isGuest}
+              onBack={() => history.push('/')}
             />
-          </Dialog>
+          </div>
         )}
         
         {this.state.isWaitingForOpponent ? (
@@ -888,7 +891,15 @@ class App extends Component {
   }
 
   handleClosePanel = () => {
-    this.setState({ showFriendsPanel: false, showUserProfile: false });
+    this.setState({
+      showFriendsPanel: false,
+      showUserProfile: false
+    });
+    
+    // If we came from the landing page, go back to it
+    if (this.state.showLandingPage) {
+      this.setState({ showLandingPage: true });
+    }
   }
   
   handleGameChallengeAccepted = async (gameId, playerColor = 'w') => {
@@ -1019,4 +1030,31 @@ class App extends Component {
   }
 }
 
-export default App;
+// Wrap the App component with withRouter after it's defined
+const AppWithRouter = withRouter(App);
+
+// Main app container that sets up routing
+class AppContainer extends Component {
+  render() {
+    const { currentUser, isGuest, onSignOut } = this.props;
+    
+    return (
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" render={(props) => 
+            <AppWithRouter {...props} currentUser={currentUser} isGuest={isGuest} onSignOut={onSignOut} />
+          } />
+          <Route path="/profile" render={(props) => 
+            <AppWithRouter {...props} currentUser={currentUser} isGuest={isGuest} onSignOut={onSignOut} />
+          } />
+          <Route path="/friends" render={(props) => 
+            <AppWithRouter {...props} currentUser={currentUser} isGuest={isGuest} onSignOut={onSignOut} />
+          } />
+          {/* Add other routes as needed */}
+        </Switch>
+      </BrowserRouter>
+    );
+  }
+}
+
+export default AppContainer;

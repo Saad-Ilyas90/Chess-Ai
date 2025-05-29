@@ -154,6 +154,22 @@ section {
   margin-left: 15px !important;
 }
 
+/* Profile button styling */
+.profile-button {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.profile-button div {
+  color: #e0c9a6 !important;
+  font-weight: 500 !important;
+}
+
+.user-profile-container {
+  display: flex;
+  align-items: center;
+}
+
 /* Hero Section */
 .hero-section {
   min-height: 100vh;
@@ -483,6 +499,355 @@ section {
   font-size: 14px;
 }
 
+/* Tab Navigation */
+.landing-tabs {
+  background-color: #5d4037;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Style the tab labels like Facebook */
+.landing-tabs > div > div > div {
+  height: 48px !important;
+}
+
+.landing-tabs > div > div > div > button {
+  height: 48px !important;
+  padding-top: 12px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  opacity: 1 !important;
+  transition: all 0.3s ease !important;
+}
+
+.landing-tabs > div > div > div > button:hover {
+  background-color: rgba(224, 201, 166, 0.1) !important;
+}
+
+.landing-page-content {
+  background-color: #1a1a1a;
+  min-height: 100vh;
+  padding-top: 60px;
+  color: #e0c9a6;
+  position: relative;
+  z-index: 1;
+}
+
+.landing-home-content {
+  /* This ensures the home content displays properly */
+  display: block;
+  width: 100%;
+}
+
+.profile-header, .friends-header {
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 5;
+  padding-top: 30px;
+  margin-top: 50px;
+  background-color: #1a1a1a;
+}
+
+/* Match section styling from landing page */
+.profile-header .section-title, .friends-header .section-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #e0c9a6;
+  margin: 0 0 15px;
+  letter-spacing: 2px;
+}
+
+.profile-header .section-title-underline, .friends-header .section-title-underline {
+  width: 80px;
+  height: 3px;
+  background-color: #e0c9a6;
+  margin: 0 auto;
+}
+
+.profile-content, .friends-content {
+  padding: 20px 20px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #1a1a1a;
+  min-height: calc(100vh - 48px);
+  background-image: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Style overrides for UserProfile component to match landing page */
+.profile-content {
+  background-color: #1a1a1a;
+  position: relative;
+  overflow: visible;
+}
+
+/* Add chess piece decorations like on landing page */
+.profile-content::before, .friends-content::before {
+  content: '♚';
+  position: absolute;
+  font-size: 120px;
+  color: rgba(224, 201, 166, 0.05);
+  top: 30%;
+  left: 5%;
+  z-index: 0;
+}
+
+.profile-content::after, .friends-content::after {
+  content: '♞';
+  position: absolute;
+  font-size: 120px;
+  color: rgba(224, 201, 166, 0.05);
+  bottom: 20%;
+  right: 5%;
+  z-index: 0;
+}
+
+.profile-content > div, .profile-content Paper {
+  background-color: #2a2a2a !important;
+  color: #e0c9a6 !important;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.profile-content h2, .profile-content h3 {
+  color: #e0c9a6 !important;
+}
+
+.profile-content p {
+  color: #cccccc !important;
+}
+
+/* Additional styling to ensure UserProfile matches landing page */
+.profile-content button {
+  margin: 5px !important;
+}
+
+.profile-content button span {
+  color: #e0c9a6 !important;
+}
+
+.profile-content button[primary="true"] {
+  background-color: #5d4037 !important;
+}
+
+.profile-content .MuiChip-root, .profile-content div[class*="Chip"] {
+  background-color: #5d4037 !important;
+  color: #e0c9a6 !important;
+}
+
+.profile-content input {
+  color: #e0c9a6 !important;
+}
+
+.profile-content div[style*="margin: auto"] {
+  background-color: #5d4037 !important;
+  color: #e0c9a6 !important;
+}
+
+/* Style overrides for FriendsPanel component to match landing page */
+.friends-content {
+  background-color: #1a1a1a;
+  position: relative;
+}
+
+/* Enhanced styling for the friends panel to match landing page */
+.friends-content .MuiPaper-root, .friends-content Paper {
+  background-color: #2a2a2a !important;
+  color: #e0c9a6 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  overflow: hidden !important;
+  margin: 20px auto !important;
+  max-width: 800px !important;
+  width: 100% !important;
+}
+
+.friends-content button.MuiRaisedButton-root, .friends-content RaisedButton {
+  background-color: #5d4037 !important;
+  color: #e0c9a6 !important;
+  margin: 5px !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+/* Target all RaisedButtons to match landing page buttons */
+.friends-content button {
+  background-color: #5d4037 !important;
+  color: #e0c9a6 !important;
+  margin: 5px !important;
+}
+
+/* Target the specific ADD FRIENDS button */
+.friends-content button[label="ADD FRIENDS"],
+.friends-content button[label="Add Friends"] {
+  background-color: #5d4037 !important;
+  border: 2px solid #e0c9a6 !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3) !important;
+}
+
+.friends-content button span {
+  color: #e0c9a6 !important;
+  font-weight: bold !important;
+}
+
+/* Override Material-UI specific elements */
+.friends-content div[class*="List"],
+.friends-content div[class*="Item"],
+.friends-content div[class*="Paper"],
+.friends-content div[class*="Card"] {
+  background-color: #2a2a2a !important;
+}
+
+/* Override ListItem hover effects */
+.friends-content div:hover {
+  background-color: #3a3a3a !important;
+}
+
+.friends-content h3, .friends-content h4 {
+  color: #e0c9a6 !important;
+  font-weight: bold !important;
+  margin: 15px 0 !important;
+}
+
+/* Style friend list text */
+.friends-content p {
+  color: #e0c9a6 !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+}
+
+/* Style all text elements in friends panel to ensure visibility */
+.friends-content div, .friends-content span, .friends-content p {
+  color: #e0c9a6 !important;
+}
+
+/* General styling for all text in the friends panel */
+.friends-content {
+  color: #e0c9a6 !important;
+}
+
+/* Style the friends content text */
+.friends-content div > div {
+  color: #e0c9a6 !important;
+  font-size: 16px !important;
+  padding: 10px !important;
+}
+
+/* Force all elements in friends panel to have consistent background */
+/* Global override for ALL elements in Friends panel */
+.friends-content * {
+  background-color: #2a2a2a !important;
+}
+
+.friends-content *:not(button):not(input) {
+  color: #e0c9a6 !important;
+}
+
+.friends-content div {
+  background-color: #2a2a2a !important;
+}
+
+.friends-content p, .friends-content span {
+  color: #e0c9a6 !important;
+}
+
+/* Override any inline styles */
+.friends-content [style*="background"] {
+  background-color: #2a2a2a !important;
+}
+
+.friends-content [style*="color"] {
+  color: #e0c9a6 !important;
+}
+
+.friends-content Paper,
+.friends-content > div Paper,
+.friends-content div Paper,
+.friends-content > div > div Paper,
+.friends-content List,
+.friends-content ListItem,
+.friends-content > div > List,
+.friends-content > div > div > List {
+  background-color: #2a2a2a !important;
+  color: #e0c9a6 !important;
+}
+
+/* Direct targeting of the List component */
+.friends-content div[style*="overflow"] > div,
+.friends-content div[style*="padding"] > div,
+.friends-content div > div[style*="background-color: white"] {
+  background-color: #2a2a2a !important;
+  color: #e0c9a6 !important;
+}
+
+/* Fix white background in friend list */
+.friends-content .MuiPaper-root > div,
+.friends-content div[style*="background-color: white"],
+.friends-content div[style*="backgroundColor: white"],
+.friends-content div[style*="background: white"] {
+  background-color: #2a2a2a !important;
+  color: #e0c9a6 !important;
+}
+
+/* Make no friends message more visible */
+.friends-content div[style*="text-align: center"] {
+  color: #e0c9a6 !important;
+  font-size: 16px !important;
+  margin: 20px !important;
+}
+
+.friends-content Paper, .friends-content > div {
+  background-color: #2a2a2a !important;
+  color: #e0c9a6 !important;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+  margin-bottom: 20px;
+}
+
+.friends-content h2, .friends-content h3, .friends-content h4 {
+  color: #e0c9a6 !important;
+}
+
+.friends-content p {
+  color: #cccccc !important;
+}
+
+.friends-content div:not(.landing-tabs):not([class*="Tab"]) {
+  color: #cccccc !important;
+}
+
+.friends-content input, .friends-content .MuiTextField-root, .friends-content TextField {
+  color: #e0c9a6 !important;
+  margin-bottom: 15px !important;
+}
+
+.friends-content .MuiListItem-root, .friends-content ListItem {
+  background-color: #2a2a2a !important;
+  border-bottom: 1px solid rgba(224, 201, 166, 0.1) !important;
+}
+
+.friends-content .MuiDivider-root, .friends-content Divider {
+  background-color: rgba(224, 201, 166, 0.2) !important;
+}
+
+.friends-content button {
+  background-color: #5d4037 !important;
+  color: #e0c9a6 !important;
+}
+
+.friends-content button span {
+  color: #e0c9a6 !important;
+}
+
+.friends-content .MuiChip-root, .friends-content div[class*="Chip"] {
+  background-color: #5d4037 !important;
+  color: #e0c9a6 !important;
+}
+
 /* Responsive Styles */
 @media (max-width: 1024px) {
   .hero-section {
@@ -554,6 +919,45 @@ section {
   .cta-buttons {
     flex-direction: column;
     align-items: center;
+  }
+  
+  /* Responsive styles for profile and friends pages */
+  .profile-content, .friends-content {
+    padding: 70px 10px 40px;
+  }
+  
+  .profile-content::before, .profile-content::after,
+  .friends-content::before, .friends-content::after {
+    display: none;
+  }
+  
+  .profile-content > div, .friends-content > div {
+    margin: 10px !important;
+    padding: 15px !important;
+  }
+  
+  /* Profile page responsive styles */
+  .profile-content div[style*="display: flex"] {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .profile-content div[style*="display: flex"] > div {
+    margin: 5px 0 !important;
+  }
+  
+  /* Friends panel responsive styles */
+  .friends-content .MuiDialog-paper {
+    width: 90% !important;
+    max-width: none !important;
+  }
+  
+  .friends-content .MuiListItem-root {
+    padding: 10px !important;
+  }
+  
+  .friends-content button {
+    margin: 5px !important;
   }
 }
 

@@ -37,7 +37,8 @@ class AuthWrapper extends Component {
                   ...snapShot.data()
                 },
                 loading: false,
-                isGuest: false
+                isGuest: false,
+                forceSignIn: false // Reset forceSignIn flag after successful authentication
               });
             }, (error) => {
               console.warn('Firestore snapshot error:', error);
@@ -71,7 +72,8 @@ class AuthWrapper extends Component {
                 gamesWon: 0
               },
               loading: false,
-              isGuest: false
+              isGuest: false,
+              forceSignIn: false // Reset forceSignIn flag after successful authentication
             });
           }
 
@@ -103,11 +105,12 @@ class AuthWrapper extends Component {
               gamesWon: 0
             },
             loading: false,
-            isGuest: false
+            isGuest: false,
+            forceSignIn: false // Reset forceSignIn flag after successful authentication
           });
         }
       } else {
-        this.setState({ currentUser: null, loading: false, isGuest: false });
+        this.setState({ currentUser: null, loading: false, isGuest: false, forceSignIn: false });
       }
     });
   }

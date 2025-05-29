@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './FriendsPanel.custom.css';
 import { 
   getUserFriends, 
   sendFriendRequest, 
@@ -775,9 +776,17 @@ class FriendsPanel extends Component {
 
     if (isGuest) {
       return (
-        <Paper style={{ padding: '20px', margin: '20px', textAlign: 'center' }}>
-          <h3>Friends System</h3>
-          <p>Sign in to add friends and challenge them to games!</p>
+        <Paper style={{ padding: '30px', margin: '20px auto', maxWidth: '800px', textAlign: 'center', backgroundColor: '#2a2a2a', color: '#e0c9a6', borderRadius: '8px', boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)' }}>
+          <h3 style={{ fontSize: '24px', color: '#e0c9a6', marginBottom: '20px' }}>Friends System</h3>
+          <p style={{ color: '#e0c9a6', fontSize: '16px', lineHeight: '1.6', maxWidth: '80%', margin: '0 auto 20px' }}>Sign in to add friends and challenge them to games!</p>
+          <RaisedButton
+            label="Sign In"
+            primary={true}
+            backgroundColor="#5d4037"
+            labelColor="#e0c9a6"
+            style={{ marginTop: '10px' }}
+            onClick={this.props.onSignIn}
+          />
         </Paper>
       );
     }
@@ -800,17 +809,17 @@ class FriendsPanel extends Component {
         label="Reject"
         onClick={() => this.handleRejectFriendRequest(challengingFriendId, notifications.find(n => n.fromUserId === challengingFriendId).id)}
         disabled={isProcessingRequest}
-        style={{ backgroundColor: '#f0f2f5' }}
-        labelStyle={{ color: '#4b4f56' }}
+        style={{ backgroundColor: '#2a2a2a' }}
+        labelStyle={{ color: '#e0c9a6' }}
       />
     ];
 
     return (
       <div>
-        <Paper style={{ padding: '20px', margin: '20px' }}>
+        <Paper style={{ padding: '30px', margin: '20px auto', maxWidth: '800px', backgroundColor: '#2a2a2a', color: '#e0c9a6', borderRadius: '8px', boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <h3 style={{ margin: 0 }}>Friends ({friends.length})</h3>
+              <h3 style={{ margin: 0, color: '#e0c9a6', fontSize: '22px', fontWeight: 'bold' }}>Friends ({friends.length})</h3>
               
               {/* Debug button - only visible in development */}
               {process.env.NODE_ENV !== 'production' && (
@@ -829,22 +838,46 @@ class FriendsPanel extends Component {
                 <Badge
                   badgeContent={friendRequests.length}
                   primary={true}
-                  style={{ marginRight: '10px' }}
+                  badgeStyle={{ 
+                    backgroundColor: '#ffdd99', 
+                    color: '#5d4037', 
+                    fontWeight: 'bold',
+                    fontSize: '14px',
+                    padding: '0 6px',
+                    minWidth: '22px',
+                    height: '22px',
+                    borderRadius: '11px',
+                    border: '2px solid #8d6050',
+                    boxShadow: '0 0 8px #ffdd99'
+                  }}
+                  style={{ marginRight: '15px' }}
                 >
                   <IconButton 
                     onClick={() => this.setState({ showFriendRequests: true })}
                     title="Friend Requests"
+                    style={{ 
+                      backgroundColor: '#5d4037', 
+                      border: '3px solid #e0c9a6', 
+                      padding: '8px',
+                      boxShadow: '0 0 10px rgba(224, 201, 166, 0.7)'
+                    }}
                   >
-                    <span>👥</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <span className="icon-text">👥</span>
+                      <span className="icon-label">REQUESTS</span>
+                    </div>
                   </IconButton>
                 </Badge>
               ) : (
                 <IconButton 
                   onClick={() => this.setState({ showFriendRequests: true })}
                   title="Friend Requests"
-                  style={{ marginRight: '10px' }}
+                  className="friend-request-icon"
                 >
-                  <span>👥</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <span style={{ fontSize: '30px', color: '#ffdd99', textShadow: '0 0 3px rgba(255, 221, 153, 0.5)' }}>👥</span>
+                    <span style={{ fontSize: '12px', color: '#ffdd99', fontWeight: 'bold', marginTop: '2px', textAlign: 'center' }}>REQUESTS</span>
+                  </div>
                 </IconButton>
               )}
               
@@ -853,20 +886,46 @@ class FriendsPanel extends Component {
                 <Badge
                   badgeContent={otherNotifications.length}
                   primary={true}
-                  style={{ marginRight: '10px' }}
+                  badgeStyle={{ 
+                    backgroundColor: '#ffdd99', 
+                    color: '#5d4037', 
+                    fontWeight: 'bold',
+                    fontSize: '14px',
+                    padding: '0 6px',
+                    minWidth: '22px',
+                    height: '22px',
+                    borderRadius: '11px',
+                    border: '2px solid #8d6050',
+                    boxShadow: '0 0 8px #ffdd99'
+                  }}
+                  style={{ marginRight: '15px' }}
                 >
                   <IconButton 
                     onClick={() => this.setState({ showNotifications: true })}
                     title="Notifications"
+                    style={{ 
+                      backgroundColor: '#5d4037', 
+                      border: '3px solid #e0c9a6', 
+                      padding: '8px',
+                      boxShadow: '0 0 10px rgba(224, 201, 166, 0.7)'
+                    }}
                   >
-                    <span>🔔</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <span className="icon-text">🔔</span>
+                      <span className="icon-label">ALERTS</span>
+                    </div>
                   </IconButton>
                 </Badge>
               )}
               
               <RaisedButton
-                label="Add Friends"
+                label="ADD FRIENDS"
                 primary={true}
+                backgroundColor="#8d6050"
+                labelColor="#ffdd99"
+                labelStyle={{ fontSize: '22px', fontWeight: 'bold' }}
+                className="add-friends-button"
+                labelClassName="add-friends-label"
                 onClick={() => this.setState({ showSearchDialog: true })}
               />
             </div>
@@ -985,7 +1044,9 @@ class FriendsPanel extends Component {
 
           <List>
             {friends.length === 0 ? (
-              <ListItem primaryText="No friends yet. Add some friends to start playing!" />
+              <div className="no-friends-message">
+                No friends yet. Add some friends to start playing!
+              </div>
             ) : (
               friends.map((friend) => (
                 <ListItem
@@ -1002,11 +1063,11 @@ class FriendsPanel extends Component {
                   }
                   primaryText={
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <span>{friend.displayName}</span>
+                      <span style={{ color: '#e0c9a6' }}>{friend.displayName}</span>
                       {friend.isOnline && (
                         <Chip 
-                          style={{ marginLeft: '10px', height: '20px' }}
-                          labelStyle={{ fontSize: '10px', lineHeight: '20px' }}
+                          style={{ marginLeft: '10px', height: '20px', backgroundColor: '#5d4037' }}
+                          labelStyle={{ fontSize: '10px', lineHeight: '20px', color: '#e0c9a6' }}
                         >
                           Online
                         </Chip>
@@ -1014,10 +1075,10 @@ class FriendsPanel extends Component {
                     </div>
                   }
                   secondaryText={
-                    <div>
-                      <div>Rating: {friend.rating || 'Unrated'}</div>
-                      <div>Games: {friend.gamesPlayed || 0} | Wins: {friend.gamesWon || 0}</div>
-                      <div>Last seen: {this.formatLastSeen(friend.lastSeen)}</div>
+                    <div style={{ color: '#cccccc' }}>
+                      <div style={{ color: '#cccccc' }}>Rating: {friend.rating || 'Unrated'}</div>
+                      <div style={{ color: '#cccccc' }}>Games: {friend.gamesPlayed || 0} | Wins: {friend.gamesWon || 0}</div>
+                      <div style={{ color: '#cccccc' }}>Last seen: {this.formatLastSeen(friend.lastSeen)}</div>
                     </div>
                   }
                   onClick={() => this.handleDirectChallenge(friend.id)}
@@ -1053,6 +1114,9 @@ class FriendsPanel extends Component {
           modal={false}
           open={showSearchDialog}
           onRequestClose={() => this.setState({ showSearchDialog: false, searchResults: [], searchTerm: '', emailError: null })}
+          contentStyle={{ backgroundColor: '#2a2a2a', color: '#e0c9a6', maxWidth: '500px', width: '90%' }}
+          titleStyle={{ backgroundColor: '#5d4037', color: '#e0c9a6', padding: '15px' }}
+          bodyStyle={{ backgroundColor: '#2a2a2a', padding: '0' }}
         >
           <div style={{ padding: '20px' }}>
             <div style={{ marginBottom: '15px' }}>
@@ -1068,24 +1132,30 @@ class FriendsPanel extends Component {
                   })}
                   style={{
                     margin: '0 5px',
-                    backgroundColor: searchByEmail ? '#e0e0e0' : 'transparent',
-                    color: searchByEmail ? '#4CAF50' : 'rgba(0, 0, 0, 0.87)'
+                    backgroundColor: searchByEmail ? '#5d4037' : 'transparent',
+                    color: '#e0c9a6',
+                    border: searchByEmail ? '1px solid #e0c9a6' : 'none'
                   }}
+                  hoverColor="#6d5047"
+                  labelStyle={{ color: '#e0c9a6' }}
                 />
                 <FlatButton
                   label="Search by Username"
                   primary={!searchByEmail}
                   onClick={() => this.setState({ 
-                    searchByEmail: false, 
+                    searchByEmail: false,
                     emailError: null,
                     searchResults: [],
                     searchTerm: ''
                   })}
                   style={{
                     margin: '0 5px',
-                    backgroundColor: !searchByEmail ? '#e0e0e0' : 'transparent',
-                    color: !searchByEmail ? '#4CAF50' : 'rgba(0, 0, 0, 0.87)'
+                    backgroundColor: !searchByEmail ? '#5d4037' : 'transparent',
+                    color: '#e0c9a6',
+                    border: !searchByEmail ? '1px solid #e0c9a6' : 'none'
                   }}
+                  hoverColor="#6d5047"
+                  labelStyle={{ color: '#e0c9a6' }}
                 />
               </div>
             </div>
@@ -1098,12 +1168,22 @@ class FriendsPanel extends Component {
                 onKeyPress={this.handleSearchKeyPress}
                 style={{ flex: 1, marginRight: '10px' }}
                 errorText={emailError}
+                inputStyle={{ color: '#e0c9a6' }}
+                hintStyle={{ color: 'rgba(224, 201, 166, 0.7)' }}
+                underlineStyle={{ borderColor: 'rgba(224, 201, 166, 0.5)' }}
+                underlineFocusStyle={{ borderColor: '#e0c9a6' }}
+                errorStyle={{ color: '#ff6d6d' }}
               />
               <RaisedButton
                 label={isSearching ? "Searching..." : "Search"}
                 onClick={this.handleSearch}
                 disabled={isSearching || !searchTerm.trim()}
                 primary={true}
+                backgroundColor="#5d4037"
+                labelColor="#e0c9a6"
+                disabledBackgroundColor="rgba(93, 64, 55, 0.5)"
+                disabledLabelColor="rgba(224, 201, 166, 0.5)"
+                style={{ border: '1px solid #e0c9a6', borderRadius: '4px' }}
               />
             </div>
 
@@ -1164,28 +1244,29 @@ class FriendsPanel extends Component {
                           alignItems: 'center'
                         }}>
                           <div style={{ 
-                            width: '40px',
-                            height: '40px',
+                            width: '50px',
+                            height: '50px',
                             borderRadius: '50%',
-                            backgroundColor: '#4CAF50',
-                            color: 'white',
+                            backgroundColor: '#5d4037',
+                            color: '#e0c9a6',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             marginRight: '15px',
-                            fontSize: '18px'
+                            fontSize: '22px',
+                            border: '2px solid #e0c9a6'
                           }}>
                             {(user.displayName || '?').charAt(0).toUpperCase()}
                           </div>
                           
                           <div style={{ flexGrow: 1 }}>
-                            <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
+                            <div style={{ fontWeight: 'bold', fontSize: '16px', color: '#e0c9a6' }}>
                               {user.displayName || 'Unknown User'}
                             </div>
-                            <div style={{ color: '#666', fontSize: '14px' }}>
+                            <div style={{ color: '#cccccc', fontSize: '14px' }}>
                               Email: {user.email || 'Not available'}
                             </div>
-                            <div style={{ color: '#666', fontSize: '14px' }}>
+                            <div style={{ color: '#cccccc', fontSize: '14px' }}>
                               Rating: {user.rating || 'Unrated'}
                             </div>
                           </div>
@@ -1193,6 +1274,9 @@ class FriendsPanel extends Component {
                           <div>
                             <RaisedButton
                               label={isProcessingRequest ? "Sending..." : "Add Friend"}
+                              backgroundColor="#5d4037"
+                              labelColor="#e0c9a6"
+                              style={{ border: '1px solid #e0c9a6', borderRadius: '4px' }}
                               onClick={() => {
                                 console.log('[FriendsPanel] Add Friend button clicked for user:', user.id, user.displayName);
                                 this.handleSendFriendRequest(user.id, user.displayName);
@@ -1232,8 +1316,11 @@ class FriendsPanel extends Component {
         <Dialog
           title="Friend Requests"
           modal={false}
-          open={this.state.showFriendRequests}
+          open={showFriendRequests}
           onRequestClose={() => this.setState({ showFriendRequests: false })}
+          contentStyle={{ backgroundColor: '#2a2a2a', color: '#e0c9a6', maxWidth: '500px', width: '90%' }}
+          titleStyle={{ backgroundColor: '#5d4037', color: '#e0c9a6', padding: '15px' }}
+          bodyStyle={{ backgroundColor: '#2a2a2a', padding: '20px' }}
         >
           <div style={{ padding: '20px' }}>
             {/* Friend Requests Header */}
@@ -1260,7 +1347,7 @@ class FriendsPanel extends Component {
                 color: '#666'
               }}>
                 <div style={{ fontSize: '24px', marginBottom: '10px' }}>👥</div>
-                <p>No friend requests at the moment</p>
+                <p style={{ color: '#e0c9a6', fontSize: '16px', textAlign: 'center' }}>No friend requests at the moment</p>
               </div>
             ) : (
               <div>
@@ -1272,7 +1359,9 @@ class FriendsPanel extends Component {
                       marginBottom: '15px', 
                       padding: '15px', 
                       borderRadius: '8px',
-                      boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+                      boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+                      backgroundColor: '#1a1a1a',
+                      border: '1px solid rgba(224, 201, 166, 0.2)'
                     }}>
                       <div style={{ display: 'flex' }}>
                         <div style={{ marginRight: '15px' }}>
@@ -1280,16 +1369,17 @@ class FriendsPanel extends Component {
                             <Avatar 
                               src={fromUser.photoURL} 
                               size={60}
-                              style={{ border: '1px solid #e0e0e0' }}
+                              style={{ border: '2px solid #5d4037' }}
                             />
                           ) : (
                             <Avatar 
                               style={{
-                                backgroundColor: '#4267B2',
-                                color: 'white',
+                                backgroundColor: '#5d4037',
+                                color: '#e0c9a6',
                                 fontSize: '24px',
                                 width: 60,
-                                height: 60
+                                height: 60,
+                                border: '2px solid #e0c9a6'
                               }}
                             >
                               {(fromUser.displayName || '?').charAt(0).toUpperCase()}
@@ -1300,13 +1390,14 @@ class FriendsPanel extends Component {
                         <div style={{ flex: 1 }}>
                           <div style={{ 
                             fontWeight: 'bold', 
-                            fontSize: '16px',
-                            marginBottom: '5px'
+                            fontSize: '18px',
+                            marginBottom: '5px',
+                            color: '#e0c9a6'
                           }}>
                             {fromUser.displayName || 'Unknown User'}
                             <span style={{ 
                               fontSize: '12px', 
-                              color: '#666', 
+                              color: '#cccccc', 
                               fontWeight: 'normal',
                               marginLeft: '10px'
                             }}>
@@ -1317,7 +1408,7 @@ class FriendsPanel extends Component {
                           {fromUser.email && (
                             <div style={{ 
                               fontSize: '14px', 
-                              color: '#666',
+                              color: '#cccccc',
                               marginBottom: '5px'
                             }}>
                               {fromUser.email}
@@ -1339,17 +1430,22 @@ class FriendsPanel extends Component {
                               label="Confirm"
                               primary={true}
                               onClick={() => this.handleAcceptFriendRequest(request.fromUserId, request.id)}
-                              style={{ marginRight: '10px' }}
+                              style={{ marginRight: '10px', border: '1px solid #e0c9a6', borderRadius: '4px' }}
                               disabled={isProcessingRequest}
-                              labelStyle={{ fontWeight: 'bold' }}
-                              backgroundColor="#4267B2"
+                              labelStyle={{ fontWeight: 'bold', color: '#e0c9a6' }}
+                              backgroundColor="#5d4037"
+                              disabledBackgroundColor="rgba(93, 64, 55, 0.5)"
+                              disabledLabelColor="rgba(224, 201, 166, 0.5)"
                             />
                             <RaisedButton
                               label="Delete Request"
                               onClick={() => this.handleRejectFriendRequest(request.fromUserId, request.id)}
                               disabled={isProcessingRequest}
-                              style={{ backgroundColor: '#f0f2f5' }}
-                              labelStyle={{ color: '#4b4f56' }}
+                              style={{ backgroundColor: '#2a2a2a', border: '1px solid #e0c9a6', borderRadius: '4px' }}
+                              labelStyle={{ color: '#e0c9a6' }}
+                              disabledBackgroundColor="rgba(42, 42, 42, 0.5)"
+                              disabledLabelColor="rgba(224, 201, 166, 0.5)"
+                              hoverColor="#3a3a3a"
                             />
                           </div>
                         </div>
@@ -1368,16 +1464,22 @@ class FriendsPanel extends Component {
           modal={false}
           open={showNotifications}
           onRequestClose={() => this.setState({ showNotifications: false })}
+          contentStyle={{ backgroundColor: '#2a2a2a', color: '#e0c9a6', maxWidth: '500px', width: '90%' }}
+          titleStyle={{ backgroundColor: '#5d4037', color: '#e0c9a6', padding: '15px' }}
+          bodyStyle={{ backgroundColor: '#2a2a2a', padding: '20px' }}
         >
           <div style={{ padding: '20px' }}>
             {otherNotifications.length === 0 ? (
-              <p>No notifications</p>
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <div style={{ fontSize: '24px', marginBottom: '10px' }}>🔔</div>
+                <p style={{ color: '#e0c9a6', fontSize: '16px' }}>No notifications at the moment</p>
+              </div>
             ) : (
               <div>
-                <div style={{ marginBottom: '15px', color: '#666' }}>
+                <div style={{ marginBottom: '15px', color: '#e0c9a6', fontSize: '16px', fontWeight: 'bold' }}>
                   You have {otherNotifications.length} notification{otherNotifications.length !== 1 ? 's' : ''}
                 </div>
-                <List style={{ border: '1px solid #e0e0e0', borderRadius: '4px' }}>
+                <List style={{ border: '1px solid #e0c9a6', borderRadius: '8px', backgroundColor: '#1a1a1a' }}>
                   {otherNotifications.map((notification) => {
                     const fromUser = notification.fromUserDetails || { displayName: 'Unknown User' };
                     
@@ -1386,33 +1488,43 @@ class FriendsPanel extends Component {
                         <ListItem
                           leftAvatar={
                             fromUser.photoURL ? (
-                              <Avatar src={fromUser.photoURL} />
+                              <Avatar 
+                                src={fromUser.photoURL} 
+                                style={{ border: '2px solid #5d4037' }}
+                              />
                             ) : (
-                              <Avatar style={{backgroundColor: '#4CAF50'}}>
+                              <Avatar style={{
+                                backgroundColor: '#5d4037',
+                                color: '#e0c9a6',
+                                border: '2px solid #e0c9a6'
+                              }}>
                                 {(fromUser.displayName || 'U').charAt(0).toUpperCase()}
                               </Avatar>
                             )
                           }
                           primaryText={
-                            <div style={{ fontWeight: 'bold' }}>
+                            <div style={{ fontWeight: 'bold', color: '#e0c9a6', fontSize: '16px' }}>
                               Game Challenge
                             </div>
                           }
                           secondaryText={
                             <div>
-                              <div>From: {fromUser.displayName || 'Unknown User'}</div>
-                              {fromUser.email && <div>Email: {fromUser.email}</div>}
-                              {notification.gameId && <div>Game ID: {notification.gameId}</div>}
-                              <div style={{ color: '#999', fontSize: '12px' }}>
+                              <div style={{ color: '#cccccc' }}>From: {fromUser.displayName || 'Unknown User'}</div>
+                              {fromUser.email && <div style={{ color: '#cccccc' }}>Email: {fromUser.email}</div>}
+                              {notification.gameId && <div style={{ color: '#cccccc' }}>Game ID: {notification.gameId}</div>}
+                              <div style={{ color: '#a0a0a0', fontSize: '12px' }}>
                                 {new Date(notification.createdAt.seconds * 1000).toLocaleString()}
                               </div>
                             </div>
                           }
                           rightIconButton={
-                            <FlatButton
+                            <RaisedButton
                               label="Accept Challenge"
                               onClick={() => this.handleAcceptGameChallenge(notification)}
                               primary={true}
+                              backgroundColor="#5d4037"
+                              labelColor="#e0c9a6"
+                              style={{ border: '1px solid #e0c9a6', borderRadius: '4px', marginRight: '10px' }}
                             />
                           }
                         />
