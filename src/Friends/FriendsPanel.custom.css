@@ -1266,3 +1266,21 @@ button.friend-request-icon > div > span:first-child,
     margin: 10px auto !important;
   }
 }
+
+/* START - Fix for disappearing friend request icon */
+.friend-request-icon > div > span:first-child { /* This targets the 👥 icon span specifically */
+  font-size: 24px !important;      /* Make this the size you want, e.g., 24px or 30px */
+  transform: scale(1) !important;   /* Resets any problematic scaling to none */
+  width: auto !important;           /* Allows the icon to size naturally */
+  height: auto !important;          /* Allows the icon to size naturally */
+  line-height: normal !important;   /* Ensures appropriate line height for the icon */
+  letter-spacing: normal !important;/* Resets any problematic letter spacing */
+  word-spacing: normal !important;  /* Resets any problematic word spacing */
+  
+  /* Ensure it's visible and takes up space */
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: inline-block !important; /* This usually works well for icons */
+  color: #ffdd99 !important;       /* Ensures your desired icon color is applied */
+}
+/* END - Fix for disappearing friend request icon */
