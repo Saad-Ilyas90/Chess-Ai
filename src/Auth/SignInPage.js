@@ -433,11 +433,11 @@ class SignInPage extends Component {
             disabled={loading}
           />
           
-          {/* Play as Guest */}
+          {/* Continue as Guest */}
           <RaisedButton
             label={<span>
-              <span className="login-guest-icon">👤</span>
-              Play as Guest
+              <span className="login-guest-icon">👥</span>
+              Continue as Guest
             </span>}
             onClick={this.props.onPlayAsGuest}
             className="login-guest-button"

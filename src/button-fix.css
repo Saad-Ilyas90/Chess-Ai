@@ -144,9 +144,9 @@ div[style*="min-width: 88px"] {
 }
 
 /* Remove background from any parent that might be showing through */
-div[style*="background-color: rgb(255, 255, 255)"] {
+/* div[style*="background-color: rgb(255, 255, 255)"] {
   background-color: transparent !important;
-}
+} */
 
 /* Additional hack: Add a border to the bottom of the button the same color as the background */
 button[disabled][type="button"] {

@@ -170,6 +170,50 @@ section {
   align-items: center;
 }
 
+/* Hamburger Menu Button */
+.hamburger-menu-button {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+}
+
+.hamburger-line {
+  width: 100%;
+  height: 3px;
+  background-color: #e0c9a6;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu-button:hover .hamburger-line {
+  background-color: #ffffff;
+}
+
+/* Ensure hamburger menu is hidden on larger screens */
+@media (min-width: 769px) {
+  .hamburger-menu-button {
+    display: none !important;
+  }
+  
+  .landing-nav {
+    position: static !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    flex-direction: row !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+}
+
 /* Hero Section */
 .hero-section {
   min-height: 100vh;
@@ -468,11 +512,39 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: 'ultraminimal, sans-serif';
+  letter-spacing: 1px;
 }
 
 .footer-logo-icon {
   font-size: 30px;
-  margin-right: 10px;
+  margin-right: 1px;
+}
+
+.footer-logo-knights {
+  display: inline-block;
+  position: relative;
+  width: 50px;
+  height: 28px;
+  margin-left: 5px;
+}
+
+.footer-logo-knight-left {
+  position: absolute;
+  font-size: 24px;
+  left: -6px;
+  top: -4px;
+  transform: scaleX(-1);
+  color: #e0c9a6;
+}
+
+.footer-logo-knight-right {
+  position: absolute;
+  font-size: 24px;
+  right: 12px;
+  top: -4px;
+  transform: scaleX(-1);
+  color: #e0c9a6;
 }
 
 .footer-links {
@@ -885,79 +957,106 @@ section {
 }
 
 @media (max-width: 768px) {
+  .landing-header {
+    padding: 10px 0;
+    height: auto;
+    min-height: auto;
+  }
+  
   .landing-nav-container {
-    flex-direction: column;
-    padding: 10px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    position: relative;
   }
   
   .landing-logo-header {
-    margin-bottom: 15px;
+    margin-bottom: 0;
+    font-size: 24px;
   }
   
+  .landing-logo-icon {
+    font-size: 32px;
+  }
+  
+  .landing-logo-knight-left,
+  .landing-logo-knight-right {
+    font-size: 24px;
+  }
+  
+  /* Show hamburger menu button */
+  .hamburger-menu-button {
+    display: flex;
+  }
+  
+  /* Hide navigation by default on mobile */
   .landing-nav {
-    flex-wrap: wrap;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: rgba(93, 64, 55, 0.98);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 999;
+  }
+  
+  /* Show navigation when mobile menu is open */
+  .landing-nav.mobile-menu-open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  /* Mobile menu overlay */
+  .mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .mobile-menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .nav-link {
+    font-size: 16px;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(224, 201, 166, 0.2);
+    text-align: center;
+    display: block;
+  }
+  
+  .nav-link:last-of-type {
+    border-bottom: none;
+  }
+  
+  .user-profile-container {
+    margin-top: 15px;
     justify-content: center;
-    gap: 15px;
   }
   
-  .section-title {
-    font-size: 28px;
-  }
-  
-  .hero-title {
-    font-size: 36px;
-  }
-  
-  .hero-subtitle {
-    font-size: 18px;
-  }
-  
-  .features-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .cta-buttons {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  /* Responsive styles for profile and friends pages */
-  .profile-content, .friends-content {
-    padding: 70px 10px 40px;
-  }
-  
-  .profile-content::before, .profile-content::after,
-  .friends-content::before, .friends-content::after {
-    display: none;
-  }
-  
-  .profile-content > div, .friends-content > div {
-    margin: 10px !important;
-    padding: 15px !important;
-  }
-  
-  /* Profile page responsive styles */
-  .profile-content div[style*="display: flex"] {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .profile-content div[style*="display: flex"] > div {
-    margin: 5px 0 !important;
-  }
-  
-  /* Friends panel responsive styles */
-  .friends-content .MuiDialog-paper {
-    width: 90% !important;
-    max-width: none !important;
-  }
-  
-  .friends-content .MuiListItem-root {
-    padding: 10px !important;
-  }
-  
-  .friends-content button {
-    margin: 5px !important;
+  .nav-button {
+    margin-left: 0 !important;
+    margin-top: 0;
+    width: 100%;
+    text-align: center;
   }
 }
 
@@ -987,5 +1086,41 @@ section {
   .footer-links {
     flex-direction: column;
     gap: 15px;
+  }
+  
+  .footer-logo {
+    font-size: 20px;
+  }
+  
+  .footer-logo-icon {
+    font-size: 26px;
+  }
+  
+  .footer-logo-knights {
+    width: 45px;
+    height: 24px;
+  }
+  
+  .footer-logo-knight-left,
+  .footer-logo-knight-right {
+    font-size: 20px;
+  }
+  
+  .landing-nav-container {
+    padding: 10px 15px;
+  }
+  
+  .landing-logo-header {
+    font-size: 20px;
+  }
+  
+  .hamburger-menu-button {
+    width: 28px;
+    height: 22px;
+  }
+  
+  .nav-link {
+    font-size: 18px;
+    padding: 18px 0;
   }
 }

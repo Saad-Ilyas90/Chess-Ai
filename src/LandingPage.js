@@ -21,7 +21,8 @@ class LandingPage extends Component {
       anchorEl: null,
       activeTab: 'home',
       showProfile: false,
-      showFriends: false
+      showFriends: false,
+      mobileMenuOpen: false
     };
   }
   
@@ -60,6 +61,17 @@ class LandingPage extends Component {
       showProfile: value === 'profile',
       showFriends: value === 'friends'
     });
+  };
+
+  handleMobileMenuToggle = () => {
+    this.setState(prevState => ({
+      mobileMenuOpen: !prevState.mobileMenuOpen
+    }));
+  };
+
+  handleNavLinkClick = () => {
+    // Close mobile menu when a navigation link is clicked
+    this.setState({ mobileMenuOpen: false });
   };
   render() {
     const { onStartGame, onSignIn, currentUser, onSignOut } = this.props;
@@ -134,6 +146,12 @@ class LandingPage extends Component {
         <div className="landing-home-content">
         {/* Navigation Header */}
       <header className="landing-header">
+        {/* Mobile menu overlay */}
+        <div 
+          className={`mobile-menu-overlay ${this.state.mobileMenuOpen ? 'active' : ''}`}
+          onClick={this.handleNavLinkClick}
+        ></div>
+        
         <div className="landing-nav-container">
           <div className="landing-logo-header">
             <span className="landing-logo-icon">♚</span>
@@ -141,8 +159,6 @@ class LandingPage extends Component {
               <span>C</span>
               <span>H</span>
               <span>E</span>
-              <span>S</span>
-              <span>S</span>
             </div>
             <span className="landing-logo-knights">
               <span className="landing-logo-knight-left">♘</span>
@@ -150,10 +166,21 @@ class LandingPage extends Component {
             </span>
           </div>
           
-          <nav className="landing-nav">
-            <a href="#features" className="nav-link">Features</a>
-            <a href="#game-modes" className="nav-link">Game Modes</a>
-            <a href="#about" className="nav-link">About</a>
+          {/* Hamburger Menu Button */}
+          <button 
+            className="hamburger-menu-button"
+            onClick={this.handleMobileMenuToggle}
+            aria-label="Toggle mobile menu"
+          >
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+          </button>
+          
+          <nav className={`landing-nav ${this.state.mobileMenuOpen ? 'mobile-menu-open' : ''}`}>
+            <a href="#features" className="nav-link" onClick={this.handleNavLinkClick}>Features</a>
+            <a href="#game-modes" className="nav-link" onClick={this.handleNavLinkClick}>Game Modes</a>
+            <a href="#about" className="nav-link" onClick={this.handleNavLinkClick}>About</a>
             {currentUser ? (
               <div className="user-profile-container">
                 <FlatButton
@@ -394,9 +421,11 @@ class LandingPage extends Component {
               <span>C</span>
               <span>H</span>
               <span>E</span>
-              <span>S</span>
-              <span>S</span>
             </div>
+            <span className="footer-logo-knights">
+              <span className="footer-logo-knight-left">♘</span>
+              <span className="footer-logo-knight-right">♘</span>
+            </span>
           </div>
           <div className="footer-links">
             <a href="#" className="footer-link">Terms of Service</a>
