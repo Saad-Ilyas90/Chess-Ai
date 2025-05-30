@@ -823,7 +823,7 @@ class FriendsPanel extends Component {
 
     return (
       <div>
-        <Paper style={{ padding: '20px', margin: '20px auto', maxWidth: '800px', backgroundColor: '#2a2a2a', color: '#e0c9a6', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)' }}>
+        <Paper style={{ padding: '20px', margin: '20px auto', maxWidth: '800px', backgroundColor: '#2a2a2a', color: '#e0c9a6', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)', position: 'relative' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <h3 style={{ margin: 0, color: '#e0c9a6', fontSize: '22px', fontWeight: 'bold' }}>Friends ({friends.length})</h3>
@@ -1065,32 +1065,117 @@ class FriendsPanel extends Component {
             </div>
           )}
           
+          
+          {/* Friend cards section - this stays inside the parent Paper */}
           {friends.length > 0 && (
-            <div className="friend-grid">
-              {friends.map(friend => (
-                <Paper key={friend.id} className="friend-card">
-                  {friend.photoURL ? (
-                    <Avatar src={friend.photoURL} className="friend-avatar" />
-                  ) : (
-                    <Avatar className="friend-avatar">
-                      <PersonIcon color="#e0c9a6" />
-                    </Avatar>
-                  )}
-                  <div className="friend-details">
-                    <div className="friend-name">{friend.displayName}</div>
-                    <div className="friend-stats">Rating: {friend.rating || 'Unrated'}</div>
-                    <div className="friend-stats">Games: {friend.gamesPlayed || 0} | Wins: {friend.gamesWon || 0}</div>
-                    <div className="friend-stats">Last seen: {this.formatLastSeen(friend.lastSeen)}</div>
-                  </div>
-                  <div className="friend-actions">
-                    <FlatButton
-                      label="Remove"
-                      secondary={true}
-                      onClick={e => { e.stopPropagation(); this.handleRemoveFriend(friend.id); }}
-                    />
-                  </div>
-                </Paper>
-              ))}
+            <div style={{ 
+              position: 'absolute', 
+              top: '12rem', 
+              right: '12rem', 
+              width: '520px',
+              background: 'transparent',
+              zIndex: 1000
+            }}>
+              <div style={{ 
+                display: 'flex',
+                flexWrap: 'nowrap',
+                gap: '8px',
+                overflowX: 'auto',
+                padding: '5px 0'
+              }}>
+                {friends.map(friend => (
+                  <Paper 
+                    key={friend.id} 
+                    style={{
+                      width: '100%',
+                      backgroundColor: '#2a2a2a',
+                      color: '#e0c9a6',
+                      borderRadius: '8px',
+                      padding: '10px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      boxShadow: '0 0 8px rgba(255, 221, 153, 0.3), 0 0 15px rgba(255, 221, 153, 0.2)',
+                      border: '1px solid rgba(224, 201, 166, 0.2)'
+                    }}
+                  >
+                    {friend.photoURL ? (
+                      <Avatar 
+                        src={friend.photoURL} 
+                        style={{
+                          width: '45px',
+                          height: '45px',
+                          border: '2px solid #4CAF50',
+                          marginBottom: '6px'
+                        }}
+                      />
+                    ) : (
+                      <Avatar 
+                        style={{
+                          width: '45px',
+                          height: '45px',
+                          border: '2px solid #4CAF50',
+                          marginBottom: '6px'
+                        }}
+                      >
+                        <PersonIcon color="#e0c9a6" />
+                      </Avatar>
+                    )}
+                    <div style={{
+                      textAlign: 'center',
+                      width: '100%',
+                      marginBottom: '5px'
+                    }}>
+                      <div style={{
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        marginBottom: '3px',
+                        color: '#e0c9a6',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}>{friend.displayName}</div>
+                      <div style={{
+                        fontSize: '11px',
+                        color: '#e0c9a6',
+                        margin: '1px 0',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}>Rating: {friend.rating || 'Unrated'}</div>
+                      <div style={{
+                        fontSize: '11px',
+                        color: '#e0c9a6',
+                        margin: '1px 0',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}>Games: {friend.gamesPlayed || 0} | Wins: {friend.gamesWon || 0}</div>
+                      <div style={{
+                        fontSize: '11px',
+                        color: '#e0c9a6',
+                        margin: '1px 0',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}>Last seen: {this.formatLastSeen(friend.lastSeen)}</div>
+                    </div>
+                    <div style={{
+                      marginTop: 'auto',
+                      width: '100%'
+                    }}>
+                      <FlatButton
+                        label="REMOVE"
+                        labelStyle={{ color: '#ffdd99', fontSize: '11px', fontWeight: 'bold' }}
+                        backgroundColor="#8d6050"
+                        hoverColor="#6d4c40"
+                        style={{ width: '100%' }}
+                        onClick={e => { e.stopPropagation(); this.handleRemoveFriend(friend.id); }}
+                      />
+                    </div>
+                  </Paper>
+                ))}
+              </div>
             </div>
           )}
         </Paper>
@@ -1314,25 +1399,27 @@ class FriendsPanel extends Component {
               display: 'flex', 
               justifyContent: 'space-between', 
               alignItems: 'center',
-              borderBottom: '1px solid #e0e0e0',
+              borderBottom: '1px solid rgba(224, 201, 166, 0.2)',
               paddingBottom: '15px',
               marginBottom: '15px'
             }}>
-              <h3 style={{ margin: 0, color: '#3b5998' }}>Friend Requests</h3>
-              <span style={{ color: '#666', fontSize: '14px' }}>
+              <h3 style={{ margin: 0, color: '#e0c9a6' }}>Friend Requests</h3>
+              <span style={{ color: '#e0c9a6', fontSize: '14px' }}>
                 {friendRequests.length} pending request{friendRequests.length !== 1 ? 's' : ''}
               </span>
             </div>
 
             {friendRequests.length === 0 ? (
               <div style={{ 
-                padding: '30px 20px', 
-                textAlign: 'center', 
-                backgroundColor: '#f5f5f5',
-                borderRadius: '4px',
-                color: '#666'
+                padding: '30px 20px',
+                textAlign: 'center',
+                backgroundColor: '#1a1a1a',
+                borderRadius: '8px',
+                color: '#e0c9a6',
+                boxShadow: '0 0 8px rgba(255, 221, 153, 0.2)',
+                border: '1px solid rgba(224, 201, 166, 0.2)'
               }}>
-                <div style={{ fontSize: '24px', marginBottom: '10px' }}>👥</div>
+                <div style={{ fontSize: '24px', marginBottom: '10px', color: '#ffdd99', textShadow: '0 0 3px rgba(255, 221, 153, 0.5)' }}>👥</div>
                 <p style={{ color: '#e0c9a6', fontSize: '16px', textAlign: 'center' }}>No friend requests at the moment</p>
               </div>
             ) : (
