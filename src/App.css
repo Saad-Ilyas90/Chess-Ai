@@ -134,21 +134,30 @@
 
 .login-button {
   width: 100%;
-  margin-bottom: 15px !important;
+  margin: 0 auto 15px auto !important;
   background-color: #e0c9a6 !important;
   color: #5d4037 !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+  max-width: 90% !important;
 }
 
 .login-button span {
   color: #5d4037 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .login-guest-button {
   width: 100% !important;
-  margin-bottom: 15px !important;
+  margin: 0 auto 15px auto !important;
   background-color: #5d4037 !important; /* Brown background */
   color: #e0c9a6 !important; /* Gold text */
   border: 1px solid #e0c9a6 !important; /* Gold border */
+  border-radius: 4px !important;
+  overflow: hidden !important;
+  max-width: 90% !important;
   height: 36px !important; /* Same height as Google button */
   min-height: 36px !important;
   display: block !important; /* Ensure visibility */

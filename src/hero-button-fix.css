@@ -1,0 +1,78 @@
+/* Special fixes for hero section buttons (Play Now and Watch Tutorial) */
+.hero-button {
+  min-width: 160px !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+.hero-button > div {
+  height: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  background-color: transparent !important;
+}
+
+.hero-button span {
+  position: relative !important;
+  opacity: 1 !important;
+  font-size: 14px !important;
+  letter-spacing: 0px !important;
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+  user-select: none !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+/* Mobile specific fixes */
+@media (max-width: 1024px) {
+  .hero-buttons {
+    justify-content: center !important;
+    display: flex !important;
+    gap: 20px !important;
+    width: 100% !important;
+    flex-direction: row !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-buttons {
+    justify-content: center !important;
+    display: flex !important;
+    gap: 15px !important;
+    width: 100% !important;
+  }
+  
+  .hero-button {
+    width: 45% !important; /* Makes buttons fit side by side */
+    max-width: 180px !important;
+    margin: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-buttons {
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  
+  .hero-button {
+    width: 100% !important;
+    max-width: 180px !important;
+    height: auto !important;
+    min-height: 36px !important;
+    margin: 0 auto 15px auto !important; /* Center horizontally with space between buttons */
+  }
+  
+  .hero-button span {
+    font-size: 13px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}

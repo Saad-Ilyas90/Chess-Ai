@@ -931,10 +931,16 @@ section {
   .hero-content {
     padding-right: 0;
     margin-bottom: 60px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   
   .hero-buttons {
     justify-content: center;
+    width: 100%;
+    max-width: 400px;
   }
   
   .chess-board-display {
@@ -972,7 +978,7 @@ section {
   }
   
   .landing-logo-header {
-    margin-bottom: 0;
+    margin-bottom: 2;
     font-size: 24px;
   }
   
@@ -982,7 +988,24 @@ section {
   
   .landing-logo-knight-left,
   .landing-logo-knight-right {
+    top:1px;
+    margin-right: 8px;
     font-size: 24px;
+  }
+  
+  /* Fix for landing page buttons on smaller screens */
+  .game-mode-button {
+    width: 100% !important;
+    max-width: 200px !important;
+    margin: 0 auto !important;
+  }
+  
+  /* Ensure button text stays properly aligned and sized */
+  .game-mode-button span {
+    font-size: 14px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
   
   /* Show hamburger menu button */
@@ -1074,8 +1097,43 @@ section {
   }
   
   .hero-buttons {
+    display: flex;
     flex-direction: column;
+    align-items: center;
     width: 100%;
+    margin: 0 auto;
+  }
+  
+  /* Improve button styling for smallest screens */
+  .hero-button, .game-mode-button, .cta-button {
+    width: 100% !important;
+    max-width: 180px !important;
+    height: auto !important;
+    min-height: 36px !important;
+    margin: 0 auto 15px auto !important;
+  }
+  
+  /* Fix button text overflow issues */
+  .hero-button span, .game-mode-button span, .cta-button span {
+    font-size: 13px !important;
+    padding: 0 10px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: inline-block !important;
+  }
+  
+  .game-mode-button div, .cta-button div {
+    height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  /* Fix CTA buttons specifically */
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
   }
   
   .chess-board-display {

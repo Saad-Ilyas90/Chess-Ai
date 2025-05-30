@@ -1,6 +1,10 @@
 import './App.css';
 import './dropdown-fix.css';
 import './button-fix.css';
+import './game-mode-button-fix.css';
+import './cta-button-fix.css';
+import './hero-button-fix.css';
+import './auth-button-fix.css';
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Switch, withRouter } from 'react-router-dom';
 import Header from './Header.js';

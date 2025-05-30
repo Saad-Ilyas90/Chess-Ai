@@ -82,6 +82,39 @@ button[tabindex="0"][type="button"] > div {
   background-color: transparent !important; /* Ensure no background interference */
 }
 
+/* Fix for buttons on small screens */
+@media (max-width: 768px) {
+  button[style*="background-color: rgb(76, 175, 80)"] > div,
+  div[style*="border: 1px solid rgb(224, 201, 166)"] button > div,
+  button[tabindex="0"][type="button"] > div,
+  .primary-button > div,
+  .secondary-button > div {
+    height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 4px !important;
+    overflow: hidden !important;
+    background-color: transparent !important;
+    transition: all 0.3s ease !important;
+  }
+  
+  /* Specific fix for the CTA section buttons */
+  .cta-section .primary-button,
+  .cta-section .secondary-button {
+    border-radius: 4px !important;
+    overflow: hidden !important;
+  }
+  
+  .cta-section .primary-button > div,
+  .cta-section .secondary-button > div {
+    height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
 /* Specifically target Friend List "Add Friend" buttons */
 div[style*="padding: 15px; border-bottom: none; display: flex"] button,
 div[style*="display: flex; align-items: center"] button {
@@ -99,6 +132,30 @@ div[style*="display: flex; align-items: center"] button span {
 span[style*="color: rgb(255, 255, 255)"] {
   color: rgb(224, 201, 166) !important;
   font-weight: 500 !important;
+}
+
+/* Mobile button fixes for small screens */
+@media (max-width: 768px) {
+  /* General button fixes for mobile */
+  button[tabindex="0"][type="button"] {
+    height: auto !important;
+    min-height: 36px !important;
+  }
+  
+  /* Fix button content alignment */
+  button[tabindex="0"][type="button"] > div {
+    height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  /* Prevent text overflow */
+  button span {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
 }
 
 /* Remove all borders from the button */

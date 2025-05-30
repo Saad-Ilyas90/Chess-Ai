@@ -1,0 +1,73 @@
+/* Special fixes for CTA section buttons (Play as Guest) */
+.cta-button {
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+.cta-button > div {
+  height: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  background-color: transparent !important;
+}
+
+.cta-button span {
+  position: relative !important;
+  opacity: 1 !important;
+  font-size: 14px !important;
+  letter-spacing: 0px !important;
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+  user-select: none !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+/* Specific fix for the Play as Guest button */
+.cta-section .primary-button {
+  background-color: #e0c9a6 !important;
+  border: none !important;
+}
+
+.cta-section .primary-button > div {
+  background-color: transparent !important;
+}
+
+.cta-section .primary-button span {
+  color: #5d4037 !important;
+  font-weight: bold !important;
+}
+
+/* Mobile specific fixes */
+@media (max-width: 768px) {
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .cta-button {
+    width: 100% !important;
+    max-width: 200px !important;
+    margin: 0 auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .cta-button {
+    height: auto !important;
+    min-height: 36px !important;
+    max-width: 180px !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .cta-button span {
+    font-size: 13px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
