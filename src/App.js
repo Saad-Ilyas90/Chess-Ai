@@ -789,8 +789,13 @@ class App extends Component {
           resized(windowSize.windowWidth, windowSize.windowHeight);
         }}/>
         <Header
-          onNewGameClick={this.openNewGameDia}
-          onAnalysisClick={this.openAnalysisConfirmation}
+          gameMode={this.state.gameMode}
+          hideUserIcons={this.state.gameMode === 'ai'}
+          currentUser={this.props.currentUser}
+          isGuest={this.props.isGuest}
+          onSignOut={this.props.onSignOut}
+          onNewGameClick={this.requestOpenNewGame}
+          onAnalysisClick={this.requestOpenIntelligenceDia}
           onOpenUserProfile={() => this.setState({ showUserProfile: true })}
           onOpenFriends={() => this.setState({ showFriendsPanel: true })}
           friendRequestCount={this.state.friendRequestCount}

@@ -13,7 +13,7 @@ import Badge from 'material-ui/Badge';
 class Header extends Component {
 
     render() {
-        const { gameMode, gameId, currentUser, isGuest, onSignOut, onShowFriends, onShowProfile, friendRequestCount } = this.props;
+        const { gameMode, gameId, currentUser, isGuest, onSignOut, onOpenFriends, onOpenUserProfile, onNewGameClick, onAnalysisClick, friendRequestCount, hideUserIcons } = this.props;
         const isAIMode = gameMode === 'ai';
         
         const styles = {
@@ -44,7 +44,7 @@ class Header extends Component {
             }
         };
 
-        const userSection = currentUser ? (
+        const userSection = (!hideUserIcons && currentUser) ? (
             <div style={styles.userSection}>
                 {!isGuest && (
                     <div>
@@ -123,13 +123,17 @@ class Header extends Component {
                     </Chip>
                 )}
                 
-                <IconButton title="New Game" onClick={this.props.requestOpenNewGame}><svg style={{ 'width': '24px', 'height': '24px' }} viewBox="0 0 24 24">
-                    <path d="M3,3H21V21H3V3M5,5V12H12V19H19V12H12V5H5Z" fill="#333" />
-                </svg></IconButton>
+                {isAIMode && (
+                    <IconButton title="New Game" onClick={onNewGameClick}>
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <path d="M3,3H21V21H3V3M5,5V12H12V19H19V12H12V5H5Z" fill="#e0c9a6" />
+                        </svg>
+                    </IconButton>
+                )}
                 
                 {isAIMode && (
-                    <IconButton title="AI Settings" onClick={this.props.requestOpenIntelligenceDia}>
-                        <svg width="24" height="24" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <IconButton title="AI Settings" onClick={onAnalysisClick}>
+                        <svg width="24" height="24" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                                 <path d="M0,15.089434 C0,16.3335929 5.13666091,24.1788679 14.9348958,24.1788679 C24.7325019,24.1788679 29.8697917,16.3335929 29.8697917,15.089434 C29.8697917,13.8456167 24.7325019,6 14.9348958,6 C5.13666091,6 0,13.8456167 0,15.089434 Z" id="outline"></path>
                                 <mask id="mask">
@@ -149,10 +153,16 @@ class Header extends Component {
             </div>
         );
 
-        return (<div><AppBar title="Chess" zDepth={0} iconElementRight={rightButtons}></AppBar>
-            <LinearProgress id="thinking-bar" style={{backgroundColor:"#333"}} mode="indeterminate"> </LinearProgress>
+        return (<div>
+          <AppBar
+            title="Chess"
+            style={{ backgroundColor: 'rgba(93, 64, 55, 0.95)' }}
+            titleStyle={{ color: '#e0c9a6' }}
+            zDepth={0}
+            iconElementRight={rightButtons}
+          />
+          <LinearProgress id="thinking-bar" style={{backgroundColor:"#333"}} mode="indeterminate"> </LinearProgress>
         </div>
-
         )
     }
 }
