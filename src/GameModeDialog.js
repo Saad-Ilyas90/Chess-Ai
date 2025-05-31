@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import TextField from 'material-ui/TextField';
 import { generateGameId, isColorTaken, getGameData, getUserFriends, challengeFriend } from './firebase';
@@ -13,6 +14,7 @@ import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import Avatar from 'material-ui/Avatar';
 import Chip from 'material-ui/Chip';
+import './GameModeDialog.css';
 
 class GameModeDialog extends Component {
   constructor(props) {
@@ -167,16 +169,34 @@ class GameModeDialog extends Component {
     const actions = [
       <FlatButton
         label="CANCEL"
-        primary={true}
-        style={{ color: '#333' }}
+        primary={false}
+        style={{ 
+          color: '#e0c9a6', 
+          margin: '0 12px',
+          minWidth: '120px',
+          borderRadius: '4px',
+          border: '1px solid rgba(224, 201, 166, 0.4)'
+        }}
         onClick={onClose}
+        hoverColor="rgba(224, 201, 166, 0.1)"
+        className="game-mode-button-cancel"
       />,
-      <FlatButton
+      <RaisedButton
         label="START GAME"
-        primary={true}
-        style={{ color: '#333' }}
+        backgroundColor="#e0c9a6"
         onClick={this.handleSubmit}
         disabled={loading || (joinGame && !gameId)}
+        disabledBackgroundColor="rgba(224, 201, 166, 0.3)"
+        className="game-mode-button-start"
+        style={{ 
+          margin: '0 12px',
+          minWidth: '120px',
+          borderRadius: '4px'
+        }}
+        labelStyle={{
+          color: '#5d4037',
+          fontWeight: 'bold'
+        }}
       />
     ];
     
@@ -192,43 +212,57 @@ class GameModeDialog extends Component {
     const styles = {
       radioButton: {
         marginBottom: 16,
+        color: '#e0c9a6',
+        textShadow: '0 1px 1px rgba(0, 0, 0, 0.5)'
       },
       disabledRadioButton: {
         marginBottom: 16,
-        color: '#999',
-        cursor: 'not-allowed'
+        color: 'rgba(224, 201, 166, 0.5)',
+        cursor: 'not-allowed',
+        opacity: 0.6
       },
       group: {
         padding: '10px 0',
       },
       container: {
         padding: '20px',
-        marginTop: '10px',
-        marginBottom: '10px',
-        backgroundColor: '#f5f5f5',
+        marginTop: '20px',
+        marginBottom: '20px',
+        backgroundColor: '#2d2d2d',
         borderRadius: '4px',
+        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)'
       },
       title: {
-        fontSize: '18px',
+        fontSize: '22px',
         fontWeight: 'bold',
-        marginBottom: '15px',
-        color: '#333'
+        marginBottom: '5px',
+        color: '#e0c9a6',
+        letterSpacing: '1px'
+      },
+      titleUnderline: {
+        width: '60px',
+        height: '2px',
+        backgroundColor: '#e0c9a6',
+        marginBottom: '15px'
       },
       header: {
-        marginBottom: '20px',
+        marginBottom: '30px',
         textAlign: 'center',
-        fontSize: '20px',
+        fontSize: '26px',
         fontWeight: 'bold',
-        color: '#333'
+        color: '#e0c9a6',
+        letterSpacing: '2px'
       },
       gameId: {
         fontSize: '20px',
         fontWeight: 'bold',
         padding: '10px',
-        backgroundColor: '#e0e0e0',
+        backgroundColor: '#5d4037',
+        color: '#e0c9a6',
         borderRadius: '4px',
         display: 'inline-block',
-        marginTop: '10px'
+        marginTop: '10px',
+        letterSpacing: '1px'
       },
       loadingContainer: {
         display: 'flex',
@@ -246,13 +280,23 @@ class GameModeDialog extends Component {
         onRequestClose={onClose}
         autoScrollBodyContent={true}
         contentStyle={{ width: '90%', maxWidth: '500px' }}
+        bodyStyle={{ backgroundColor: '#1a1a1a', padding: '20px' }}
+        titleStyle={{ backgroundColor: '#5d4037', color: '#e0c9a6', fontWeight: 'bold', letterSpacing: '2px', textAlign: 'center' }}
+        actionsContainerStyle={{ 
+          backgroundColor: '#1a1a1a', 
+          borderTop: '1px solid rgba(224, 201, 166, 0.2)', 
+          padding: '16px',
+          display: 'flex', 
+          justifyContent: 'center'
+        }}
       >
         <div style={styles.header}>
-          Select how you want to play
+          SELECT HOW YOU WANT TO PLAY
         </div>
         
         <Paper style={styles.container}>
-          <div style={styles.title}>Game Mode</div>
+          <div style={styles.title}>GAME MODE</div>
+          <div style={styles.titleUnderline} className="section-title-underline"></div>
           <RadioButtonGroup 
             name="gameMode" 
             valueSelected={gameMode} 
@@ -263,18 +307,23 @@ class GameModeDialog extends Component {
               value="ai"
               label="Play against AI"
               style={styles.radioButton}
+              labelStyle={{color: '#ffffff', fontWeight: 500}}
+              iconStyle={{fill: '#e0c9a6'}}
             />
             <RadioButton
               value="multiplayer"
               label="Play with a friend"
               style={styles.radioButton}
+              labelStyle={{color: '#ffffff', fontWeight: 500}}
+              iconStyle={{fill: '#e0c9a6'}}
             />
           </RadioButtonGroup>
         </Paper>
         
         {gameMode === 'multiplayer' && (
           <Paper style={styles.container}>
-            <div style={styles.title}>Multiplayer Options</div>
+            <div style={styles.title}>MULTIPLAYER OPTIONS</div>
+            <div style={styles.titleUnderline}></div>
             <RadioButtonGroup 
               name="joinType" 
               valueSelected={joinGame ? 'join' : 'create'} 
@@ -285,43 +334,68 @@ class GameModeDialog extends Component {
                 value="create"
                 label="Create a new game"
                 style={styles.radioButton}
+                labelStyle={{color: '#ffffff', fontWeight: 500}}
+                iconStyle={{fill: '#e0c9a6'}}
               />
               <RadioButton
                 value="join"
                 label="Join an existing game"
                 style={styles.radioButton}
+                labelStyle={{color: '#ffffff', fontWeight: 500}}
+                iconStyle={{fill: '#e0c9a6'}}
               />
             </RadioButtonGroup>
             
             {/* Friends List Section */}
             {this.props.currentUser && !this.props.isGuest && (
-              <div style={{ marginTop: '20px', marginBottom: '20px' }}>
-                <div style={{ ...styles.title, color: '#4CAF50' }}>Play with Friends</div>
+              <div style={{ marginTop: '20px', marginBottom: '20px', backgroundColor: '#2d2d2d', padding: '20px', borderRadius: '4px', boxShadow: '0 3px 10px rgba(0, 0, 0, 0.5)' }}>
+                <div style={{ ...styles.title, color: '#e0c9a6', textAlign: 'center', fontSize: '22px', letterSpacing: '1.5px', textShadow: '0 2px 4px rgba(0, 0, 0, 0.7)' }}>PLAY WITH FRIENDS</div>
+                <div style={{...styles.titleUnderline, margin: '0 auto 20px auto'}} className="section-title-underline"></div>
                 {friends.length > 0 ? (
-                  <List style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid #e0e0e0', borderRadius: '4px' }}>
+                  <List style={{ maxHeight: '250px', overflowY: 'auto', border: '2px solid rgba(224, 201, 166, 0.6)', borderRadius: '8px', backgroundColor: '#262626', padding: '15px', boxShadow: 'inset 0 0 10px rgba(0,0,0,0.5)' }}>
                     {friends.map(friend => (
                       <ListItem
                         key={friend.id}
+                        style={{ 
+                          cursor: 'pointer',
+                          backgroundColor: '#3c3c3c',
+                          marginBottom: '8px',
+                          borderRadius: '4px',
+                          border: '1px solid #4e4e4e',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                          paddingTop: '4px',
+                          paddingBottom: '4px'
+                        }}
                         leftAvatar={
                           friend.photoURL ? (
-                            <Avatar src={friend.photoURL} />
+                            <Avatar src={friend.photoURL} style={{border: '1px solid #e0c9a6', width: 36, height: 36}} />
                           ) : (
-                            <Avatar>{friend.displayName.charAt(0)}</Avatar>
+                            <Avatar style={{backgroundColor: '#e0c9a6', color: '#3c3c3c', border: '1px solid #5d4037', width: 36, height: 36, fontWeight: 'bold'}}>{friend.displayName.charAt(0)}</Avatar>
                           )
                         }
-                        primaryText={friend.displayName}
+                        primaryText={
+                          <div style={{color: '#FFFFFF', fontWeight: '600', fontSize: '18px', textShadow: '0 1px 1px rgba(0, 0, 0, 0.9)', letterSpacing: '0.5px', padding: '1px 0', textAlign: 'center', margin: '0', marginTop: '-12px'}}>
+                            {friend.displayName}
+                          </div>
+                        }
                         secondaryText={
-                          <div>
-                            <span>Rating: {friend.rating || 'Unrated'}</span>
-                            <span style={{ marginLeft: '10px' }}>
+                          <div style={{marginTop: '3px', marginBottom: '0', position: 'relative'}}>
+                            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                              <span style={{color: '#e0c9a6', fontWeight: 'bold', fontSize: '15px', textShadow: '0 1px 1px rgba(0, 0, 0, 0.7)'}}>Rating: {friend.rating || 'Unrated'}</span>
                               {friend.isOnline ? (
-                                <Chip backgroundColor="#4CAF50" labelColor="#fff" style={{ height: '20px' }}>
-                                  <span style={{ fontSize: '12px' }}>Online</span>
-                                </Chip>
+                                <div style={{marginRight: '5px'}}>
+                                  <div style={{backgroundColor: '#4CAF50', color: 'white', fontWeight: 'bold', fontSize: '14px', padding: '2px 10px', borderRadius: '4px', border: '2px solid #388E3C', boxShadow: '0 2px 4px rgba(0,0,0,0.7)', display: 'inline-block'}}>
+                                    Online
+                                  </div>
+                                </div>
                               ) : (
-                                <span style={{ color: '#999', fontSize: '12px' }}>Offline</span>
+                                <div style={{marginRight: '5px'}}>
+                                  <div style={{backgroundColor: '#795548', color: 'white', fontWeight: 'bold', fontSize: '14px', padding: '2px 10px', borderRadius: '4px', border: '2px solid #5d4037', boxShadow: '0 2px 4px rgba(0,0,0,0.7)', display: 'inline-block'}}>
+                                    Offline
+                                  </div>
+                                </div>
                               )}
-                            </span>
+                            </div>
                           </div>
                         }
                         onClick={() => {
@@ -338,7 +412,7 @@ class GameModeDialog extends Component {
                     ))}
                   </List>
                 ) : (
-                  <div style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                  <div style={{ textAlign: 'center', padding: '20px', color: '#ffffff', fontWeight: '500', backgroundColor: 'rgba(93, 64, 55, 0.3)', borderRadius: '4px', border: '1px solid rgba(224, 201, 166, 0.2)', marginTop: '10px' }}>
                     No friends found. Add friends to challenge them directly!
                   </div>
                 )}
@@ -347,35 +421,51 @@ class GameModeDialog extends Component {
             
             {joinGame ? (
               <div>
-                <TextField
-                  floatingLabelText="Enter Game ID"
-                  fullWidth={true}
-                  value={gameId}
-                  onChange={this.handleGameIdChange}
-                  errorText={error}
-                />
+                <div style={{display: 'flex', alignItems: 'flex-end', gap: '10px', marginBottom: '15px'}}>
+                  <TextField
+                    floatingLabelText="Enter Game ID"
+                    style={{flex: 1}}
+                    value={gameId}
+                    onChange={this.handleGameIdChange}
+                    errorText={error}
+                    inputStyle={{color: '#ffffff'}}
+                    floatingLabelStyle={{color: '#e0c9a6'}}
+                    underlineStyle={{borderColor: 'rgba(224, 201, 166, 0.5)'}}
+                    underlineFocusStyle={{borderColor: '#e0c9a6'}}
+                    errorStyle={{color: '#ff7043'}}
+                  />
+                  <RaisedButton
+                    label="Search"
+                    style={{minWidth: '100px', marginBottom: error ? '20px' : '0px'}}
+                    backgroundColor="#e0c9a6"
+                    labelStyle={{color: '#5d4037', fontWeight: 'bold'}}
+                    onClick={() => this.handleGameIdChange({target: {value: gameId}})}
+                    disabled={!gameId || loading}
+                  />
+                </div>
                 {loading && (
                   <div style={styles.loadingContainer}>
-                    <CircularProgress size={24} />
+                    <CircularProgress size={24} color="#e0c9a6" />
                   </div>
                 )}
                 {oppositeColorSelected && (
-                  <div style={{color: '#4caf50', marginTop: '10px'}}>
+                  <div style={{color: '#e0c9a6', marginTop: '10px', textAlign: 'center'}}>
                     Auto-selected {playerColor === 'w' ? 'white' : 'black'} as it's the only available color
                   </div>
                 )}
               </div>
             ) : (
               <div style={{textAlign: 'center', marginTop: '15px'}}>
-                <p>Your Game ID:</p>
-                <div style={styles.gameId}>{gameId}</div>
-                <p style={{marginTop: '15px'}}>Share this ID with your opponent</p>
+                <p style={{color: '#e0c9a6', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px'}}>YOUR GAME ID:</p>
+                <div style={{...styles.gameId, maxWidth: '200px', margin: '0 auto', padding: '12px', fontSize: '22px', fontWeight: 'bold', letterSpacing: '2px', borderRadius: '4px', boxShadow: '0 2px 6px rgba(0, 0, 0, 0.5)', border: '1px solid rgba(224, 201, 166, 0.3)'}}>{gameId}</div>
+                <p style={{marginTop: '15px', color: '#ffffff', fontStyle: 'italic', opacity: 0.9}}>Share this ID with your opponent</p>
               </div>
             )}
             
             <Divider style={{margin: '20px 0'}} />
             
-            <div style={styles.title}>Choose your color</div>
+            <div style={styles.title}>CHOOSE YOUR COLOR</div>
+            <div style={styles.titleUnderline}></div>
             <RadioButtonGroup 
               name="playerColor" 
               valueSelected={playerColor} 
@@ -386,25 +476,30 @@ class GameModeDialog extends Component {
                 value="w"
                 label="Play as White (moves first)"
                 style={whiteDisabled ? styles.disabledRadioButton : styles.radioButton}
+                labelStyle={{color: whiteDisabled ? 'rgba(255, 255, 255, 0.4)' : '#ffffff', fontWeight: 500}}
+                iconStyle={{fill: whiteDisabled ? 'rgba(224, 201, 166, 0.4)' : '#e0c9a6'}}
                 disabled={whiteDisabled}
               />
               <RadioButton
                 value="b"
                 label="Play as Black"
                 style={blackDisabled ? styles.disabledRadioButton : styles.radioButton}
+                labelStyle={{color: blackDisabled ? 'rgba(255, 255, 255, 0.4)' : '#ffffff', fontWeight: 500}}
+                iconStyle={{fill: blackDisabled ? 'rgba(224, 201, 166, 0.4)' : '#e0c9a6'}}
                 disabled={blackDisabled}
               />
             </RadioButtonGroup>
             {(whiteDisabled && blackDisabled) && (
-              <div style={{color: '#f44336', marginTop: '10px'}}>
+              <div style={{color: '#ff7043', marginTop: '10px'}}>
                 This game is full - both colors are already taken.
               </div>
             )}
             
             <Divider style={{margin: '20px 0'}} />
             
-            <div style={{...styles.title, fontSize: '20px', color: '#2196F3'}}>Time Control</div>
-            <div style={{marginBottom: '15px', color: '#666'}}>
+            <div style={{...styles.title, fontSize: '20px', color: '#e0c9a6'}}>TIME CONTROL</div>
+            <div style={styles.titleUnderline}></div>
+            <div style={{marginBottom: '15px', color: '#ffffff', fontWeight: 400, textShadow: '0 1px 1px rgba(0, 0, 0, 0.5)'}}>
               Select how much time each player will have for the entire game:
             </div>
             <SelectField
@@ -414,15 +509,21 @@ class GameModeDialog extends Component {
               fullWidth={true}
               disabled={joinGame && gameData && gameData.timeControl}
               style={{marginBottom: '15px'}}
+              labelStyle={{color: '#ffffff'}}
+              floatingLabelStyle={{color: '#e0c9a6'}}
+              underlineStyle={{borderColor: 'rgba(224, 201, 166, 0.5)'}}
+              underlineFocusStyle={{borderColor: '#e0c9a6'}}
+              menuItemStyle={{color: '#e0c9a6'}}
+              iconStyle={{fill: '#e0c9a6'}}
             >
-              <MenuItem value="none" primaryText="No time limit" />
-              <MenuItem value="3" primaryText="3 minutes" leftIcon={<div style={{color: '#2196F3'}}>⏱</div>} />
-              <MenuItem value="5" primaryText="5 minutes" leftIcon={<div style={{color: '#2196F3'}}>⏱</div>} />
-              <MenuItem value="10" primaryText="10 minutes" leftIcon={<div style={{color: '#2196F3'}}>⏱</div>} />
-              <MenuItem value="15" primaryText="15 minutes" leftIcon={<div style={{color: '#2196F3'}}>⏱</div>} />
+              <MenuItem value="none" primaryText="No time limit" style={{color: '#e0c9a6'}} />
+              <MenuItem value="3" primaryText="3 minutes" leftIcon={<div style={{color: '#e0c9a6'}}>⏱</div>} style={{color: '#e0c9a6'}} />
+              <MenuItem value="5" primaryText="5 minutes" leftIcon={<div style={{color: '#e0c9a6'}}>⏱</div>} style={{color: '#e0c9a6'}} />
+              <MenuItem value="10" primaryText="10 minutes" leftIcon={<div style={{color: '#e0c9a6'}}>⏱</div>} style={{color: '#e0c9a6'}} />
+              <MenuItem value="15" primaryText="15 minutes" leftIcon={<div style={{color: '#e0c9a6'}}>⏱</div>} style={{color: '#e0c9a6'}} />
             </SelectField>
             {joinGame && gameData && gameData.timeControl && (
-              <div style={{color: '#4caf50', marginTop: '10px'}}>
+              <div style={{color: '#e0c9a6', marginTop: '10px'}}>
                 Using time control from existing game: {gameData.timeControl === 'none' ? 'No time limit' : `${gameData.timeControl} minutes`}
               </div>
             )}

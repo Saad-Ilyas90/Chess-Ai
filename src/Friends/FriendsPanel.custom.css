@@ -1284,3 +1284,247 @@ button.friend-request-icon > div > span:first-child,
   color: #ffdd99 !important;       /* Ensures your desired icon color is applied */
 }
 /* END - Fix for disappearing friend request icon */
+
+/* Friends Panel Layout - Fixed Header Width and Consistent Alignment */
+.friends-header-container {
+  min-width: 500px !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.friends-cards-container {
+  margin-top: 0px !important;
+  padding: 20px !important;
+  margin-left: 20px !important;
+  margin-right: 20px !important;
+  margin-bottom: 20px !important;
+}
+
+/* Ensure consistent left alignment between header and cards */
+.friends-panel-paper {
+  margin: 20px !important;
+  padding: 20px !important;
+}
+
+.friends-panel-paper:last-of-type {
+  margin-top: 0px !important;
+}
+
+/* Enhanced Mobile Responsiveness for REQUESTS and ALERTS Boxes */
+
+/* Tablet and Medium Screens */
+@media screen and (max-width: 1024px) {
+  .friend-request-icon, .notification-icon {
+    width: 100px !important;
+    height: 56px !important;
+    margin: 0 8px !important;
+  }
+  
+  .icon-text {
+    font-size: 20px !important;
+    line-height: 1.2 !important;
+    margin-bottom: 2px !important;
+  }
+  
+  .icon-label {
+    font-size: 9px !important;
+    line-height: 1.1 !important;
+    letter-spacing: -0.5px !important;
+  }
+}
+
+/* Mobile Phones - Portrait Mode */
+@media screen and (max-width: 768px) {
+  .friend-request-icon, .notification-icon {
+    width: 90px !important;
+    height: 52px !important;
+    margin: 0 6px !important;
+    padding: 6px 4px !important;
+  }
+  
+  .icon-text {
+    font-size: 18px !important;
+    line-height: 1.1 !important;
+    margin-bottom: 2px !important;
+    display: block !important;
+    text-align: center !important;
+  }
+  
+  .icon-label {
+    font-size: 8px !important;
+    line-height: 1 !important;
+    letter-spacing: -0.8px !important;
+    margin-top: 2px !important;
+    display: block !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+  }
+  
+  /* Badge positioning for mobile - directly on bell icon */
+  .badge-style > span:first-child {
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
+    font-size: 10px !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    line-height: 16px !important;
+    padding: 0 3px !important;
+    border-radius: 8px !important;
+    z-index: 20 !important;
+  }
+  
+  /* Ensure header container adapts to mobile */
+  .friends-header-container {
+    min-width: auto !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  
+  /* Center align buttons on mobile */
+  .friends-header-container > div:last-child {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+}
+
+/* Small Mobile Phones */
+@media screen and (max-width: 480px) {
+  .friend-request-icon, .notification-icon {
+    width: 80px !important;
+    height: 48px !important;
+    margin: 0 4px !important;
+    padding: 4px 3px !important;
+  }
+  
+  .icon-text {
+    font-size: 16px !important;
+    line-height: 1 !important;
+    margin-bottom: 1px !important;
+  }
+  
+  .icon-label {
+    font-size: 7px !important;
+    line-height: 1 !important;
+    letter-spacing: -1px !important;
+    margin-top: 1px !important;
+    transform: scale(0.9) !important;
+    transform-origin: center !important;
+  }
+  
+  /* Stack buttons vertically on very small screens */
+  .friends-header-container {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  
+  .friends-header-container > div:first-child {
+    order: 1 !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .friends-header-container > div:last-child {
+    order: 2 !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  
+  /* Make buttons full width on tiny screens */
+  .friend-request-icon, .notification-icon, .add-friends-button {
+    width: 100% !important;
+    max-width: 200px !important;
+    height: 44px !important;
+    margin: 4px 0 !important;
+  }
+  
+  /* Horizontal layout for icon and text on tiny screens */
+  .friend-request-icon, .notification-icon {
+    flex-direction: row !important;
+    justify-content: center !important;
+    gap: 6px !important;
+  }
+  
+  .icon-text, .icon-label {
+    display: inline-block !important;
+    margin: 0 !important;
+    line-height: 1.2 !important;
+  }
+  
+  .icon-text {
+    font-size: 18px !important;
+  }
+  
+  .icon-label {
+    font-size: 10px !important;
+    transform: none !important;
+    letter-spacing: 0 !important;
+  }
+}
+
+/* Extra Small Screens */
+@media screen and (max-width: 360px) {
+  .friend-request-icon, .notification-icon {
+    width: 75px !important;
+    height: 42px !important;
+    padding: 3px 2px !important;
+  }
+  
+  .icon-text {
+    font-size: 14px !important;
+  }
+  
+  .icon-label {
+    font-size: 6px !important;
+    letter-spacing: -1.2px !important;
+  }
+  
+  /* Ensure badge stays properly positioned on tiny screens */
+  .badge-style > span:first-child {
+    top: 0px !important;
+    right: 0px !important;
+    font-size: 9px !important;
+    min-width: 14px !important;
+    height: 14px !important;
+    line-height: 14px !important;
+  }
+}
+
+/* Force visibility and proper display across all mobile sizes */
+@media screen and (max-width: 768px) {
+  .friend-request-icon *, 
+  .notification-icon *,
+  .badge-style * {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+  }
+  
+  .icon-text, .icon-label {
+    color: #ffdd99 !important;
+    text-shadow: 0 0 1px rgba(255, 221, 153, 0.3) !important;
+  }
+  
+  /* Ensure badges don't interfere with icon layout */
+  .badge-style {
+    position: relative !important;
+    overflow: visible !important;
+  }
+  
+  /* Badge number positioning - directly on the icon */
+  .badge-style > span:first-child {
+    position: absolute !important;
+    top: -2px !important;
+    right: -2px !important;
+    z-index: 25 !important;
+    pointer-events: none !important;
+    background-color: #ff6b6b !important;
+    color: white !important;
+    border: 1px solid white !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+  }
+}

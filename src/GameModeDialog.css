@@ -1,0 +1,443 @@
+/* GameModeDialog.css */
+/* Styles to match LandingPage.css theme with improved visibility and responsiveness */
+
+/* Make dialog content more visible with stronger background and borders */
+div[role="dialog"] > div > div {
+  background-color: #1a1a1a !important;
+  border: 1px solid rgba(224, 201, 166, 0.3) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Make dialog title bar more visible */
+div[role="dialog"] > div > div > div:first-child {
+  background-color: #5d4037 !important;
+  border-bottom: 2px solid #e0c9a6 !important;
+}
+
+/* Section title underline with enhanced visibility */
+.section-title-underline,
+div[style*="titleUnderline"] {
+  width: 60px !important;
+  height: 3px !important;
+  background-color: #e0c9a6 !important;
+  margin-bottom: 20px !important;
+  display: block !important;
+}
+
+/* Style for color selection section */
+div[style*="CHOOSE YOUR COLOR"],
+div:contains("CHOOSE YOUR COLOR") {
+  font-size: 22px !important;
+  color: #e0c9a6 !important;
+  text-transform: uppercase !important;
+  font-weight: bold !important;
+  margin-top: 20px !important;
+  text-align: center !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7) !important;
+  letter-spacing: 1.5px !important;
+}
+
+/* Horizontal divider styling */
+hr {
+  border: none !important;
+  height: 1px !important;
+  background-color: rgba(224, 201, 166, 0.3) !important;
+  margin: 20px 0 !important;
+}
+
+/* Dialog styling overrides */
+.game-mode-button button {
+  font-weight: bold !important;
+  letter-spacing: 1px !important;
+}
+
+/* Material UI overrides for better contrast and visibility */
+div[role="dialog"] {
+  color: #e0c9a6 !important;
+}
+
+/* Dialog Text - ensure high contrast */
+div[role="dialog"] p,
+div[role="dialog"] span,
+div[role="dialog"] div,
+div[role="dialog"] label,
+div[role="dialog"] h1,
+div[role="dialog"] h2,
+div[role="dialog"] h3 {
+  color: #e0c9a6 !important;
+}
+
+/* Specific fix for radio button labels */
+div[role="dialog"] [role="radiogroup"] label > div > span {
+  color: #ffffff !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* All dialog titles should be highly visible */
+div[role="dialog"] [style*="title"] {
+  color: #e0c9a6 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7) !important;
+  font-weight: bold !important;
+  letter-spacing: 1.5px !important;
+}
+
+/* Special styling for section titles */
+div[role="dialog"] div[style*="title"] {
+  font-size: 20px !important;
+  margin-bottom: 5px !important;
+  color: #e0c9a6 !important;
+}
+
+/* Dialog header styling */
+div[role="dialog"] div[style*="header"] {
+  font-size: 24px !important;
+  font-weight: bold !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8) !important;
+  margin-bottom: 25px !important;
+  letter-spacing: 2px !important;
+}
+
+/* Radio button labels need explicit styling for better visibility */
+div[role="dialog"] svg + div span {
+  color: #e0c9a6 !important;
+  font-weight: 500 !important;
+  font-size: 16px !important;
+}
+
+/* TextField customization */
+div[role="dialog"] input {
+  color: #ffffff !important;
+}
+
+div[role="dialog"] label {
+  color: #e0c9a6 !important;
+}
+
+div[role="dialog"] div[role="menu"] {
+  background-color: #2d2d2d !important;
+}
+
+div[role="dialog"] div[role="menu"] div,
+div[role="menu"] div {
+  color: #e0c9a6 !important;
+}
+
+/* Radio buttons customization - ensure visible */
+div[role="dialog"] svg {
+  fill: #e0c9a6 !important;
+  color: #e0c9a6 !important;
+  opacity: 1 !important;
+}
+
+/* Enhance text contrast */
+div[role="dialog"] p,
+div[role="dialog"] span,
+div[role="dialog"] div {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Ensure action buttons are visible and properly aligned */
+div[role="dialog"] > div > div > div:last-child {
+  background-color: #1a1a1a !important;
+  border-top: 1px solid rgba(224, 201, 166, 0.3) !important;
+  padding: 16px 24px !important;
+  display: flex !important;
+  justify-content: center !important; /* Center the buttons */
+  align-items: center !important;
+  gap: 24px !important;
+}
+
+/* Fix alignment for all button containers */
+div[style*="display: flex"],
+div[style*="alignItems: flex-end"] {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  margin-bottom: 16px !important;
+}
+
+/* Ensure Cancel button is visible */
+div[role="dialog"] > div > div > div:last-child button:first-child {
+  color: #e0c9a6 !important;
+  font-weight: 500 !important;
+  border: 1px solid rgba(224, 201, 166, 0.4) !important;
+  min-width: 120px !important;
+  text-align: center !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+  margin: 0 !important;
+}
+
+/* Ensure Start Game button is visible */
+div[role="dialog"] > div > div > div:last-child button:last-child {
+  background-color: #e0c9a6 !important;
+  color: #5d4037 !important;
+  font-weight: 500 !important;
+  min-width: 120px !important;
+  text-align: center !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+  margin: 0 !important;
+}
+
+/* Force radio button color */
+div[role="dialog"] input[type="radio"] {
+  color: #e0c9a6 !important;
+  border-color: #e0c9a6 !important;
+}
+
+div[role="dialog"] input[type="radio"]:checked {
+  background-color: #e0c9a6 !important;
+}
+
+/* Radio button outer circle */
+div[role="dialog"] [role="radiogroup"] svg:nth-child(1) {
+  fill: #e0c9a6 !important;
+  color: #e0c9a6 !important;
+  opacity: 1 !important;
+}
+
+/* Radio button inner dot */
+div[role="dialog"] [role="radiogroup"] svg:nth-child(2) {
+  fill: #e0c9a6 !important;
+  color: #e0c9a6 !important;
+  opacity: 1 !important;
+}
+
+/* Time control select */
+div[role="dialog"] div[role="button"] {
+  color: #ffffff !important;
+}
+
+div[role="dialog"] hr {
+  background-color: rgba(224, 201, 166, 0.3) !important;
+}
+
+/* Focus and hover effects */
+div[role="dialog"] input:focus {
+  border-color: #e0c9a6 !important;
+}
+
+div[role="dialog"] div[role="button"]:hover {
+  background-color: rgba(224, 201, 166, 0.2) !important;
+}
+
+/* Friend list item styling */
+div[role="dialog"] div[role="listitem"]:hover {
+  background-color: rgba(224, 201, 166, 0.2) !important;
+  cursor: pointer;
+}
+
+div[role="dialog"] div[role="listitem"] div {
+  color: #e0c9a6 !important;
+}
+
+/* Make dropdown menu match landing page */
+div[role="presentation"] {
+  background-color: #2d2d2d !important;
+}
+
+div[role="presentation"] div[role="menu"] div {
+  color: #e0c9a6 !important;
+}
+
+div[role="presentation"] div[role="menu"] div:hover {
+  background-color: rgba(224, 201, 166, 0.2) !important;
+}
+
+/* Error text styling */
+div[role="dialog"] div[class*="TextField-error"] {
+  color: #ff7043 !important;
+}
+
+/* Progress indicator */
+div[role="progressbar"] {
+  color: #e0c9a6 !important;
+}
+
+/* Explicitly target MenuItem text */
+div[role="menu"] div[role="menuitem"] div {
+  color: #e0c9a6 !important;
+}
+
+/* Fix SelectField dropdown text */
+div[role="dialog"] div[role="menu"] div span {
+  color: #e0c9a6 !important;
+}
+
+/* Fix for dropdown items */
+div[role="dialog"] div[role="menu"] div[role="menuitem"],
+div[role="menuitem"],
+div[role="menu"] span {
+  color: #e0c9a6 !important;
+}
+
+/* Style all Material-UI buttons consistently */
+div[role="dialog"] button {
+  border-radius: 4px !important;
+  min-width: 100px !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+}
+
+/* Style for search button specifically */
+div[style*="display: flex"] button,
+div[style*="alignItems: flex-end"] button {
+  margin-bottom: 0 !important;
+  height: 36px !important;
+  line-height: 36px !important;
+}
+
+/* Material UI dialog title specific fix */
+div[class*="Dialog-title"] h3 {
+  color: #e0c9a6 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7) !important;
+  font-weight: bold !important;
+  letter-spacing: 1.5px !important;
+}
+
+/* Fix radio button text */
+div[role="radiogroup"] label span,
+div[role="dialog"] label span {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+/* Fix alignment for player info section */
+div[style*="flexDirection: column"] {
+  align-items: center !important;
+}
+
+/* Improve player profile display */
+div[role="dialog"] img {
+  border: 2px solid #e0c9a6 !important;
+}
+
+/* Improve player display and profile sections */
+div[role="dialog"] [class*="ListItem"] {
+  background-color: rgba(93, 64, 55, 0.4) !important;
+  margin-bottom: 5px !important;
+  border-radius: 4px !important;
+  border: 1px solid rgba(224, 201, 166, 0.3) !important;
+}
+
+/* Make player names highly visible */
+div[role="dialog"] [class*="ListItem"] div[class*="primaryText"],
+div[role="dialog"] [class*="primaryText"] span {
+  color: #ffffff !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9) !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Improve player rating display */
+div[role="dialog"] div:contains("Rating") {
+  color: #e0c9a6 !important;
+  font-weight: 500 !important;
+  margin-left: 10px !important;
+  font-size: 16px !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Fix friend section title */
+div[style*="PLAY WITH FRIENDS"],
+div:contains("PLAY WITH FRIENDS") {
+  color: #e0c9a6 !important;
+  font-size: 22px !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.5px !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7) !important;
+  margin-bottom: 10px !important;
+  text-align: center !important;
+}
+
+/* Fix paper container */
+div[role="dialog"] [class*="Paper-root"] {
+  background-color: #2d2d2d !important;
+  color: #e0c9a6 !important;
+}
+
+/* Game ID display */
+div[style*="gameId"] {
+  color: #e0c9a6 !important;
+  background-color: #5d4037 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid rgba(224, 201, 166, 0.3) !important;
+  font-size: 22px !important;
+  padding: 12px !important;
+  letter-spacing: 2px !important;
+  text-align: center !important;
+  max-width: 200px !important;
+  margin: 15px auto !important;
+  border-radius: 4px !important;
+  font-weight: bold !important;
+}
+
+/* Style for "YOUR GAME ID:" text */
+div:contains("YOUR GAME ID:") {
+  color: #e0c9a6 !important;
+  font-size: 18px !important;
+  text-align: center !important;
+  margin-bottom: 10px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  font-weight: bold !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Style for "Share this ID with your opponent" text */
+div:contains("Share this ID") {
+  color: #ffffff !important;
+  font-size: 16px !important;
+  text-align: center !important;
+  margin-top: 10px !important;
+  font-style: italic !important;
+  opacity: 0.9 !important;
+}
+
+/* Responsive styling for mobile devices */
+@media (max-width: 768px) {
+  /* Ensure dialog fits mobile screens properly */
+  div[role="dialog"] > div > div {
+    width: 95% !important;
+    max-width: none !important;
+    margin: 0 auto !important;
+  }
+  
+  /* Make text larger and more readable on small screens */
+  div[role="dialog"] [role="radiogroup"] label > div > span {
+    font-size: 18px !important;
+  }
+  
+  /* Improve section titles on mobile */
+  div[role="dialog"] div[style*="title"] {
+    font-size: 22px !important;
+  }
+  
+  /* Make header text readable on mobile */
+  div[role="dialog"] div[style*="header"] {
+    font-size: 26px !important;
+    line-height: 1.3 !important;
+  }
+  
+  /* Increase padding on containers for mobile */
+  div[role="dialog"] [class*="Paper-root"] {
+    padding: 16px !important;
+  }
+  
+  /* Ensure buttons are large enough to tap on mobile */
+  div[role="dialog"] > div > div > div:last-child button {
+    padding: 12px 24px !important;
+    font-size: 16px !important;
+    margin: 0 !important;
+  }
+  
+  /* Dialog footer for mobile */
+  div[role="dialog"] > div > div > div:last-child {
+    gap: 12px !important;
+    padding: 12px !important;
+  }
+}
