@@ -74,7 +74,7 @@ class LandingPage extends Component {
     this.setState({ mobileMenuOpen: false });
   };
   render() {
-    const { onStartGame, onSignIn, currentUser, onSignOut } = this.props;
+    const { onStartGame, onSignIn, currentUser, onSignOut, isGuest, onGameChallengeAccepted } = this.props;
     const { activeTab, showProfile, showFriends } = this.state;
     
     return (
@@ -137,7 +137,11 @@ class LandingPage extends Component {
               <h2 className="section-title">Friends</h2>
               <div className="section-title-underline"></div>
             </div>
-            <FriendsPanel currentUser={currentUser} />
+            <FriendsPanel 
+              currentUser={currentUser}
+              isGuest={isGuest}
+              onGameChallengeAccepted={onGameChallengeAccepted}
+            />
           </div>
         )}
         

@@ -767,6 +767,8 @@ class App extends Component {
           window.location.href = '/';
         }}
         currentUser={currentUser}
+        isGuest={isGuest}
+        onGameChallengeAccepted={this.handleGameChallengeAccepted}
         onOpenUserProfile={() => history.push('/profile')}
         onOpenFriends={() => history.push('/friends')}
         onSignOut={onSignOut}
@@ -964,6 +966,7 @@ class App extends Component {
       
       // Update state and set up game
       this.setState({ 
+        showLandingPage: false,
         showFriendsPanel: false,
         gameId: gameId,
         gameMode: 'multiplayer',

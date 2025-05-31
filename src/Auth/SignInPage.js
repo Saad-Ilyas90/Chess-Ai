@@ -32,7 +32,10 @@ class SignInPage extends Component {
 
   handleInputChange = (field) => (event) => {
     const value = event.target.value;
-    this.setState({ [field]: value }, () => {
+    this.setState({ 
+      [field]: value,
+      showError: false // Clear any global errors when user is typing
+    }, () => {
       // Run validation as user types
       this.validateField(field, value);
     });
@@ -163,24 +166,34 @@ class SignInPage extends Component {
       
       switch (error.code) {
         case 'auth/user-not-found':
-          errorMessage = 'No account found with this email';
+          errorMessage = 'No account found with this email. Please check your email or sign up for a new account.';
           break;
         case 'auth/wrong-password':
-          errorMessage = 'Incorrect password';
+          errorMessage = 'Incorrect password. Please try again or use the "Forgot Password" option.';
           break;
         case 'auth/email-already-in-use':
-          errorMessage = 'An account with this email already exists';
+          errorMessage = 'An account with this email already exists. Please sign in instead.';
           break;
         case 'auth/weak-password':
-          errorMessage = 'Password is too weak';
+          errorMessage = 'Password is too weak. Please use a stronger password with at least 6 characters.';
           break;
         case 'auth/invalid-email':
-          errorMessage = 'Invalid email address';
+          errorMessage = 'Invalid email address format. Please enter a valid email.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many unsuccessful login attempts. Please wait a moment before trying again.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+          break;
+        case 'auth/user-disabled':
+          errorMessage = 'This account has been disabled. Please contact support for assistance.';
           break;
         default:
-          errorMessage = error.message;
+          errorMessage = error.message || 'An error occurred during authentication. Please try again.';
       }
       
+      console.error('Authentication error:', error.code, error.message);
       this.showError(errorMessage);
       this.setState({ loading: false });
     }
@@ -245,7 +258,13 @@ class SignInPage extends Component {
   }
 
   showError = (error) => {
-    this.setState({ error, showError: true });
+    // First hide any existing error to create a visual reset effect
+    this.setState({ showError: false }, () => {
+      // Then set the new error after a short delay for better visual feedback
+      setTimeout(() => {
+        this.setState({ error, showError: true });
+      }, 100);
+    });
   }
 
   toggleAuthMode = () => {
@@ -327,7 +346,16 @@ class SignInPage extends Component {
           <Snackbar
             open={showError}
             message={error}
-            autoHideDuration={4000}
+            autoHideDuration={6000}
+            bodyStyle={{ 
+              backgroundColor: '#5d4037', 
+              color: '#ffdd99', 
+              fontSize: '14px',
+              fontWeight: 'bold',
+              padding: '12px 24px',
+              borderLeft: '4px solid #ff9800'
+            }}
+            contentStyle={{ textAlign: 'center' }}
             onRequestClose={() => this.setState({ showError: false })}
           />
         </div>
@@ -402,10 +430,11 @@ class SignInPage extends Component {
           )}
           
           <RaisedButton
-            label={isSignUp ? 'Sign Up' : 'Sign In'}
+            label={loading ? (isSignUp ? 'Signing up...' : 'Signing in...') : (isSignUp ? 'Sign Up' : 'Sign In')}
             onClick={this.handleEmailPasswordAuth}
             className="login-button"
             disabled={loading}
+            labelStyle={{ fontWeight: 'bold' }}
           />
           
           {!isSignUp && (
@@ -458,8 +487,16 @@ class SignInPage extends Component {
         <Snackbar
           open={showError}
           message={error}
-          autoHideDuration={4000}
-          bodyStyle={{ backgroundColor: '#5d4037', color: '#e0c9a6' }}
+          autoHideDuration={6000}
+          bodyStyle={{ 
+            backgroundColor: '#5d4037', 
+            color: '#ffdd99', 
+            fontSize: '14px',
+            fontWeight: 'bold',
+            padding: '12px 24px',
+            borderLeft: '4px solid #ff9800'
+          }}
+          contentStyle={{ textAlign: 'center' }}
           onRequestClose={() => this.setState({ showError: false })}
         />
       </div>
