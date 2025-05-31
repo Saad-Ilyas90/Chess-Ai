@@ -11,6 +11,18 @@ class ChessBoardMultiplayer extends Component {
             to: ''
         };
     }
+    componentDidMount() {
+        // Mark multiplayer game as active in the global state
+        if (window.chessAIApp && window.chessAIApp.setGameActive) {
+            window.chessAIApp.setGameActive(true, 'multiplayer');
+            
+            // Show alert warning about back button with stronger warning for multiplayer
+            setTimeout(() => {
+                alert("⚠️ IMPORTANT: Using your browser's back button during this multiplayer game will forfeit your match. Your opponent will win automatically. Please use the in-game controls instead.");
+            }, 500); // Short delay to ensure the board is rendered first
+        }
+    }
+    
     refreshBoard() {
         // Clear all cell classes first
         const cells = document.getElementsByClassName("cell");

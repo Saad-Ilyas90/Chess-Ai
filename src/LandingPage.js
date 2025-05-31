@@ -73,6 +73,12 @@ class LandingPage extends Component {
     // Close mobile menu when a navigation link is clicked
     this.setState({ mobileMenuOpen: false });
   };
+  
+  componentDidMount() {
+    // Expose the tab change function globally for back button handler
+    window.chessAIApp = window.chessAIApp || {};
+    window.chessAIApp.setActiveTab = this.handleTabChange;
+  }
   render() {
     const { onStartGame, onSignIn, currentUser, onSignOut, isGuest, onGameChallengeAccepted } = this.props;
     const { activeTab, showProfile, showFriends } = this.state;

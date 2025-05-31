@@ -24,6 +24,7 @@ import Chat from './Chat.js';
 import FriendsPanel from './Friends/FriendsPanel.js';
 import UserProfile from './Profile/UserProfile.js';
 import LandingPage from './LandingPage.js';
+import BackButtonHandler from './util/BackButtonHandler';
 // Firebase services
 import { 
   createGameSession, 
@@ -123,6 +124,13 @@ class App extends Component {
     if (this.state.gameMode === 'multiplayer' && this.state.gameId) {
       this.setupGameListener();
     }
+    
+    // Expose the showLandingPage function to our global back button handler
+    window.chessAIApp = window.chessAIApp || {};
+    window.chessAIApp.showLandingPage = (show) => {
+      console.log(`Setting showLandingPage to ${show}`);
+      this.setState({ showLandingPage: show });
+    };
     
     // If user is authenticated, don't show the game mode dialog automatically
     // This allows the landing page to display properly for authenticated users
@@ -1048,18 +1056,22 @@ class AppContainer extends Component {
     
     return (
       <BrowserRouter>
-        <Switch>
-          <Route exact path="/" render={(props) => 
-            <AppWithRouter {...props} currentUser={currentUser} isGuest={isGuest} onSignOut={onSignOut} />
-          } />
-          <Route path="/profile" render={(props) => 
-            <AppWithRouter {...props} currentUser={currentUser} isGuest={isGuest} onSignOut={onSignOut} />
-          } />
-          <Route path="/friends" render={(props) => 
-            <AppWithRouter {...props} currentUser={currentUser} isGuest={isGuest} onSignOut={onSignOut} />
-          } />
-          {/* Add other routes as needed */}
-        </Switch>
+        <div style={{ width: '100%' }}>
+          {/* Include the BackButtonHandler component to intercept back button events */}
+          <BackButtonHandler />
+          <Switch>
+            <Route exact path="/" render={(props) => 
+              <AppWithRouter {...props} currentUser={currentUser} isGuest={isGuest} onSignOut={onSignOut} />
+            } />
+            <Route path="/profile" render={(props) => 
+              <AppWithRouter {...props} currentUser={currentUser} isGuest={isGuest} onSignOut={onSignOut} />
+            } />
+            <Route path="/friends" render={(props) => 
+              <AppWithRouter {...props} currentUser={currentUser} isGuest={isGuest} onSignOut={onSignOut} />
+            } />
+            {/* Add other routes as needed */}
+          </Switch>
+        </div>
       </BrowserRouter>
     );
   }

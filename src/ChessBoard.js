@@ -72,6 +72,16 @@ class ChessBoard extends Component {
         var board = chess.board();
         this.refreshBoard(board)
         this.forceUpdate();
+        
+        // Mark game as active in the global state
+        if (window.chessAIApp && window.chessAIApp.setGameActive) {
+          window.chessAIApp.setGameActive(true, 'singleplayer');
+          
+          // Show alert warning about back button
+          setTimeout(() => {
+            alert("⚠️ Warning: Using your browser's back button during the game will cause you to lose your progress. Please use the in-game controls instead.");
+          }, 500); // Short delay to ensure the board is rendered first
+        }
     }
 
     componentDidUpdate(prevProps) {

@@ -1,0 +1,122 @@
+import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+
+class BackButtonHandler extends Component {
+  componentDidMount() {
+    // Create a global object to store app state and functions
+    window.chessAIApp = window.chessAIApp || {
+      // Track if user is in an active game
+      inActiveGame: false,
+      // Track game type (ai or multiplayer)
+      gameType: null,
+      // Flag to track whether back button warning has been shown (to prevent multiple dialogs)
+      backButtonWarningShown: false,
+      // Function to set these flags - will be called from ChessBoard components
+      setGameActive: (isActive, type) => {
+        window.chessAIApp.inActiveGame = isActive;
+        window.chessAIApp.gameType = type;
+        // Reset warning flag when game status changes
+        window.chessAIApp.backButtonWarningShown = false;
+        console.log(`Game status: ${isActive ? 'active' : 'inactive'}, type: ${type || 'none'}`);
+      },
+      // Function to directly show/hide the chess board
+      // This will be filled in by App.js
+      showLandingPage: null,
+      setActiveTab: (tab) => {
+        // HARDCODED: Force tab to 'home' when back button is pressed
+        const homeTabs = document.querySelectorAll('button[value="home"]');
+        if (homeTabs && homeTabs.length > 0) {
+          homeTabs[0].click();
+        }
+      }
+    };
+    
+    // Push state when component mounts to ensure we can detect back button
+    window.history.pushState({ page: 'current' }, '', window.location.pathname);
+    window.history.pushState({ page: 'current' }, '', window.location.pathname);
+    
+    // Add popstate listener to handle back button press
+    window.addEventListener('popstate', this.handleBackButton);
+  }
+
+  componentWillUnmount() {
+    // Clean up listeners
+    window.removeEventListener('popstate', this.handleBackButton);
+  }
+
+  handleBackButton = (event) => {
+    // Prevent the default navigation
+    window.history.pushState(null, null, window.location.pathname);
+    
+    // Check if user is in an active game
+    if (window.chessAIApp && window.chessAIApp.inActiveGame) {
+      // Prevent showing multiple dialogs
+      if (window.chessAIApp.backButtonWarningShown) {
+        return;
+      }
+      
+      // Mark that we've shown the warning
+      window.chessAIApp.backButtonWarningShown = true;
+      
+      // Show confirmation dialog with warning
+      const gameType = window.chessAIApp.gameType || 'this';
+      const leaveMessage = gameType === 'multiplayer' ? 
+        'You are in an active multiplayer game. If you leave now, you will forfeit the match. Are you sure you want to leave?' :
+        'You are in an active game. If you leave now, your progress will be lost. Are you sure you want to leave?';
+        
+      const shouldLeave = window.confirm(leaveMessage);
+      
+      // Reset the warning flag
+      window.chessAIApp.backButtonWarningShown = false;
+      
+      if (shouldLeave) {
+        // User confirmed they want to leave the game
+        this.exitGameOrTab();
+      }
+      // If user cancels, do nothing and stay in the game
+    } else {
+      // No active game, just handle tab switching or exit
+      this.exitGameOrTab();
+    }
+  }
+
+  // Helper method to handle all back button scenarios
+  exitGameOrTab = () => {
+    // First, try to use the App's showLandingPage function if available
+    if (window.chessAIApp && typeof window.chessAIApp.showLandingPage === 'function') {
+      // Set game as inactive
+      if (window.chessAIApp) {
+        window.chessAIApp.inActiveGame = false;
+        window.chessAIApp.gameType = null;
+      }
+      
+      // Call the hardcoded function to show landing page
+      window.chessAIApp.showLandingPage(true);
+      
+      // Also try setting the active tab to home
+      if (window.chessAIApp && window.chessAIApp.setActiveTab) {
+        window.chessAIApp.setActiveTab('home');
+      }
+      
+      console.log('Back button: Showing landing page');
+    }
+    // Then try to switch tabs if we're in the landing page with tabs
+    else if (window.chessAIApp && window.chessAIApp.setActiveTab) {
+      window.chessAIApp.setActiveTab('home');
+      console.log('Back button: Switching to home tab');
+    }
+    
+    // For fallback, try to find and click the home tab
+    const homeTabs = document.querySelectorAll('button[value="home"]');
+    if (homeTabs && homeTabs.length > 0) {
+      homeTabs[0].click();
+      console.log('Back button: Clicked home tab');
+    }
+  }
+
+  render() {
+    return null; // This component doesn't render anything
+  }
+}
+
+export default withRouter(BackButtonHandler);
