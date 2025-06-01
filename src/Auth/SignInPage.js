@@ -319,14 +319,19 @@ class SignInPage extends Component {
             <p className="login-subtitle">Enter your email to receive a password reset link</p>
             
             <TextField
-              hintText="Email"
+              floatingLabelText="Email Address"
+              floatingLabelStyle={{color: '#e0c9a6', fontWeight: '500'}}
+              floatingLabelFixed={true}
+              type="email"
               value={resetEmail}
               onChange={this.handleInputChange('resetEmail')}
               className="login-text-field"
+              underlineShow={true}
               fullWidth={true}
               errorText={this.state.resetEmailError}
               errorStyle={{color: '#ffccbc'}}
               underlineFocusStyle={{borderColor: '#e0c9a6'}}
+              inputStyle={{color: '#e0c9a6'}}
             />
             
             <RaisedButton
@@ -380,52 +385,68 @@ class SignInPage extends Component {
           {/* Email/Password Form */}
           {isSignUp && (
             <TextField
-              hintText="Display Name"
+              floatingLabelText="Display Name (shown to other players)"
+              floatingLabelStyle={{color: '#e0c9a6', fontWeight: '500'}}
+              floatingLabelFixed={true}
               value={displayName}
               onChange={this.handleInputChange('displayName')}
               className="login-text-field"
+              underlineShow={true}
               fullWidth={true}
               errorText={this.state.displayNameError}
               errorStyle={{color: '#ffccbc'}}
               underlineFocusStyle={{borderColor: '#e0c9a6'}}
+              inputStyle={{color: '#e0c9a6'}}
             />
           )}
           
           <TextField
-            hintText="Email"
+            floatingLabelText="Email Address"
+            floatingLabelStyle={{color: '#e0c9a6', fontWeight: '500'}}
+            floatingLabelFixed={true}
             type="email"
             value={email}
             onChange={this.handleInputChange('email')}
             className="login-text-field"
+            underlineShow={true}
             fullWidth={true}
             errorText={this.state.emailError}
             errorStyle={{color: '#ffccbc'}}
             underlineFocusStyle={{borderColor: '#e0c9a6'}}
+            inputStyle={{color: '#e0c9a6'}}
           />
           
           <TextField
-            hintText="Password"
+            floatingLabelText="Password (min 6 chars, include a number)"
+            floatingLabelStyle={{color: '#e0c9a6', fontWeight: '500'}}
+            floatingLabelFixed={true}
             type="password"
             value={password}
             onChange={this.handleInputChange('password')}
             className="login-text-field"
+            underlineShow={true}
             fullWidth={true}
             errorText={this.state.passwordError}
             errorStyle={{color: '#ffccbc'}}
             underlineFocusStyle={{borderColor: '#e0c9a6'}}
+            inputStyle={{color: '#e0c9a6'}}
           />
           
           {isSignUp && (
             <TextField
-              hintText="Confirm Password"
+              floatingLabelText="Confirm Password"
+              floatingLabelStyle={{color: '#e0c9a6', fontWeight: '500'}}
+              floatingLabelFixed={true}
               type="password"
               value={confirmPassword}
               onChange={this.handleInputChange('confirmPassword')}
               className="login-text-field"
+              underlineShow={true}
               fullWidth={true}
               errorText={this.state.confirmPasswordError}
               errorStyle={{color: '#ffccbc'}}
               underlineFocusStyle={{borderColor: '#e0c9a6'}}
+              inputStyle={{color: '#e0c9a6'}}
             />
           )}
           

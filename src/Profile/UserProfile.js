@@ -96,7 +96,9 @@ class UserProfile extends Component {
             </div>
           ) : (
             <div style={{ width: '120px', height: '120px', margin: '0 auto 30px', borderRadius: '60px', backgroundColor: '#5d4037', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '3px solid #e0c9a6', boxShadow: '0 5px 15px rgba(0, 0, 0, 0.3)' }}>
-              <span style={{ fontSize: '60px', color: '#e0c9a6' }}>{currentUser.displayName.charAt(0)}</span>
+              <span style={{ fontSize: '60px', color: '#e0c9a6' }}>
+                {currentUser.displayName ? currentUser.displayName.charAt(0) : 'U'}
+              </span>
             </div>
           )}
           
@@ -106,7 +108,8 @@ class UserProfile extends Component {
                 value={displayName}
                 onChange={(e) => this.setState({ displayName: e.target.value })}
                 hintText="Display Name"
-                style={{ marginBottom: '20px', color: '#e0c9a6' }}
+                underlineShow={false}
+                style={{ marginBottom: '20px', color: '#e0c9a6', backgroundColor: '#2a2a2a', border: '1px solid #e0c9a6', borderRadius: '4px', padding: '8px' }}
                 inputStyle={{ color: '#e0c9a6' }}
                 hintStyle={{ color: 'rgba(224, 201, 166, 0.5)' }}
               />

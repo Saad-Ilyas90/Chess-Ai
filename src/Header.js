@@ -11,6 +11,50 @@ import Avatar from 'material-ui/Avatar';
 import Badge from 'material-ui/Badge';
 
 class Header extends Component {
+    handleBackNavigation = () => {
+        // Check if user is in an active game
+        if (this.props.gameMode) {
+            // Show confirmation dialog with warning
+            const gameType = this.props.gameMode || 'singleplayer';
+            const leaveMessage = gameType === 'multiplayer' ? 
+                'You are in an active multiplayer game. If you leave now, you will forfeit the match. Are you sure you want to leave?' :
+                'You are in an active game. If you leave now, your progress will be lost. Are you sure you want to leave?';
+                
+            const shouldLeave = window.confirm(leaveMessage);
+            
+            if (shouldLeave) {
+                // User confirmed they want to leave the game
+                if (window.chessAIApp && typeof window.chessAIApp.showLandingPage === 'function') {
+                    // Set game as inactive
+                    if (window.chessAIApp) {
+                        window.chessAIApp.inActiveGame = false;
+                        window.chessAIApp.gameType = null;
+                    }
+                    
+                    // Call the function to show landing page
+                    window.chessAIApp.showLandingPage(true);
+                    
+                    // Also try setting the active tab to home
+                    if (window.chessAIApp && window.chessAIApp.setActiveTab) {
+                        window.chessAIApp.setActiveTab('home');
+                    }
+                    
+                    // Reload entire page if exiting multiplayer
+                    if (gameType === 'multiplayer') {
+                        window.location.reload();
+                    } else {
+                        this.props.history.push('/');
+                    }
+                } else {
+                    // Fallback if the global function isn't available
+                    this.props.history.push('/');
+                }
+            }
+        } else {
+            // No active game, just navigate back
+            this.props.history.push('/');
+        }
+    }
 
     render() {
         const { gameMode, gameId, currentUser, isGuest, onSignOut, onOpenFriends, onOpenUserProfile, onNewGameClick, onAnalysisClick, friendRequestCount, hideUserIcons } = this.props;
@@ -114,15 +158,28 @@ class Header extends Component {
 
         const rightButtons = (
             <div style={{ display: 'flex', alignItems: 'center' }}>
-                {gameMode === 'multiplayer' && gameId && (
-                    <Chip
-                      style={styles.chip}
-                      labelStyle={styles.chipLabel}
-                    >
-                      Game ID: {gameId}
-                    </Chip>
+                {/* In multiplayer mode, only show game ID and the dialog button */}
+                {gameMode === 'multiplayer' && (
+                    <div>
+                        {gameId && (
+                            <Chip
+                              style={styles.chip}
+                              labelStyle={styles.chipLabel}
+                            >
+                              Game ID: {gameId}
+                            </Chip>
+                        )}
+                        
+                        {/* Only rectangular dialog box icon in multiplayer mode */}
+                        <IconButton title="Game Dialog" onClick={onNewGameClick}>
+                            <svg width="24" height="24" viewBox="0 0 24 24">
+                                <path d="M3,3H21V21H3V3M5,5V19H19V5H5Z" fill="#e0c9a6" />
+                            </svg>
+                        </IconButton>
+                    </div>
                 )}
                 
+                {/* Only show these buttons in AI mode */}
                 {isAIMode && (
                     <IconButton title="New Game" onClick={onNewGameClick}>
                         <svg width="24" height="24" viewBox="0 0 24 24">
@@ -149,17 +206,49 @@ class Header extends Component {
                     </IconButton>
                 )}
                 
-                {userSection}
+                {/* Only show user section if not in multiplayer mode */}
+                {gameMode !== 'multiplayer' && userSection}
             </div>
         );
 
         return (<div>
           <AppBar
-            title="Chess"
             style={{ backgroundColor: 'rgba(93, 64, 55, 0.95)' }}
-            titleStyle={{ color: '#e0c9a6' }}
             zDepth={0}
+            iconElementLeft={<span />}
             iconElementRight={rightButtons}
+            title={
+              <div 
+                onClick={this.handleBackNavigation}
+                style={{ 
+                  cursor: 'pointer', 
+                  display: 'flex', 
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(93, 64, 55, 0.95)',
+                  padding: '0 12px',
+                  height: '36px'
+                }}
+              >
+                <span style={{ fontSize: '26px', color: '#e0c9a6', marginRight: '-17px', marginTop: '-14px' }}>♚</span>
+                <div style={{ 
+                  fontFamily: 'serif', 
+                  fontSize: '26px',
+                  fontWeight: 'bold', 
+                  color: '#e0c9a6',
+                  letterSpacing: '-2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginRight: '-10px'
+                }}>
+                  CHE
+                </div>
+                <div style={{ display: 'flex', marginLeft: '-10px', marginTop: '-2px' }}>
+                  <span style={{ fontSize: '26px', color: '#e0c9a6', marginRight: '-25px', transform: 'scaleX(-1)' }}>♘</span>
+                  <span style={{ fontSize: '26px', color: '#e0c9a6', transform: 'scaleX(-1)' }}>♘</span>
+                </div>
+              </div>
+            }
+            titleStyle={{ height: 'auto', lineHeight: 'normal', padding: '8px 0' }}
           />
           <LinearProgress id="thinking-bar" style={{backgroundColor:"#333"}} mode="indeterminate"> </LinearProgress>
         </div>

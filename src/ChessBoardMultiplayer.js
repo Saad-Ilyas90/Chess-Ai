@@ -21,6 +21,10 @@ class ChessBoardMultiplayer extends Component {
                 alert("⚠️ IMPORTANT: Using your browser's back button during this multiplayer game will forfeit your match. Your opponent will win automatically. Please use the in-game controls instead.");
             }, 500); // Short delay to ensure the board is rendered first
         }
+        // Initial board refresh after mount
+        setTimeout(() => {
+            this.refreshBoard();
+        }, 100);
     }
     
     refreshBoard() {
@@ -89,12 +93,6 @@ class ChessBoardMultiplayer extends Component {
                 }
             }
         }
-    }
-
-    componentDidMount() {
-        setTimeout(() => {
-            this.refreshBoard();
-        }, 100);
     }
 
     componentDidUpdate(prevProps) {

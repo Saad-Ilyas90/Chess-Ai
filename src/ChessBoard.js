@@ -4,8 +4,11 @@ const Chess = require('./chess.js').Chess;
 let sf = null;
 
 function showThinkingBar(value){
-    document.getElementById('thinking-bar').style.height="2px"
-    document.getElementById('thinking-bar').style.opacity=value?"1":"0";
+    const thinkingBar = document.getElementById('thinking-bar');
+    if (thinkingBar) {
+        thinkingBar.style.height="2px";
+        thinkingBar.style.opacity=value?"1":"0";
+    }
 }
 
 class ChessBoard extends Component {
@@ -30,7 +33,10 @@ class ChessBoard extends Component {
                 if (board[row][col] !== null)
                     if (board[row][col].color === this.state.userColor) {
                         var cellId = "cell-" + (String.fromCharCode(97 + col)) + (-1 * (row - 8));
-                        document.getElementById(cellId).classList.add("selectable");
+                        const cellElement = document.getElementById(cellId);
+                        if (cellElement) {
+                            cellElement.classList.add("selectable");
+                        }
                     }
             }
         }
@@ -41,6 +47,9 @@ class ChessBoard extends Component {
 
     // New method to highlight king in check
     highlightKingInCheck() {
+        // Check if we have a valid board prop
+        if (!this.props.board) return;
+        
         const chess = new Chess(this.props.board);
         if (chess.in_check()) {
             // Get the king's square for the current turn
@@ -67,20 +76,18 @@ class ChessBoard extends Component {
     }
 
     componentDidMount() {
-        var chess = new Chess(this.props.board);
-        var cells = document.getElementsByClassName("cell");
-        var board = chess.board();
-        this.refreshBoard(board)
-        this.forceUpdate();
+        // Use a small delay to ensure the DOM is fully rendered
+        setTimeout(() => {
+            var chess = new Chess(this.props.board);
+            var cells = document.getElementsByClassName("cell");
+            var board = chess.board();
+            this.refreshBoard(board);
+            this.forceUpdate();
+        }, 100);
         
         // Mark game as active in the global state
         if (window.chessAIApp && window.chessAIApp.setGameActive) {
           window.chessAIApp.setGameActive(true, 'singleplayer');
-          
-          // Show alert warning about back button
-          setTimeout(() => {
-            alert("⚠️ Warning: Using your browser's back button during the game will cause you to lose your progress. Please use the in-game controls instead.");
-          }, 500); // Short delay to ensure the board is rendered first
         }
     }
 
@@ -180,10 +187,15 @@ class ChessBoard extends Component {
                 this.setState({ from: cellCode })
                 this.setState({ selectMode: true })
                 var selectedCell = document.getElementById("cell-" + cellCode);
-                selectedCell.classList.add("selected");
+                if (selectedCell) {
+                    selectedCell.classList.add("selected");
+                }
                 var legatTos = chess.moves({ square: cellCode, verbose: true }).map((move) => { return move.to });
                 for (var i = 0; i < legatTos.length; i++) {
-                    document.getElementById("cell-" + legatTos[i]).classList.add("legalnext");
+                    const legalCell = document.getElementById("cell-" + legatTos[i]);
+                    if (legalCell) {
+                        legalCell.classList.add("legalnext");
+                    }
                 }
             }
         }

@@ -74,6 +74,22 @@ class LandingPage extends Component {
     this.setState({ mobileMenuOpen: false });
   };
   
+  handlePlayAsGuestClick = () => {
+    const { currentUser } = this.props;
+    
+    // If user is logged in, show a warning alert and don't start the game
+    if (currentUser && !this.props.isGuest) {
+      alert("You are currently logged in. You should log out first before playing as a guest.");
+      // Don't proceed to the game
+      return;
+    }
+    
+    // Only proceed with the game if user is not logged in or is already a guest
+    this.props.onStartGame();
+  };
+  
+
+  
   componentDidMount() {
     // Expose the tab change function globally for back button handler
     window.chessAIApp = window.chessAIApp || {};
@@ -410,7 +426,7 @@ class LandingPage extends Component {
           <RaisedButton
             label="Play as Guest"
             className="cta-button primary-button"
-            onClick={onStartGame}
+            onClick={this.handlePlayAsGuestClick}
           />
           {!currentUser && (
             <RaisedButton
@@ -449,6 +465,8 @@ class LandingPage extends Component {
       </footer>
         </div>
         )}
+        
+
         </div>
     );
   }

@@ -77,12 +77,10 @@ class App extends Component {
     }
     
     this.state = {
-      showLandingPage: true, // Start with landing page
-      boardIndex: 0,
+      showLandingPage: true, // Start with landing page      boardIndex: 0,
       newGameDiaOpen: false,
       intelligenceDiaOpen: false,
       gameModeDialogOpen: false,
-      analysisConfirmationOpen: false,
       analysisOpen: false,
       gameOver: false,
       isReviewingPosition: false,
@@ -245,11 +243,10 @@ class App extends Component {
               // Handle timeout game over
               const winner = gameData.winner;
               const loser = winner === 'w' ? 'b' : 'w';
-              if (this.state.userColor === loser) {
-                setTimeout(() => {
+              if (this.state.userColor === loser) {                setTimeout(() => {
                   alert('You lost on time!');
-                  // Show analysis confirmation
-                  this.setState({ analysisConfirmationOpen: true });
+                  // Show analysis dialog
+                  this.setState({ analysisOpen: true });
                 }, 500);
               }
             } else {
@@ -258,11 +255,10 @@ class App extends Component {
             if (chess.in_checkmate()) {
               const loser = chess.turn();
               // If this player is the loser, show the popup
-              if (loser === this.state.userColor) {
-                setTimeout(() => {
+              if (loser === this.state.userColor) {                setTimeout(() => {
                   alert('Checkmate! You lost!');
-                  // Show analysis confirmation
-                  this.setState({ analysisConfirmationOpen: true });
+                  // Show analysis dialog
+                  this.setState({ analysisOpen: true });
                 }, 500);
               }
             }
@@ -304,11 +300,10 @@ class App extends Component {
           await declareTimeoutWin(this.state.gameId, winnerColor);
           
           if (this.state.userColor === winnerColor) {
-            setTimeout(() => {
-              alert('You won on time!');
+            setTimeout(() => {              alert('You won on time!');
               this.setState({ gameOver: true });
-              // Show analysis confirmation
-              this.setState({ analysisConfirmationOpen: true });
+              // Show analysis dialog
+              this.setState({ analysisOpen: true });
             }, 500);
           }
         }
@@ -507,10 +502,9 @@ class App extends Component {
         console.error("Error updating game state:", error);
       }
     }
-    
-    // Show analysis confirmation when game is over in any game mode
+      // Show analysis dialog when game is over in any game mode
     if (gameOver) {
-      this.setState({ analysisConfirmationOpen: true });
+      this.setState({ analysisOpen: true });
     }
     
     this.getFallenOnes();
@@ -557,19 +551,14 @@ class App extends Component {
       newGameDiaOpen: false, 
       gameModeDialogOpen: true
     });
-  }
-
-  closeAnalysisConfirmation = () => {
-    this.setState({ analysisConfirmationOpen: false });
-  }
+  };
   
   showAnalysisConfirmation = () => {
-    this.setState({ analysisConfirmationOpen: true });
+    // Directly open the analysis dialog since we removed the confirmation dialog
+    this.setState({ analysisOpen: true });
   }
-  
-  showAnalysis = () => {
+    showAnalysis = () => {
     this.setState({ 
-      analysisConfirmationOpen: false,
       analysisOpen: true 
     });
   }
@@ -718,6 +707,11 @@ class App extends Component {
               onTimeUpdate={(time) => userColor === 'b' && this.handleTimeUpdate('w', time) || userColor === 'w' && this.handleTimeUpdate('b', time)}
               onTimeUp={() => userColor === 'b' && this.handleTimeUpdate('w', 0) || userColor === 'w' && this.handleTimeUpdate('b', 0)}
               className={userColor === 'w' ? 'black-timer' : 'white-timer'}
+              style={{
+                backgroundColor: userColor === 'w' ? '#232323' : '#3a3a3a',
+                borderColor: userColor === 'w' ? '#5d4037' : '#e0c9a6',
+                color: '#e0c9a6'
+              }}
             />
           </div>
           
@@ -731,6 +725,11 @@ class App extends Component {
               onTimeUpdate={(time) => userColor === 'w' && this.handleTimeUpdate('w', time) || userColor === 'b' && this.handleTimeUpdate('b', time)}
               onTimeUp={() => userColor === 'w' && this.handleTimeUpdate('w', 0) || userColor === 'b' && this.handleTimeUpdate('b', 0)}
               className={userColor === 'w' ? 'white-timer' : 'black-timer'}
+              style={{
+                backgroundColor: userColor === 'w' ? '#3a3a3a' : '#232323',
+                borderColor: userColor === 'w' ? '#e0c9a6' : '#5d4037',
+                color: '#e0c9a6'
+              }}
             />
           </div>
         </div>
@@ -757,11 +756,6 @@ class App extends Component {
     const intelligenceActions = [
       <FlatButton label="Cancel" primary={true} style={{ color: '#333' }} onClick={this.requestCloseIntelligenceDia} />,
       <FlatButton label="OK" primary={true} style={{ color: '#333' }} onClick={this.requestCloseIntelligenceDia} />,
-    ];
-    
-    const analysisConfirmationActions = [
-      <FlatButton label="No" primary={true} style={{ color: '#333' }} onClick={this.closeAnalysisConfirmation} />,
-      <FlatButton label="Yes" primary={true} style={{ color: '#333' }} onClick={this.showAnalysis} />,
     ];
       
     // If showLandingPage is true, render the landing page, otherwise render the game
@@ -859,16 +853,7 @@ class App extends Component {
           <div className="label">Depth {this.state.intelligenceLevel}</div>
           <Slider step={1} value={parseInt(this.state.intelligenceLevel, 10)} min={1} max={20} defaultValue={parseInt(this.state.intelligenceLevel, 10)} onChange={this.onChangeIntelligenceLevel} />
         </Dialog>
-        
-        <Dialog 
-          title="Game Analysis" 
-          actions={analysisConfirmationActions} 
-          modal={false} 
-          open={this.state.analysisConfirmationOpen} 
-          onRequestClose={this.closeAnalysisConfirmation}
-        >
-          Would you like to evaluate this game?
-        </Dialog>
+  
         
         {this.state.gameMode === 'multiplayer' ? (
           <MultiplayerAnalysis 

@@ -2,21 +2,22 @@
   padding: 10px;
   margin: 5px;
   border-radius: 4px;
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: #2a2a2a;
+  color: #e0c9a6;
   text-align: center;
-  border: 2px solid #ddd;
+  border: 2px solid #5d4037;
   width: 120px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .timer.active {
-  border-color: #4CAF50;
-  background-color: #e8f5e9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-color: #e0c9a6;
+  background-color: #3a3a3a;
+  box-shadow: 0 2px 8px rgba(224, 201, 166, 0.5);
 }
 
 .timer.low-time {
-  color: #f44336;
+  color: #ff9d76;
   animation: pulse 1s infinite;
 }
 
@@ -24,16 +25,59 @@
   font-size: 0.9em;
   margin-bottom: 5px;
   font-weight: bold;
+  color: #e0c9a6;
 }
 
 .time-display {
   font-size: 1.2em;
   font-weight: bold;
   font-family: monospace;
+  color: #e0c9a6;
 }
 
 @keyframes pulse {
   0% { opacity: 1; }
-  50% { opacity: 0.8; }
+  50% { opacity: 0.7; }
   100% { opacity: 1; }
-} 
+}
+
+/* White timer styling - using high specificity */
+div.timer.white-timer {
+  background-color: #3a3a3a !important;
+  border-color: #e0c9a6 !important;
+  border-width: 2px !important;
+  color: #e0c9a6 !important;
+}
+
+div.timer.white-timer.active {
+  background-color: #2a2a2a !important;
+  border-color: #e0c9a6 !important;
+  border-width: 3px !important;
+  box-shadow: 0 0 10px rgba(224, 201, 166, 0.6) !important;
+}
+
+/* Black timer styling - using high specificity to match white timer */
+div.timer.black-timer {
+  background-color: #212121 !important;
+  border-color: #e0c9a6 !important;
+  border-width: 2px !important;
+  color: #e0c9a6 !important;
+}
+
+div.timer.black-timer.active {
+  background-color: #1a1a1a !important;
+  border-color: #e0c9a6 !important;
+  border-width: 3px !important;
+  box-shadow: 0 0 10px rgba(224, 201, 166, 0.6) !important;
+}
+
+/* Critical time styling */
+.timer.critical-time {
+  animation: critical-pulse 0.5s infinite;
+}
+
+@keyframes critical-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}

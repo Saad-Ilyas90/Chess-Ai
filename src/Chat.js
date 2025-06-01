@@ -175,15 +175,17 @@ class Chat extends Component {
             <h3>Chat</h3>
             {isSmallScreen && (
               <FlatButton 
-                icon={<CloseIcon />}
+                icon={<CloseIcon color="#e0c9a6" />}
                 onClick={this.toggleChat}
+                style={{ minWidth: '36px' }}
+                backgroundColor="transparent"
               />)
             }
           </div>
           
           <div className="messages-container">
             {messages.length === 0 ? (
-              <div className="no-messages">
+              <div className="no-messages" style={{ color: '#e0c9a6', fontStyle: 'italic' }}>
                 No messages yet. Start the conversation!
               </div>
             ) : (
@@ -206,16 +208,35 @@ class Chat extends Component {
             <TextField
               hintText="Type a message..."
               fullWidth
+              underlineShow={false}
+              style={{ 
+                marginBottom: 10,
+                backgroundColor: '#3a3a3a',
+                border: '1px solid #5d4037',
+                borderRadius: '4px',
+                padding: '0 10px',
+                width: '100%',
+                boxSizing: 'border-box'
+              }}
               value={newMessage}
               onChange={this.handleMessageChange}
-              style={{ marginBottom: 10 }}
+              inputStyle={{ color: '#e0c9a6' }}
+              hintStyle={{ color: '#a09080' }}
+              underlineStyle={{ display: 'none' }}
+              underlineFocusStyle={{ display: 'none' }}
             />
             <FlatButton 
               label="Send" 
-              primary={true} 
               type="submit"
               disabled={!newMessage.trim()}
-              style={{ width: '100%' }}
+              style={{ 
+                width: '100%',
+                backgroundColor: '#e0c9a6',
+                color: '#2a2a2a',
+                marginTop: '5px'
+              }}
+              labelStyle={{ color: '#2a2a2a', fontWeight: 'bold' }}
+              hoverColor="#d0b996"
             />
           </form>
         </div>
@@ -227,7 +248,7 @@ class Chat extends Component {
             onClick={this.toggleChat}
             aria-label="Toggle chat"
           >
-            <ChatIcon color="white" />
+            <ChatIcon color="#2a2a2a" />
             {unreadCount > 0 && (
               <span className="chat-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
             )}

@@ -424,14 +424,15 @@ class GameModeDialog extends Component {
                 <div style={{display: 'flex', alignItems: 'flex-end', gap: '10px', marginBottom: '15px'}}>
                   <TextField
                     floatingLabelText="Enter Game ID"
-                    style={{flex: 1}}
+                    underlineShow={false}
+                    style={{flex: 1, backgroundColor: '#2a2a2a', border: '1px solid #e0c9a6', borderRadius: '4px', padding: '8px'}}
                     value={gameId}
                     onChange={this.handleGameIdChange}
                     errorText={error}
+                    underlineStyle={{display: 'none'}}
+                    underlineFocusStyle={{display: 'none'}}
                     inputStyle={{color: '#ffffff'}}
                     floatingLabelStyle={{color: '#e0c9a6'}}
-                    underlineStyle={{borderColor: 'rgba(224, 201, 166, 0.5)'}}
-                    underlineFocusStyle={{borderColor: '#e0c9a6'}}
                     errorStyle={{color: '#ff7043'}}
                   />
                   <RaisedButton
@@ -511,8 +512,8 @@ class GameModeDialog extends Component {
               style={{marginBottom: '15px'}}
               labelStyle={{color: '#ffffff'}}
               floatingLabelStyle={{color: '#e0c9a6'}}
-              underlineStyle={{borderColor: 'rgba(224, 201, 166, 0.5)'}}
-              underlineFocusStyle={{borderColor: '#e0c9a6'}}
+              underlineStyle={{display: 'none'}}
+              underlineFocusStyle={{display: 'none'}}
               menuItemStyle={{color: '#e0c9a6'}}
               iconStyle={{fill: '#e0c9a6'}}
             >

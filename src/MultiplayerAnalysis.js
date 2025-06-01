@@ -14,6 +14,12 @@ import { red500, amber500, green500, blue500, grey700 } from 'material-ui/styles
 import Tabs from 'material-ui/Tabs/Tabs';
 import Tab from 'material-ui/Tabs/Tab';
 
+// Theme colors
+const themeDialogBackgroundColor = '#2a2a2a';
+const themeDialogTextColor = '#e0c9a6';
+const themeDialogSecondaryTextColor = '#b0a080';
+const themeAccentColor = '#5d4037';
+
 class MultiplayerAnalysis extends Component {
   constructor(props) {
     super(props);
@@ -346,96 +352,44 @@ class MultiplayerAnalysis extends Component {
   }
 
   render() {
-    const { open, playerColor } = this.props;
-    const { analyzing, moves, activeTab } = this.state;
-    
-    // Filter moves by color for the tabs
-    const whiteMoves = moves.filter(move => move.isWhite);
-    const blackMoves = moves.filter(move => !move.isWhite);
-    
-    // Get only the player's moves based on their color
-    const playerMoves = playerColor === 'w' ? whiteMoves : blackMoves;
-    
-    // Calculate move quality counts
-    const whiteGoodMoves = whiteMoves.filter(m => m.magnitude === 'good move' || m.magnitude === 'excellent move').length;
-    const whiteBadMoves = whiteMoves.filter(m => m.magnitude === 'blunder' || m.magnitude === 'mistake' || m.magnitude === 'inaccuracy').length;
-    const blackGoodMoves = blackMoves.filter(m => m.magnitude === 'good move' || m.magnitude === 'excellent move').length;
-    const blackBadMoves = blackMoves.filter(m => m.magnitude === 'blunder' || m.magnitude === 'mistake' || m.magnitude === 'inaccuracy').length;
-    
-    // Sort moves by move number
-    whiteMoves.sort((a, b) => a.move - b.move);
-    blackMoves.sort((a, b) => a.move - b.move);
-    
-    const customContentStyle = {
+    const { open } = this.props;
+    const { analyzing, moves } = this.state;
+
+    const displayMoves = [...moves];
+    displayMoves.sort((a, b) => a.move - b.move);
+
+    const dialogTitleStyle = {
+      color: themeDialogTextColor,
+      paddingBottom: '8px',
+      backgroundColor: themeDialogBackgroundColor,
+    };
+
+    const dialogContentStyle = {
+      color: themeDialogTextColor,
       position: 'relative',
-      paddingTop: '0px'
+      paddingTop: '0px',
+      backgroundColor: themeDialogBackgroundColor,
     };
     
-    const titleStyle = {
-      paddingBottom: '8px'
+    const dialogActionsContainerStyle = {
+      backgroundColor: themeDialogBackgroundColor,
     };
-    
-    const closeButtonStyle = {
+
+    const closeIconButtonStyle = {
       position: 'absolute',
       right: '5px',
       top: '5px',
       padding: '0'
     };
-    
-    const tabStyle = {
-      backgroundColor: '#f5f5f5',
-      color: '#333'
-    };
-    
+
     const actions = [
       <FlatButton
         label="Close"
         primary={true}
-        style={{ color: '#333' }}
+        style={{ color: themeDialogTextColor }}
         onClick={this.handleClose}
       />
     ];
-
-    const renderMovesList = (movesToShow) => {
-      if (movesToShow.length === 0) {
-        return (
-          <div style={{ textAlign: 'center', padding: '20px' }}>
-            No significant moves were found.
-          </div>
-        );
-      }
-
-      return (
-        <List>
-          {movesToShow.map((move, index) => (
-            <div key={index}>
-              <ListItem
-                leftAvatar={
-                  <Avatar
-                    icon={this.getIcon(move.magnitude)}
-                    backgroundColor={move.color}
-                  />
-                }
-                primaryText={`Move ${Math.ceil(move.move/2)} - ${move.player}`}
-                secondaryText={
-                  <p>
-                    Evaluation changed from {move.evalBefore} to {move.evalAfter}.
-                    This was a {move.magnitude}.
-                  </p>
-                }
-                secondaryTextLines={2}
-                onClick={() => {
-                  console.log(`Clicked on move index ${move.move} from tab ${activeTab}`);
-                  this.jumpToPosition(move.fen, move.move);
-                }}
-                style={{cursor: 'pointer'}}
-              />
-              <Divider inset={true} />
-            </div>
-          ))}
-        </List>
-      );
-    };
 
     return (
       <Dialog
@@ -445,81 +399,58 @@ class MultiplayerAnalysis extends Component {
         open={open}
         onRequestClose={this.handleClose}
         autoScrollBodyContent={true}
-        contentStyle={customContentStyle}
-        titleStyle={titleStyle}
+        paperProps={{ style: { backgroundColor: themeDialogBackgroundColor } }}
+        contentStyle={dialogContentStyle}
+        titleStyle={dialogTitleStyle}
+        actionsContainerStyle={dialogActionsContainerStyle}
+        bodyStyle={{ backgroundColor: themeDialogBackgroundColor, color: themeDialogTextColor }}
       >
-        <IconButton 
-          style={closeButtonStyle} 
+        <IconButton
+          style={closeIconButtonStyle}
           onClick={this.handleClose}
           tooltip="Close"
         >
-          <CloseIcon color={grey700} />
+          <CloseIcon color={themeDialogTextColor} />
         </IconButton>
-        
+
         {analyzing ? (
-          <div style={{ textAlign: 'center', padding: '20px' }}>
+          <div style={{ textAlign: 'center', padding: '20px', color: themeDialogTextColor }}>
             Analyzing game moves...
           </div>
-        ) : moves.length > 0 ? (
-          <div>
-            <p>Analysis of the game:</p>
-            
-            {/* Add move quality summary */}
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-around', 
-              margin: '10px 0 15px',
-              padding: '8px',
-              backgroundColor: '#f9f9f9',
-              borderRadius: '4px'
-            }}>
-              <div>
-                <strong>White:</strong> {whiteGoodMoves} good moves, {whiteBadMoves} mistakes
-              </div>
-              <div>
-                <strong>Black:</strong> {blackGoodMoves} good moves, {blackBadMoves} mistakes
-              </div>
-            </div>
-            
-            <p style={{ fontSize: '0.8em', fontStyle: 'italic', marginBottom: '15px' }}>
+        ) : displayMoves.length > 0 ? (
+          <div style={{ color: themeDialogTextColor }}>
+            <p>All moves in this game:</p>
+            <p style={{ fontSize: '0.8em', fontStyle: 'italic', marginBottom: '15px', color: themeDialogSecondaryTextColor }}>
               Click on a move to view the position on the board
             </p>
-            
-            <Tabs
-              value={activeTab}
-              onChange={this.handleTabChange}
-            >
-              <Tab 
-                label="My Moves" 
-                value="player"
-                style={tabStyle}
-              >
-                <div style={{ padding: '10px' }}>
-                  {renderMovesList(playerMoves)}
+            <List>
+              {displayMoves.map((move, index) => (
+                <div key={index}>
+                  <ListItem
+                    leftAvatar={
+                      <Avatar
+                        icon={this.getIcon(move.magnitude)}
+                        backgroundColor={move.color}
+                      />
+                    }
+                    primaryText={<span style={{ color: themeDialogTextColor }}>{`Move ${Math.ceil(move.move/2)} - ${move.player}`}</span>}
+                    secondaryText={
+                      <p style={{ color: themeDialogSecondaryTextColor, margin: 0 }}>
+                        Evaluation changed from {move.evalBefore} to {move.evalAfter}.
+                        This was a {move.magnitude}.
+                      </p>
+                    }
+                    secondaryTextLines={2}
+                    onClick={() => this.jumpToPosition(move.fen, move.move)}
+                    style={{cursor: 'pointer'}}
+                  />
+                  <Divider inset={true} style={{ backgroundColor: themeAccentColor }}/>
                 </div>
-              </Tab>
-              <Tab 
-                label="White Moves" 
-                value="white"
-                style={tabStyle}
-              >
-                <div style={{ padding: '10px' }}>
-                  {renderMovesList(whiteMoves)}
-                </div>
-              </Tab>
-              <Tab 
-                label="Black Moves" 
-                value="black"
-                style={tabStyle}
-              >
-                <div style={{ padding: '10px' }}>
-                  {renderMovesList(blackMoves)}
-                </div>
-              </Tab>
-            </Tabs>
+              ))}
+            </List>
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '20px' }}>
+          <div style={{ textAlign: 'center', padding: '20px', color: themeDialogTextColor }}>
             No significant moves were found in this game.
           </div>
         )}
@@ -528,4 +459,4 @@ class MultiplayerAnalysis extends Component {
   }
 }
 
-export default MultiplayerAnalysis; 
+export default MultiplayerAnalysis;
