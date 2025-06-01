@@ -618,9 +618,13 @@
 
 
 .chess-board {
-  position: relative; /* Ensure proper positioning context */
+  display: inline-grid;
+  grid-template-columns: repeat(8, 1em);
+  grid-auto-rows: 1em;
+  width: fit-content;
+  position: relative;
   cursor: default;
-  font-family: "chessline";
+  font-family: 'Segoe UI Symbol', 'Arial Unicode MS', sans-serif;
   text-align: center;
   font-size: 86.5px;
   -webkit-touch-callout: none;
@@ -629,15 +633,12 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  max-width: 100%;
-  height: auto;
-  z-index: 20; /* Ensure board is above timers */
-  pointer-events: auto; /* Ensure the board can receive pointer events */
-
-  /* Match landing page chess board surround color scheme */
+  /* Surround background for subtle frame */
   background-color: rgba(224, 201, 166, 0.1);
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+  z-index: 20; /* Ensure board is above timers */
+  pointer-events: auto; /* Ensure the board can receive pointer events */
   overflow: hidden;
 }
 
@@ -655,9 +656,7 @@
   }
 }
 
-.seperator {
-  margin-top: -100px;
-}
+/* separators removed */
 
 .selectable:hover {
   background-color: gold;

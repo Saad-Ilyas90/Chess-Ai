@@ -227,23 +227,22 @@ class ChessBoard extends Component {
     }
 
     render() {
-        let renderableBoard = fenToBoard(this.props.board);
-        var row = [];
-
-        for (var i = 0; i < renderableBoard.length; i++) {
-            if (i % 8 == 0 && i != 0) {
-                row.push(<p className="seperator" />);
-            }
-            let _cellCode = String.fromCharCode(97 + i % 8) + String.fromCharCode(57 - (i + 1) / 8);
-            row.push(<Cell cellCode={_cellCode} onClick={(cellCode) => { this.nextState(cellCode) }} piece={renderableBoard[i]} />)
-
-        }
-
-        return (
-            <div className="chess-board">
-                {row}
-            </div>
-        );
+        // Convert the board string to an array of individual cells
+        const renderableBoard = fenToBoard(this.props.board).split('');
+        const cells = renderableBoard.map((piece, i) => {
+            const file = i % 8;
+            const rank = 8 - Math.floor(i / 8);
+            const cellCode = String.fromCharCode(97 + file) + rank;
+            return (
+                <Cell
+                    key={cellCode}
+                    cellCode={cellCode}
+                    onClick={(code) => this.nextState(code)}
+                    piece={piece}
+                />
+            );
+        });
+        return <div className="chess-board">{cells}</div>;
     }
 }
 
@@ -258,7 +257,36 @@ class Cell extends Component {
         alert("hello");
     }
     render() {
-        return (<span id={"cell-" + this.props.cellCode} onClick={() => { this.props.onClick(this.props.cellCode) }} className="cell">{this.props.piece}</span>)
+        // Determine square color based on file (a-h) and rank (1-8)
+        const fileIndex = this.props.cellCode.charCodeAt(0) - 'a'.charCodeAt(0);
+        const rankIndex = parseInt(this.props.cellCode[1], 10) - 1;
+        const isLightSquare = (fileIndex + rankIndex) % 2 === 0;
+        const cellColor = isLightSquare ? 'c5876a' : '#b58863';
+        // Map FEN char to filled glyph
+        const fenChar = this.props.piece;
+        const glyphMap = { 'p': '\u265F', 'r': '\u265C', 'n': '\u265E', 'b': '\u265D', 'q': '\u265B', 'k': '\u265A' };
+        const glyph = fenChar && fenChar !== '.' ? glyphMap[fenChar.toLowerCase()] : '';
+        // Determine piece color by FEN case (uppercase = white)
+        const isWhitePiece = fenChar && fenChar === fenChar.toUpperCase();
+        const pieceColor = isWhitePiece ? '80440e' : '#000000';
+        return (
+            <span
+                id={'cell-' + this.props.cellCode}
+                onClick={() => this.props.onClick(this.props.cellCode)}
+                className="cell"
+                style={{
+                    backgroundColor: cellColor,
+                    color: glyph ? pieceColor : 'inherit',
+                    display: 'inline-flex',
+                    width: '1em',
+                    height: '1em',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+            >
+                {glyph}
+            </span>
+        );
     }
 }
 

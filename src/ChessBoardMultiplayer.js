@@ -317,17 +317,36 @@ class Cell extends Component {
     }
     
     render() {
+        // Square coloring
+        const fileIndex = this.props.cellCode.charCodeAt(0) - 'a'.charCodeAt(0);
+        const rankIndex = parseInt(this.props.cellCode[1], 10) - 1;
+        const isLightSquare = (fileIndex + rankIndex) % 2 === 0;
+        const cellColor = isLightSquare ? 'c5876a' : '#b58863';
+        // Map FEN char to filled glyph
+        const fenChar = this.props.piece;
+        const glyphMap = { 'p': '\u265F', 'r': '\u265C', 'n': '\u265E', 'b': '\u265D', 'q': '\u265B', 'k': '\u265A' };
+        const glyph = fenChar && fenChar !== '.' ? glyphMap[fenChar.toLowerCase()] : '';
+        // Determine piece color by FEN case
+        const isWhitePiece = fenChar && fenChar === fenChar.toUpperCase();
+        const pieceColor = isWhitePiece ? '80440e' : '#000000';
         return (
             <span 
                 id={`cell-${this.props.cellCode}`} 
                 onClick={this.handleClick} 
                 className="cell"
                 style={{ 
+                    backgroundColor: cellColor,
+                    color: glyph ? pieceColor : 'inherit',
+                    display: 'inline-flex',
+                    width: '1em',
+                    height: '1em',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     pointerEvents: 'auto',
                     zIndex: 10
                 }}
             >
-                {this.props.piece}
+                {glyph}
             </span>
         );
     }

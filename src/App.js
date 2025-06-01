@@ -451,27 +451,31 @@ class App extends Component {
   };
 
   getFallenOnes = () => {
-    // Check if we have valid historical states
-    if (!this.state.historicalStates || 
-        this.state.boardIndex < 0 || 
+    // Compute captured pieces by comparing initial board to current board
+    if (!this.state.historicalStates ||
+        this.state.boardIndex < 0 ||
         this.state.boardIndex >= this.state.historicalStates.length ||
         !this.state.historicalStates[this.state.boardIndex]) {
-      return ""; // Return empty string if no valid state exists
+      return "";
     }
-    
-    var orig = "tJnWlNjTOoOoOoOoZ+Z+Z+Z++Z+Z+Z+ZZ+Z+Z+Z++Z+Z+Z+ZpPpPpPpPRhBqKbHr".toLowerCase();
-    var curr = fenToBoard(this.state.historicalStates[this.state.boardIndex]).toLowerCase();
-    orig = orig.replace(/z/g,"");
-    orig = orig.replace(/\+/g,"");
-    curr = curr.replace(/z/g,"");
-    curr = curr.replace(/\+/g,"");
-    orig = orig.split("");
-    curr = curr.split("");
-    for(let i = 0;i<curr.length;i++){
-      if(orig.includes(curr[i]))
-        orig.splice(orig.indexOf(curr[i]),1)
-    }
-    return orig.join("");
+    // Use startFen constant for initial position
+    const initialBoard = fenToBoard(startFen);
+    const currentBoard = fenToBoard(this.state.historicalStates[this.state.boardIndex]);
+    // Extract arrays of piece glyphs (exclude spaces)
+    const initialPieces = initialBoard.split('').filter(ch => ch.trim().length > 0);
+    const currentPieces = currentBoard.split('').filter(ch => ch.trim().length > 0);
+    // Determine captured pieces: those in initialPieces not in currentPieces
+    const tempCurr = [...currentPieces];
+    const captured = [];
+    initialPieces.forEach(piece => {
+      const idx = tempCurr.indexOf(piece);
+      if (idx !== -1) {
+        tempCurr.splice(idx, 1);
+      } else {
+        captured.push(piece);
+      }
+    });
+    return captured.join('');
   }
 
   handleChessMove = async (fen, gameOver = false) => {
