@@ -265,13 +265,7 @@ class ChessBoardMultiplayer extends Component {
         const rows = [];
         const boardArray = fenToBoard(this.props.board);
         
-        // Create rows
         for (let rank = 0; rank < 8; rank++) {
-            // Add separator between rows
-            if (rank > 0) {
-                rows.push(<p key={`sep-${rank}`} className="seperator" />);
-            }
-            
             // Create cells for each rank
             const rankCells = [];
             const displayRank = 8 - rank;  // Always display from white's perspective in the data model

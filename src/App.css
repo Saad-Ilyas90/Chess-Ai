@@ -668,7 +668,7 @@
 }
 
 .legalnext {
-  background-color: gold !important;
+  background-color: rgba(33, 150, 243, 0.5) !important; /* Light Blue for legal moves */
   cursor: pointer;
 }
 

@@ -7,22 +7,27 @@ import Avatar from 'material-ui/Avatar';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import Popover from 'material-ui/Popover';
+import IconButton from 'material-ui/IconButton';
 import Divider from 'material-ui/Divider';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import UserProfile from './Profile/UserProfile';
 import FriendsPanel from './Friends/FriendsPanel';
+import Badge from 'material-ui/Badge';
+import { getUserNotifications } from './firebase';
 
 class LandingPage extends Component {
   constructor(props) {
     super(props);
     
+    this.unsubscribeFromNotifications = null;
     this.state = {
       profileMenuOpen: false,
       anchorEl: null,
       activeTab: 'home',
       showProfile: false,
       showFriends: false,
-      mobileMenuOpen: false
+      mobileMenuOpen: false,
+      notificationCount: 0
     };
   }
   
@@ -94,7 +99,21 @@ class LandingPage extends Component {
     // Expose the tab change function globally for back button handler
     window.chessAIApp = window.chessAIApp || {};
     window.chessAIApp.setActiveTab = this.handleTabChange;
+    // Subscribe to notifications to update badge count
+    if (this.props.currentUser && !this.props.isGuest) {
+      this.unsubscribeFromNotifications = getUserNotifications(
+        this.props.currentUser.id,
+        snapshot => this.setState({ notificationCount: snapshot.size })
+      );
+    }
   }
+
+  componentWillUnmount() {
+    if (this.unsubscribeFromNotifications) {
+      this.unsubscribeFromNotifications();
+    }
+  }
+
   render() {
     const { onStartGame, onSignIn, currentUser, onSignOut, isGuest, onGameChallengeAccepted } = this.props;
     const { activeTab, showProfile, showFriends } = this.state;
@@ -209,13 +228,41 @@ class LandingPage extends Component {
             <a href="#about" className="nav-link" onClick={this.handleNavLinkClick}>About</a>
             {currentUser ? (
               <div className="user-profile-container">
-                <FlatButton
-                  label={currentUser.displayName || "Profile"}
-                  className="nav-button profile-button"
-                  onClick={this.handleProfileClick}
-                  labelStyle={{ color: '#e0c9a6' }}
-                  icon={currentUser.photoURL ? <Avatar src={currentUser.photoURL} size={24} /> : null}
-                />
+                {this.state.notificationCount > 0 ? (
+                  <Badge
+                    badgeContent={this.state.notificationCount}
+                    badgeStyle={{
+                      backgroundColor: '#ffdd99',
+                      color: '#5d4037',
+                      fontWeight: 'bold',
+                      top: 0,
+                      right: 0,
+                      transform: 'none'
+                    }}
+                    style={{ marginRight: '12px' }}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                  >
+                    <IconButton onClick={this.handleProfileClick} style={{ padding: 0, width: 24, height: 24 }}>
+                      {currentUser.photoURL ? (
+                        <Avatar src={currentUser.photoURL} size={24} />
+                      ) : (
+                        <Avatar size={24}>
+                          {currentUser.displayName ? currentUser.displayName.charAt(0).toUpperCase() : 'U'}
+                        </Avatar>
+                      )}
+                    </IconButton>
+                  </Badge>
+                ) : (
+                  <IconButton onClick={this.handleProfileClick} style={{ padding: 0, width: 24, height: 24, marginRight: '12px' }}>
+                    {currentUser.photoURL ? (
+                      <Avatar src={currentUser.photoURL} size={24} />
+                    ) : (
+                      <Avatar size={24}>
+                        {currentUser.displayName ? currentUser.displayName.charAt(0).toUpperCase() : 'U'}
+                      </Avatar>
+                    )}
+                  </IconButton>
+                )}
                 <Popover
                   open={this.state.profileMenuOpen}
                   anchorEl={this.state.anchorEl}
