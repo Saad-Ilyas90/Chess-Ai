@@ -283,7 +283,7 @@ class Cell extends Component {
     const fileIndex = this.props.cellCode.charCodeAt(0) - "a".charCodeAt(0);
     const rankIndex = parseInt(this.props.cellCode[1], 10) - 1;
     const isLightSquare = (fileIndex + rankIndex) % 2 === 0;
-    const cellColor = isLightSquare ? "c5876a" : "#b58863";
+    const cellColor = isLightSquare ? "#cba974" : "#845c38";
     // Map FEN char to filled glyph
     const fenChar = this.props.piece;
     const glyphMap = {
@@ -298,7 +298,7 @@ class Cell extends Component {
       fenChar && fenChar !== "." ? glyphMap[fenChar.toLowerCase()] : "";
     // Determine piece color by FEN case (uppercase = white)
     const isWhitePiece = fenChar && fenChar === fenChar.toUpperCase();
-    const pieceColor = isWhitePiece ? "80440e" : "#000000";
+    const pieceColor = isWhitePiece ? "#f2d1b7" : "#000000";
     return (
       <span
         id={"cell-" + this.props.cellCode}
