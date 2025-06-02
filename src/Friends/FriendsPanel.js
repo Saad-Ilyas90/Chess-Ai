@@ -866,37 +866,114 @@ class FriendsPanel extends Component {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 0 3px rgba(255, 221, 153, 0.4)' 
+                    boxShadow: '0 0 3px rgba(255, 221, 153, 0.4)',
+                    top: '6px',
+                    right: '6px'
                   }}
-                  style={{ marginRight: '15px' }}
+                  style={{ 
+                    marginRight: '15px',
+                    position: 'relative',
+                    display: 'inline-flex'
+                  }}
                 >
                   <IconButton 
                     onClick={() => this.setState({ showFriendRequests: true })}
                     title="Friend Requests"
-                    style={{ 
-                      backgroundColor: '#5d4037', 
-                      border: '2px solid #8d6e63', 
-                      padding: '8px',
-                      boxShadow: 'none'
+                    className="friend-request-icon"
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      minWidth: '80px',
+                      position: 'relative',
+                      top: '2px',
+                      marginTop: '0',
+                      alignSelf: 'flex-start',
+                      visibility: 'visible',
+                      opacity: '1'
                     }}
                   >
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <span style={{ fontSize: '28px', color: '#ffdd99', textShadow: 'none' }}>👥</span>
-                      <span style={{ fontSize: '11px', color: '#ffdd99', fontWeight: 'bold', marginTop: '3px', textAlign: 'center' }}>REQUESTS</span>
+                    <div style={{ 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      alignItems: 'center',
+                      width: '100%',
+                      position: 'relative',
+                      top: '0'
+                    }}>
+                      <i 
+                        className="fas fa-user-friends" 
+                        style={{ 
+                          fontSize: '15px',
+                          color: '#ffdd99', 
+                          textShadow: '0 0 3px rgba(255, 221, 153, 0.5)',
+                          display: 'block',
+                          lineHeight: '1'
+                        }} 
+                      />
+                      <span style={{ 
+                        fontSize: '12px',
+                        color: '#ffdd99', 
+                        fontWeight: 'bold', 
+                        textAlign: 'center',
+                        whiteSpace: 'nowrap',
+                        display: 'block',
+                        lineHeight: '1'
+                      }}>REQUESTS</span>
                     </div>
                   </IconButton>
                 </Badge>
               ) : (
-                <IconButton 
-                  onClick={() => this.setState({ showFriendRequests: true })}
-                  title="Friend Requests"
-                  className="friend-request-icon"
-                >
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <span style={{ fontSize: '30px', color: '#ffdd99', textShadow: '0 0 3px rgba(255, 221, 153, 0.5)' }}>👥</span>
-                    <span style={{ fontSize: '12px', color: '#ffdd99', fontWeight: 'bold', marginTop: '2px', textAlign: 'center' }}>REQUESTS</span>
-                  </div>
-                </IconButton>
+                <IconButton
+  onClick={() => this.setState({ showFriendRequests: true })}
+  title="Friend Requests"
+  className="friend-request-icon"
+  style={{
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    minWidth: '80px',
+    position: 'relative',
+    top: '2px',
+    marginTop: '0',
+    alignSelf: 'flex-start',
+    // Force visibility on mobile
+    visibility: 'visible',
+    opacity: '1'
+  }}
+>
+  <div style={{ 
+    display: 'flex', 
+    flexDirection: 'column', 
+    alignItems: 'center',
+    width: '100%',
+    position: 'relative',
+    top: '0'
+  }}>
+    <i 
+      className="fas fa-user-friends" 
+      style={{ 
+        fontSize: '15px',
+        color: '#ffdd99', 
+        textShadow: '0 0 3px rgba(255, 221, 153, 0.5)',
+        display: 'block',
+        lineHeight: '1'
+      }} 
+    />
+    <span style={{ 
+      fontSize: '12px',
+      color: '#ffdd99', 
+      fontWeight: 'bold', 
+      Top: '2px', 
+      textAlign: 'center',
+      whiteSpace: 'nowrap',
+      display: 'block',
+      lineHeight: '1'
+    }}>
+      REQUESTS
+    </span>
+  </div>
+</IconButton>
               )}
               
               {/* Other Notifications Icon */}
@@ -914,9 +991,18 @@ class FriendsPanel extends Component {
                     height: '22px',
                     borderRadius: '11px',
                     border: '2px solid #8d6050',
-                    boxShadow: '0 0 8px #ffdd99'
+                    boxShadow: '0 0 8px #ffdd99',
+                    top: '6px',
+                    right: '6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}
-                  style={{ marginRight: '15px' }}
+                  style={{ 
+                    marginRight: '15px',
+                    position: 'relative',
+                    display: 'inline-flex'
+                  }}
                 >
                   <IconButton 
                     onClick={() => this.setState({ showNotifications: true })}
@@ -929,7 +1015,7 @@ class FriendsPanel extends Component {
                     }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <span className="icon-text">🔔</span>
+                      <i className="fas fa-bell" style={{ fontSize: '28px', color: '#ffdd99' }} />
                       <span className="icon-label">ALERTS</span>
                     </div>
                   </IconButton>
@@ -1553,7 +1639,7 @@ class FriendsPanel extends Component {
           <div style={{ padding: '20px' }}>
             {otherNotifications.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '20px' }}>
-                <div style={{ fontSize: '24px', marginBottom: '10px' }}>🔔</div>
+                <div style={{ fontSize: '24px', marginBottom: '10px' }}><i className="fas fa-bell" style={{ fontSize: '24px', color: '#e0c9a6' }} /></div>
                 <p style={{ color: '#e0c9a6', fontSize: '16px' }}>No notifications at the moment</p>
               </div>
             ) : (

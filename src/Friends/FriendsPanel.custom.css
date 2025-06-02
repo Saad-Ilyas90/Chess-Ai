@@ -1,4 +1,23 @@
 /* Enhanced styles for the Friends Panel */
+/* Tall friend request tabs */
+.friend-request-icon, .notification-icon {
+  height: 130px !important;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 968px) {
+  .friend-request-icon, .notification-icon {
+    height: 170px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .friend-request-icon, .notification-icon {
+    height: 200px !important;
+  }
+}
+
+/* Original styles */
 .friend-request-icon, .notification-icon {
   background-color: #8d6050 !important;
   box-shadow: 0 0 2px rgba(224, 201, 166, 0.3) !important;
@@ -17,6 +36,7 @@
   text-align: center !important;
   flex-direction: column !important;
 }
+
 
 /* Force visibility in all states */
 .friend-request-icon *, 
@@ -256,10 +276,7 @@
   text-align: center !important;
   align-items: center !important;
   justify-content: center !important;
- 
 }
-
-/* Fix button internal structure */
 .add-friends-button button > div {
   display: flex !important;
   align-items: center !important;
@@ -1168,11 +1185,34 @@ button.friend-request-icon > div > span:first-child,
   
   /* Fix for icon alignment in small screens */
   button.friend-request-icon > div,
-  [title="Notifications"] > div {
+  [title="Notifications"] > div,
+  [title="Friend Requests"] > div {
     flex-direction: row !important;
     justify-content: center !important;
     align-items: center !important;
     gap: 5px !important;
+  }
+  
+  /* Consistent styling for both badge and non-badge versions */
+  [title="Friend Requests"] > div,
+  .friend-request-icon > div {
+    padding-top: 8px !important;
+    position: relative !important;
+  }
+  
+  /* Target the specific icon and text within friend request button */
+  .friend-request-icon i.fas.fa-user-friends,
+  i.fas.fa-user-friends {
+    margin-bottom: 4px !important;
+    position: relative !important;
+    top: 14px !important; /* Increased top value to push it down more */
+    display: block !important;
+  }
+  
+  /* Adjust the text position */
+  .friend-request-icon span {
+    margin-top: 4px !important;
+    display: block !important;
   }
   
   /* Adjust icon size for small screens */
