@@ -49,6 +49,22 @@ section {
   background-color: transparent !important;
 }
 
+/* Add specific override for mobile screens to prevent white border */
+@media (max-width: 768px) {
+  .secondary-button {
+    border: 2px solid #e0c9a6 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+  
+  /* Ensure analysis button is visible */
+  .game-mode {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 40px !important;
+  }
+}
+
 .secondary-button span {
   color: #e0c9a6 !important;
   font-weight: bold !important;
@@ -382,6 +398,155 @@ section {
   padding: 100px 5%;
 }
 
+/* Perfect vertical alignment for multiplayer section */
+.mobile-perfect-align {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 50px;
+  width: 100%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.center-knight {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.mobile-perfect-align .game-mode-icon {
+  margin: 0 auto;
+  font-size: 60px;
+}
+
+.mobile-perfect-align .game-mode-title {
+  margin-bottom: 15px;
+  width: 100%;
+  text-align: center;
+}
+
+.mobile-perfect-align .game-mode-description {
+  margin-bottom: 20px;
+  width: 100%;
+  text-align: center;
+  max-width: 90%;
+}
+
+.mobile-perfect-align .game-mode-button {
+  margin: 0 auto;
+}
+
+/* Styles for the new multiplayer layout structure */
+.game-mode-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 50px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.knight-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  order: 2; /* On desktop, knight appears on the right */
+}
+
+.knight-icon-container .game-mode-icon {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.multiplayer-section {
+  flex: 1;
+  margin: 0;
+}
+
+/* Mobile layout for multiplayer section */
+@media (max-width: 768px) {
+  /* Center everything perfectly on mobile */
+  .game-mode-wrapper {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0;
+    width: 100%;
+  }
+  
+  /* Knight icon container - strict centering */
+  .knight-icon-container {
+    order: -1; /* On mobile, knight appears on top */
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+  }
+  
+  /* Perfect centering for the knight icon */
+  .knight-icon-container .game-mode-icon {
+    margin: 0 auto;
+    position: relative;
+    left: 0; /* Reset any offset */
+    transform: translateX(0); /* Reset any transforms */
+  }
+  
+  /* Multiplayer section - strict centering */
+  .multiplayer-section {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+  }
+  
+  /* Content section - strict centering */
+  .multiplayer-section .game-mode-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 90%;
+    text-align: center;
+    padding: 0;
+    margin: 0 auto;
+  }
+  
+  /* Title centering */
+  .multiplayer-section .game-mode-title {
+    margin: 0 auto 15px auto;
+    text-align: center;
+    width: 100%;
+  }
+  
+  /* Description centering */
+  .multiplayer-section .game-mode-description {
+    margin: 0 auto 20px auto;
+    text-align: center;
+    width: 100%;
+  }
+  
+  /* Button centering */
+  .multiplayer-section .game-mode-button {
+    margin: 0 auto;
+    display: block !important;
+  }
+}
+
 .game-modes-container {
   max-width: 1000px;
   margin: 0 auto;
@@ -420,6 +585,8 @@ section {
 .game-mode-content {
   flex: 1;
   padding: 0 30px;
+  display: block;
+  width: 100%;
 }
 
 .game-mode-title {
@@ -438,6 +605,7 @@ section {
 
 .game-mode-button {
   min-width: 140px !important;
+  border-radius: 4px !important;
 }
 
 /* About Section */
@@ -951,10 +1119,29 @@ section {
   .game-mode {
     flex-direction: column;
     text-align: center;
+    margin-bottom: 40px;
+    display: flex;
   }
   
   .game-mode.reversed {
     flex-direction: column;
+  }
+  
+  /* Fix the knight icon position for reversed game mode on mobile */
+  .game-mode.reversed {
+    display: flex !important;
+    flex-direction: column-reverse !important;
+  }
+  
+  .game-mode.reversed .game-mode-icon-container {
+    order: -1;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+  
+  .game-mode.reversed .game-mode-content {
+    margin-top: 30px;
+    margin-bottom: 30px;
   }
   
   .game-mode-icon-container {
@@ -963,6 +1150,32 @@ section {
 }
 
 @media (max-width: 768px) {
+  /* Override for multiplayer mode reversed layout on mobile */
+  /* Force correct display of the multiplayer section on mobile */
+  .game-mode.reversed {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Force the icon to be first (on top) */
+  .mobile-first-element {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 20px !important;
+    order: -999 !important;
+  }
+  
+  .game-mode.reversed .game-mode-content {
+    order: 1 !important;
+    margin-top: 0 !important;
+  }
+  
+  /* Extra important overrides to ensure proper ordering */
+  .game-mode-icon-container.mobile-first-element {
+    position: relative !important;
+    z-index: 2 !important;
+  }
+  
   .landing-header {
     padding: 10px 0;
     height: auto;
@@ -998,6 +1211,9 @@ section {
     width: 100% !important;
     max-width: 200px !important;
     margin: 0 auto !important;
+    display: inline-block !important;
+    border: none !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
   }
   
   /* Ensure button text stays properly aligned and sized */
@@ -1006,6 +1222,21 @@ section {
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
+  }
+  
+  /* Fix white border line on buttons in mobile */
+  .game-mode-button, .hero-button, .cta-button {
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 4px !important;
+    background-color: #5d4037 !important;
+  }
+  
+  .secondary-button {
+    border: 2px solid #e0c9a6 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border-radius: 4px !important;
   }
   
   /* Show hamburger menu button */
@@ -1143,6 +1374,7 @@ section {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    border: none !important;
   }
   
   /* Fix CTA buttons specifically */
@@ -1216,5 +1448,7 @@ section {
     max-width: 200px !important;
     margin: 0 auto 15px !important;
     min-height: 40px !important;
+    border: none !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
   }
 }

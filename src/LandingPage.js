@@ -401,49 +401,67 @@ class LandingPage extends Component {
         </div>
         
         <div className="game-modes-container">
-          <div className="game-mode">
-            <div className="game-mode-icon-container">
+          {/* Single Player section with perfect vertical alignment */}
+          <div className="mobile-perfect-align">
+            {/* Chess pawn icon */}
+            <div className="center-knight">
               <div className="game-mode-icon ai-mode">♟</div>
             </div>
-            <div className="game-mode-content">
-              <h3 className="game-mode-title">Single Player</h3>
-              <p className="game-mode-description">Challenge the AI at multiple difficulty levels. Perfect for beginners and grandmasters alike.</p>
-              <RaisedButton
-                label="Play vs AI"
-                className="game-mode-button"
-                onClick={onStartGame}
-              />
-            </div>
+            
+            {/* Title */}
+            <h3 className="game-mode-title">Single Player</h3>
+            
+            {/* Description */}
+            <p className="game-mode-description">Challenge the AI at multiple difficulty levels. Perfect for beginners and grandmasters alike.</p>
+            
+            {/* Button */}
+            <RaisedButton
+              label="Play vs AI"
+              className="game-mode-button"
+              onClick={onStartGame}
+            />
           </div>
           
-          <div className="game-mode reversed">
-            <div className="game-mode-content">
-              <h3 className="game-mode-title">Multiplayer</h3>
-              <p className="game-mode-description">Challenge friends or random opponents in real-time matches with customizable time controls.</p>
-              <RaisedButton
-                label="Play Multiplayer"
-                className="game-mode-button"
-                onClick={onStartGame}
-              />
-            </div>
-            <div className="game-mode-icon-container">
+          {/* Mobile-friendly multiplayer section with perfect vertical alignment */}
+          <div className="mobile-perfect-align">
+            {/* Knight icon */}
+            <div className="center-knight">
               <div className="game-mode-icon multiplayer-mode">♞</div>
             </div>
+            
+            {/* Title */}
+            <h3 className="game-mode-title">Multiplayer</h3>
+            
+            {/* Description */}
+            <p className="game-mode-description">Challenge friends or random opponents in real-time matches with customizable time controls.</p>
+            
+            {/* Button */}
+            <RaisedButton
+              label="Play Multiplayer"
+              className="game-mode-button"
+              onClick={onStartGame}
+            />
           </div>
           
-          <div className="game-mode">
-            <div className="game-mode-icon-container">
+          {/* Analysis Mode section with perfect vertical alignment */}
+          <div className="mobile-perfect-align">
+            {/* Bishop icon */}
+            <div className="center-knight">
               <div className="game-mode-icon analysis-mode">♝</div>
             </div>
-            <div className="game-mode-content">
-              <h3 className="game-mode-title">Analysis Mode</h3>
-              <p className="game-mode-description">Review your games, analyze positions, and improve your strategy with our powerful analysis tools.</p>
-              <RaisedButton
-                label="Try Analysis"
-                className="game-mode-button"
-                onClick={onStartGame}
-              />
-            </div>
+            
+            {/* Title */}
+            <h3 className="game-mode-title">Analysis Mode</h3>
+            
+            {/* Description */}
+            <p className="game-mode-description">Review your games, analyze positions, and improve your strategy with our powerful analysis tools.</p>
+            
+            {/* Button */}
+            <RaisedButton
+              label="Try Analysis"
+              className="game-mode-button"
+              onClick={onStartGame}
+            />
           </div>
         </div>
       </section>

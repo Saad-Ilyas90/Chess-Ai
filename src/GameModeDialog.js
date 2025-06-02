@@ -182,17 +182,20 @@ class GameModeDialog extends Component {
         hoverColor="rgba(224, 201, 166, 0.1)"
         className="game-mode-button-cancel"
       />,
-      <RaisedButton
+      <FlatButton
         label="START GAME"
-        backgroundColor="#e0c9a6"
+        primary={false}
         onClick={this.handleSubmit}
         disabled={loading || (joinGame && !gameId)}
-        disabledBackgroundColor="rgba(224, 201, 166, 0.3)"
+        hoverColor="rgba(224, 201, 166, 0.3)"
         className="game-mode-button-start"
         style={{ 
+          color: '#5d4037',
+          backgroundColor: '#e0c9a6',
           margin: '0 12px',
           minWidth: '120px',
-          borderRadius: '4px'
+          borderRadius: '4px',
+          border: 'none'
         }}
         labelStyle={{
           color: '#5d4037',

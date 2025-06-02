@@ -179,6 +179,32 @@ div[role="dialog"] > div > div > div:last-child button:last-child {
   text-align: center !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
   margin: 0 !important;
+  border: none !important;
+}
+
+/* Target the inner structure of the START GAME button */
+div[role="dialog"] > div > div > div:last-child button:last-child div,
+div[role="dialog"] > div > div > div:last-child button:last-child div div {
+  border: none !important;
+}
+
+/* Target the specific div with border-radius style */
+div[role="dialog"] div[style*="border-radius: 2px"] {
+  border: none !important;
+  outline: none !important;
+}
+
+/* Specific styling for START GAME button */
+.game-mode-button-start {
+  border: none !important;
+  outline: none !important;
+}
+
+/* Target all children of START GAME button */
+.game-mode-button-start * {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* Force radio button color */
