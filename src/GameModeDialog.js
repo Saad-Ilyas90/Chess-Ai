@@ -43,6 +43,7 @@ class GameModeDialog extends Component {
   };
 
   handleJoinTypeChange = (event, value) => {
+    // For custom radio buttons, value is passed directly as 'join' or 'create'
     const joinGame = value === 'join';
     const gameId = joinGame ? this.state.gameId : generateGameId();
     this.setState({ 
@@ -294,57 +295,65 @@ class GameModeDialog extends Component {
           SELECT HOW YOU WANT TO PLAY
         </div>
         
-        <Paper style={styles.container}>
+        <Paper style={styles.container} className="game-mode-container">
           <div style={styles.title}>GAME MODE</div>
           <div style={styles.titleUnderline} className="section-title-underline"></div>
-          <RadioButtonGroup 
-            name="gameMode" 
-            valueSelected={gameMode} 
-            onChange={this.handleGameModeChange}
-            style={styles.group}
-          >
-            <RadioButton
-              value="ai"
-              label="Play against AI"
-              style={styles.radioButton}
-              labelStyle={{color: '#ffffff', fontWeight: 500}}
-              iconStyle={{fill: '#e0c9a6'}}
-            />
-            <RadioButton
-              value="multiplayer"
-              label="Play with a friend"
-              style={styles.radioButton}
-              labelStyle={{color: '#ffffff', fontWeight: 500}}
-              iconStyle={{fill: '#e0c9a6'}}
-            />
-          </RadioButtonGroup>
+          
+          {/* Custom radio buttons with full clickable areas */}
+          <div className="custom-radio-group">
+            {/* AI Option - Explicitly first */}
+            <div 
+              className={`custom-radio-option radio-option-ai ${gameMode === 'ai' ? 'selected' : ''}`}
+              onClick={(e) => this.handleGameModeChange(e, 'ai')}
+            >
+              <div className="radio-circle">
+                {gameMode === 'ai' && <div className="radio-inner-circle"></div>}
+              </div>
+              <div className="radio-label">Play against AI</div>
+            </div>
+            
+            {/* Friend Option - Explicitly second */}
+            <div 
+              className={`custom-radio-option radio-option-friend ${gameMode === 'multiplayer' ? 'selected' : ''}`}
+              onClick={(e) => this.handleGameModeChange(e, 'multiplayer')}
+            >
+              <div className="radio-circle">
+                {gameMode === 'multiplayer' && <div className="radio-inner-circle"></div>}
+              </div>
+              <div className="radio-label">Play with a friend</div>
+            </div>
+          </div>
         </Paper>
         
         {gameMode === 'multiplayer' && (
           <Paper style={styles.container}>
             <div style={styles.title}>MULTIPLAYER OPTIONS</div>
             <div style={styles.titleUnderline}></div>
-            <RadioButtonGroup 
-              name="joinType" 
-              valueSelected={joinGame ? 'join' : 'create'} 
-              onChange={this.handleJoinTypeChange}
-              style={styles.group}
-            >
-              <RadioButton
-                value="create"
-                label="Create a new game"
-                style={styles.radioButton}
-                labelStyle={{color: '#ffffff', fontWeight: 500}}
-                iconStyle={{fill: '#e0c9a6'}}
-              />
-              <RadioButton
-                value="join"
-                label="Join an existing game"
-                style={styles.radioButton}
-                labelStyle={{color: '#ffffff', fontWeight: 500}}
-                iconStyle={{fill: '#e0c9a6'}}
-              />
-            </RadioButtonGroup>
+            
+            {/* Custom radio buttons for multiplayer options */}
+            <div className="custom-radio-group multiplayer-options-group">
+              {/* Create game option */}
+              <div 
+                className={`custom-radio-option radio-option-create ${!joinGame ? 'selected' : ''}`}
+                onClick={(e) => this.handleJoinTypeChange(e, 'create')}
+              >
+                <div className="radio-circle">
+                  {!joinGame && <div className="radio-inner-circle"></div>}
+                </div>
+                <div className="radio-label">Create a new game</div>
+              </div>
+              
+              {/* Join game option */}
+              <div 
+                className={`custom-radio-option radio-option-join ${joinGame ? 'selected' : ''}`}
+                onClick={(e) => this.handleJoinTypeChange(e, 'join')}
+              >
+                <div className="radio-circle">
+                  {joinGame && <div className="radio-inner-circle"></div>}
+                </div>
+                <div className="radio-label">Join an existing game</div>
+              </div>
+            </div>
             
             {/* Friends List Section */}
             {this.props.currentUser && !this.props.isGuest && (

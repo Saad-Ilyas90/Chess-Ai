@@ -205,6 +205,24 @@ div[role="dialog"] [role="radiogroup"] svg:nth-child(2) {
   opacity: 1 !important;
 }
 
+/* Explicitly target our new radio option classes */
+.radio-option-ai {
+  order: 1 !important; /* Make sure AI option is first */
+}
+
+.radio-option-friend {
+  order: 2 !important; /* Make sure friend option is second */
+}
+
+/* Target the radio buttons themselves */
+.radio-button-ai {
+  order: 1 !important;
+}
+
+.radio-button-friend {
+  order: 2 !important;
+}
+
 /* Time control select */
 div[role="dialog"] div[role="button"] {
   color: #ffffff !important;
@@ -398,8 +416,160 @@ div:contains("Share this ID") {
   opacity: 0.9 !important;
 }
 
-/* Responsive styling for mobile devices */
+/* Custom radio buttons with improved clickable areas */
+.custom-radio-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  padding: 10px 0 !important;
+  width: 100% !important;
+}
+
+.custom-radio-option {
+  display: flex !important;
+  align-items: center !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  user-select: none !important;
+  background-color: rgba(93, 64, 55, 0.15) !important;
+  border: 1px solid rgba(224, 201, 166, 0.3) !important;
+  position: relative !important;
+}
+
+/* Add a subtle glow effect on hover for better visual feedback */
+.custom-radio-option:hover {
+  background-color: rgba(224, 201, 166, 0.2) !important;
+  box-shadow: 0 2px 8px rgba(224, 201, 166, 0.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Strong visual indication of selection */
+.custom-radio-option.selected {
+  background-color: rgba(224, 201, 166, 0.25) !important;
+  border: 1px solid rgba(224, 201, 166, 0.6) !important;
+  box-shadow: 0 2px 8px rgba(224, 201, 166, 0.2) !important;
+}
+
+/* Press effect when clicking */
+.custom-radio-option:active {
+  transform: scale(0.98) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+.radio-circle {
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  border: 2px solid #e0c9a6 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 16px !important;
+  flex-shrink: 0 !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Make the radio circle more prominent when selected */
+.custom-radio-option.selected .radio-circle {
+  border: 2px solid #e0c9a6 !important;
+  box-shadow: 0 0 0 2px rgba(224, 201, 166, 0.3) !important;
+}
+
+.radio-inner-circle {
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  background-color: #e0c9a6 !important;
+  box-shadow: 0 0 4px rgba(224, 201, 166, 0.5) !important;
+}
+
+.radio-label {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+  font-size: 16px !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+  flex-grow: 1 !important;
+  letter-spacing: 0.3px !important;
+}
+
+/* Specific rules to force correct radio button order */
+.radio-option-ai {
+  order: 1 !important; /* Force Play with AI to be first */
+  position: relative !important;
+  z-index: 2 !important; /* Higher z-index to ensure visibility */
+}
+
+.radio-option-friend {
+  order: 2 !important; /* Force Play with friends to be second */
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Mobile-specific overrides */
 @media (max-width: 768px) {
+  /* Enhanced styles for custom radio buttons on mobile */
+  .custom-radio-group {
+    gap: 20px !important; /* Increase spacing between options on mobile */
+  }
+  
+  .custom-radio-option {
+    padding: 16px !important; /* Larger touch targets for mobile */
+    min-height: 60px !important; /* Ensure minimum height for better tap area */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important; /* Add subtle shadow for depth */
+    position: relative !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+  }
+  
+  /* Add visual feedback when tapping */
+  .custom-radio-option:active {
+    transform: scale(0.98) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .custom-radio-option.selected {
+    background-color: rgba(224, 201, 166, 0.3) !important;
+    border: 1px solid rgba(224, 201, 166, 0.7) !important;
+    box-shadow: 0 2px 8px rgba(224, 201, 166, 0.2) !important;
+  }
+  
+  .radio-circle {
+    width: 24px !important; /* Slightly larger radio circles on mobile */
+    height: 24px !important;
+    margin-right: 18px !important;
+  }
+  
+  .radio-inner-circle {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  
+  .radio-label {
+    font-size: 18px !important; /* Larger text on mobile */
+    letter-spacing: 0.5px !important;
+    line-height: 1.4 !important;
+  }
+  
+  /* Specific enhancements for multiplayer options */
+  .multiplayer-options-group .custom-radio-option {
+    border-left: 4px solid transparent !important;
+  }
+  
+  .multiplayer-options-group .custom-radio-option.selected {
+    border-left: 4px solid #e0c9a6 !important;
+  }
+  
+  /* Make sure options are in the correct order */
+  .radio-option-ai {
+    order: 1 !important;
+    margin-bottom: 0 !important; /* Spacing handled by gap on parent */
+  }
+  
+  .radio-option-friend {
+    order: 2 !important;
+  }
+  
   /* Ensure dialog fits mobile screens properly */
   div[role="dialog"] > div > div {
     width: 95% !important;
@@ -439,5 +609,166 @@ div:contains("Share this ID") {
   div[role="dialog"] > div > div > div:last-child {
     gap: 12px !important;
     padding: 12px !important;
+  }
+
+  /* Fix radio button layout on mobile screens */
+  div[role="dialog"] [role="radiogroup"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  /* Make each radio option full-width and clickable */
+  div[role="dialog"] [role="radiogroup"] label {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+  }
+  div[role="dialog"] [role="radiogroup"] label > div {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 12px 16px !important;
+  }
+  /* Expand native input to cover entire label for full-click area */
+  div[role="dialog"] [role="radiogroup"] label input[type="radio"] {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0 !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    z-index: 2 !important;
+  }
+  /* Remove unwanted border/outline from Start Game button */
+  div[role="dialog"] > div > div > div:last-child button:last-child {
+    border: none !important;
+    outline: none !important;
+  }
+
+  /* Game mode radio group mobile fixes */
+  .game-mode-radio-group > div {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    margin-bottom: 12px !important;
+    position: relative !important;
+  }
+  .game-mode-radio-group > div > div {
+    flex: 0 0 auto !important;
+    /* prevent icon and label from wrapping */
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+  }
+  .game-mode-radio-group > div > div > label {
+    float: none !important;
+    /* keep label on one line */
+    white-space: nowrap !important;
+    display: inline-block !important;
+    margin-left: 8px !important;
+    padding: 0 !important;
+  }
+  .game-mode-radio-group > div input[type="radio"] {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    cursor: pointer !important;
+    z-index: 2 !important;
+  }
+
+  /* Remove unwanted border/outline from Start Game button */
+  .game-mode-button-start {
+    border: none !important;
+    outline: none !important;
+  }
+  .game-mode-button-start button {
+    border: none !important;
+    outline: none !important;
+  }
+
+  /* Override game mode radio group layout on mobile to prevent displacement */
+  .game-mode-radio-group {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  .game-mode-radio-group > div {
+    width: 100% !important;
+    margin: 8px 0 !important;
+  }
+  
+  /* Fix radio button order on mobile - ensure Play with AI stays above Play with Friends */
+  /* More aggressive targeting for the radio buttons */
+  div[role="dialog"] [role="radiogroup"] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Direct targeting of radio buttons by their label text */
+  div[role="dialog"] [role="radiogroup"] label:has(span:contains("Play against AI")),
+  div[role="dialog"] [role="radiogroup"] div:has(label:contains("Play against AI")) {
+    order: -2 !important; /* Very negative to ensure it's first */
+    margin-bottom: 16px !important;
+  }
+  
+  div[role="dialog"] [role="radiogroup"] label:has(span:contains("Play with a friend")),
+  div[role="dialog"] [role="radiogroup"] div:has(label:contains("Play with a friend")) {
+    order: -1 !important; /* Less negative but still above others */
+  }
+  
+  /* Stronger targeting of the radiogroup */
+  div[role="dialog"] [role="radiogroup"][name="gameMode"] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Specific targeting by value attributes */
+  div[role="dialog"] [role="radiogroup"] input[value="ai"],
+  div[role="dialog"] [role="radiogroup"] div:has(input[value="ai"]) {
+    order: -10 !important;
+  }
+  
+  div[role="dialog"] [role="radiogroup"] input[value="multiplayer"],
+  div[role="dialog"] [role="radiogroup"] div:has(input[value="multiplayer"]) {
+    order: -5 !important;
+  }
+  
+  /* Specific styles for multiplayer options */
+  .multiplayer-options-group {
+    margin-top: 5px !important;
+  }
+  
+  /* Create new game option */
+  .radio-option-create {
+    order: 1 !important;
+  }
+  
+  /* Join existing game option */
+  .radio-option-join {
+    order: 2 !important;
+  }
+  
+  /* Direct targeting for dialog paper containers */
+  div[role="dialog"] > div > div > div > div > div[style*="container"] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Make sure play with friends section comes below */
+  div[style*="PLAY WITH FRIENDS"],
+  div:contains("PLAY WITH FRIENDS") {
+    order: 100 !important; /* Very high number to ensure it comes last */
   }
 }
