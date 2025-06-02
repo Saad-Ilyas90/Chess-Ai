@@ -944,6 +944,12 @@ h3 + div button {
     width: calc(100% - 40px) !important;
     margin: 20px auto !important;
   }
+
+  /* Remove white border from search toggle buttons */
+  .friends-content button[label="Search by Email"],
+  .friends-content button[label="Search by Username"] {
+    border: none !important;
+  }
 }
 
 /* Force responsive layout globally for all elements */

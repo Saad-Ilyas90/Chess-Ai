@@ -1251,18 +1251,19 @@ class FriendsPanel extends Component {
                 hintStyle={{ color: 'rgba(224, 201, 166, 0.7)' }}
                 underlineStyle={{ borderColor: 'rgba(224, 201, 166, 0.5)' }}
                 underlineFocusStyle={{ borderColor: '#e0c9a6' }}
+                underlineShow={false}
                 errorStyle={{ color: '#ff6d6d' }}
               />
-              <RaisedButton
+              <FlatButton
                 label={isSearching ? "Searching..." : "Search"}
                 onClick={this.handleSearch}
                 disabled={isSearching || !searchTerm.trim()}
                 backgroundColor="#5d4037"
-                labelColor="#e0c9a6"
+                hoverColor="#6d5047"
                 disabledBackgroundColor="rgba(93, 64, 55, 0.5)"
-                disabledLabelColor="rgba(224, 201, 166, 0.5)"
-                buttonStyle={{ backgroundColor: '#5d4037', border: '1px solid #e0c9a6', borderRadius: '4px' }}
+                style={{ border: 'none', borderRadius: '4px' }}
                 labelStyle={{ color: '#e0c9a6' }}
+                disabledLabelColor="rgba(224, 201, 166, 0.5)"
               />
             </div>
 
