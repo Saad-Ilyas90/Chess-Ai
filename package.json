@@ -1,7 +1,6 @@
 {
   "name": "chess",
   "version": "0.1.0",
-  "homepage": "https://avinayak.github.io/chess/",
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
