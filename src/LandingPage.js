@@ -328,7 +328,7 @@ class LandingPage extends Component {
           <div className="hero-buttons">
             <RaisedButton
               label="Play Now"
-              className="hero-button primary-button"
+              className="hero-button secondary-button"
               onClick={onStartGame}
             />
             <RaisedButton

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './FriendsPanel.custom.css';
+import './accept-challenge-fix.css'; // Fix for Accept Challenge button white lines
 import { 
   getUserFriends, 
   sendFriendRequest, 
@@ -494,13 +495,20 @@ class FriendsPanel extends Component {
   }
 
   handleRemoveFriend = async (friendId) => {
+    // Optimistically update UI to remove friend
+    this.setState(prevState => ({
+      friends: prevState.friends.filter(friend => friend.id !== friendId)
+    }));
     try {
       const success = await removeFriend(this.props.currentUser.id, friendId);
-      if (success) {
-        this.loadFriends();
+      if (!success) {
+        console.warn('[FriendsPanel] Failed to remove friend, reloading friends list');
+        await this.loadFriends();
       }
     } catch (error) {
-      console.error('Error removing friend:', error);
+      console.error('[FriendsPanel] Error removing friend:', error);
+      // Reload friends list to revert UI if error occurs
+      await this.loadFriends();
     }
   }
 
@@ -1557,51 +1565,143 @@ class FriendsPanel extends Component {
                     const fromUser = notification.fromUserDetails || { displayName: 'Unknown User' };
                     
                     return (
-                      <div key={notification.id}>
-                        <ListItem
-                          leftAvatar={
-                            fromUser.photoURL ? (
+                      <div key={notification.id} className="notification-item">
+                        <div className="notification-container" style={{ 
+                          display: 'flex', 
+                          flexDirection: 'column',
+                          padding: '20px', 
+                          position: 'relative',
+                          backgroundColor: 'rgba(40, 40, 40, 0.95)',
+                          borderRadius: '4px',
+                          margin: '8px 0',
+                          boxShadow: '0 3px 6px rgba(0, 0, 0, 0.16)'                          
+                        }}>
+                          {/* Top content area with avatar and text */}
+                          <div style={{ 
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'flex-start'
+                          }}>
+                            {/* Avatar section */}
+                            <div style={{ 
+                              marginRight: '20px',
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              paddingTop: '4px'
+                            }}>
                               <Avatar 
-                                src={fromUser.photoURL} 
-                                style={{ border: '2px solid #5d4037' }}
-                              />
-                            ) : (
-                              <Avatar style={{
-                                backgroundColor: '#5d4037',
-                                color: '#e0c9a6',
-                                border: '2px solid #e0c9a6'
-                              }}>
+                                size={54}
+                                style={{
+                                  backgroundColor: '#5d4037',
+                                  color: '#e0c9a6',
+                                  border: '3px solid #e0c9a6',
+                                  fontWeight: 'bold',
+                                  fontSize: '24px',
+                                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                                }}>
                                 {(fromUser.displayName || 'U').charAt(0).toUpperCase()}
                               </Avatar>
-                            )
-                          }
-                          primaryText={
-                            <div style={{ fontWeight: 'bold', color: '#e0c9a6', fontSize: '16px' }}>
-                              Game Challenge
                             </div>
-                          }
-                          secondaryText={
-                            <div>
-                              <div style={{ color: '#cccccc' }}>From: {fromUser.displayName || 'Unknown User'}</div>
-                              {fromUser.email && <div style={{ color: '#cccccc' }}>Email: {fromUser.email}</div>}
-                              {notification.gameId && <div style={{ color: '#cccccc' }}>Game ID: {notification.gameId}</div>}
-                              <div style={{ color: '#a0a0a0', fontSize: '12px' }}>
-                                {new Date(notification.createdAt.seconds * 1000).toLocaleString()}
+                            
+                            {/* Content section */}
+                            <div style={{ 
+                              flex: '1', 
+                              minWidth: '200px',
+                              paddingRight: '16px'
+                            }}>
+                              <div style={{ 
+                                fontWeight: 'bold', 
+                                color: '#e0c9a6', 
+                                fontSize: '20px',
+                                marginBottom: '8px',
+                                letterSpacing: '0.5px',
+                                textShadow: '0 1px 2px rgba(0,0,0,0.3)'
+                              }}>
+                                Game Challenge
+                              </div>
+                              
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                <div style={{ 
+                                  color: '#fafafa', 
+                                  fontSize: '15px',
+                                  fontWeight: '500'
+                                }}>
+                                  From: {fromUser.displayName || 'Unknown User'}
+                                </div>
+                                
+                                {fromUser.email && (
+                                  <div style={{ color: '#cccccc', fontSize: '14px' }}>
+                                    Email: {fromUser.email}
+                                  </div>
+                                )}
+                                
+                                {notification.gameId && (
+                                  <div style={{ 
+                                    color: '#e0c9a6', 
+                                    fontSize: '14px',
+                                    fontFamily: 'monospace', 
+                                    background: 'rgba(93, 64, 55, 0.4)',
+                                    padding: '4px 8px',
+                                    borderRadius: '3px',
+                                    display: 'inline-block',
+                                    marginTop: '4px',
+                                    marginBottom: '4px'
+                                  }}>
+                                    Game ID: {notification.gameId}
+                                  </div>
+                                )}
+                                
+                                <div style={{ 
+                                  color: '#a0a0a0', 
+                                  fontSize: '12px',
+                                  marginTop: '6px',
+                                  fontStyle: 'italic' 
+                                }}>
+                                  {new Date(notification.createdAt.seconds * 1000).toLocaleString()}
+                                </div>
                               </div>
                             </div>
-                          }
-                          rightIconButton={
-                            <RaisedButton
-                              label="Accept Challenge"
+                          </div>
+                          
+                          {/* Button section - centered below all content */}
+                          <div style={{ 
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '100%',
+                            marginTop: '20px'
+                          }}>
+                            <div
                               onClick={() => this.handleAcceptGameChallenge(notification)}
-                              primary={true}
-                              backgroundColor="#5d4037"
-                              labelColor="#e0c9a6"
-                              style={{ border: '1px solid #e0c9a6', borderRadius: '4px', marginRight: '10px' }}
-                            />
-                          }
-                        />
-                        <Divider />
+                              className="custom-accept-button"
+                              style={{
+                                display: 'inline-block',
+                                backgroundColor: '#5d4037',
+                                color: '#e0c9a6',
+                                padding: '12px 24px',
+                                cursor: 'pointer',
+                                fontWeight: 'bold',
+                                textTransform: 'uppercase',
+                                borderRadius: '4px',
+                                fontSize: '15px',
+                                textAlign: 'center',
+                                userSelect: 'none',
+                                letterSpacing: '1px',
+                                whiteSpace: 'nowrap',
+                                transition: 'all 0.2s ease',
+                                boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
+                                border: '1px solid #7c5548',
+                                width: '80%',
+                                maxWidth: '300px'
+                              }}
+                              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#704439'}
+                              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#5d4037'}
+                            >
+                              ACCEPT CHALLENGE
+                            </div>
+                          </div>
+                        </div>
+                        <Divider style={{ margin: '0', backgroundColor: 'rgba(224, 201, 166, 0.15)' }}/>
                       </div>
                     );
                   })}

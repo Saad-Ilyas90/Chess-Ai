@@ -1,0 +1,73 @@
+/* 
+ * ACCEPT CHALLENGE BUTTON FIX
+ * This CSS file specifically targets the white line issue around Accept Challenge buttons
+ * on smaller screens. It uses extremely specific selectors to override inline styles.
+ */
+
+/* Target the exact container structure from the HTML */
+@media screen and (max-width: 768px) {
+  /* Direct targeting of the specific element structure */
+  div[style*="position: absolute"][style*="top: 12px"][style*="right: 4px"],
+  div[style*="position:absolute"][style*="top:12px"][style*="right:4px"],
+  div[style*="border:"][style*="margin-right:"][style*="box-shadow:"] {
+    border: 0 !important;
+    border-width: 0 !important;
+    border-color: transparent !important;
+    border-style: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    overflow: hidden !important;
+    background-clip: padding-box !important;
+    -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC) !important;
+    mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC) !important;
+  }
+
+  /* Target by exact combination of attributes */
+  div[style*="display: block"][style*="min-width: 88px"][style*="position: absolute"][style*="margin-right: 10px"] {
+    border: 0 !important;
+    border-width: 0 !important;
+    border-color: transparent !important;
+    border-style: none !important;
+  }
+
+  /* Target by the specific button children */
+  div:has(> button > div > div > span:contains("Accept Challenge")) {
+    border: 0 !important;
+    border-width: 0 !important;
+    border-color: transparent !important;
+    border-style: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Target the button directly with its specific structure */
+  button[type="button"][style*="background-color: rgb(76, 175, 80)"] {
+    border: 0 !important;
+    border-width: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+
+  /* Specific targeting of content inside the button */
+  button[type="button"][style*="background-color: rgb(76, 175, 80)"] > div,
+  button[type="button"][style*="background-color: rgb(76, 175, 80)"] > div > div {
+    border: 0 !important;
+    border-width: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+
+  /* Fix for Material-UI specific classes */
+  .MuiButtonBase-root,
+  .MuiButton-root,
+  .MuiIconButton-root {
+    border: 0 !important;
+    border-width: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Eliminate any right-positioned absolute elements with borders */
+  div[style*="position: absolute"][style*="right:"] {
+    border: 0 !important;
+    border-width: 0 !important;
+  }
+}

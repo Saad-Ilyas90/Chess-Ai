@@ -1265,6 +1265,23 @@ button.friend-request-icon > div > span:first-child,
     max-width: 100% !important;
     margin: 10px auto !important;
   }
+
+  /* Mobile-friendly styling for dialog action buttons in Friends Panel */
+  .friends-content [role="dialog"] button {
+    width: 100% !important;
+    max-width: 200px !important;
+    margin: 8px auto !important;
+    min-height: 40px !important;
+    border: none !important;
+    outline: none !important;
+  }
+  .friends-content [role="dialog"] button span {
+    font-size: 14px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: inline-block !important;
+  }
 }
 
 /* START - Fix for disappearing friend request icon */
@@ -1315,216 +1332,170 @@ button.friend-request-icon > div > span:first-child,
 /* Enhanced Mobile Responsiveness for REQUESTS and ALERTS Boxes */
 
 /* Tablet and Medium Screens */
-@media screen and (max-width: 1024px) {
-  .friend-request-icon, .notification-icon {
-    width: 100px !important;
-    height: 56px !important;
-    margin: 0 8px !important;
-  }
-  
-  .icon-text {
-    font-size: 20px !important;
-    line-height: 1.2 !important;
-    margin-bottom: 2px !important;
-  }
-  
-  .icon-label {
-    font-size: 9px !important;
-    line-height: 1.1 !important;
-    letter-spacing: -0.5px !important;
-  }
-}
-
-/* Mobile Phones - Portrait Mode */
+/* Fix for Accept Challenge button white space/lines in mobile */
 @media screen and (max-width: 768px) {
-  .friend-request-icon, .notification-icon {
-    width: 90px !important;
-    height: 52px !important;
-    margin: 0 6px !important;
-    padding: 6px 4px !important;
-  }
-  
-  .icon-text {
-    font-size: 18px !important;
-    line-height: 1.1 !important;
-    margin-bottom: 2px !important;
-    display: block !important;
-    text-align: center !important;
-  }
-  
-  .icon-label {
-    font-size: 8px !important;
-    line-height: 1 !important;
-    letter-spacing: -0.8px !important;
-    margin-top: 2px !important;
-    display: block !important;
-    text-align: center !important;
-    white-space: nowrap !important;
-  }
-  
-  /* Badge positioning for mobile - directly on bell icon */
-  .badge-style > span:first-child {
-    position: absolute !important;
-    top: 2px !important;
-    right: 2px !important;
-    font-size: 10px !important;
-    min-width: 16px !important;
-    height: 16px !important;
-    line-height: 16px !important;
-    padding: 0 3px !important;
-    border-radius: 8px !important;
-    z-index: 20 !important;
-  }
-  
-  /* Ensure header container adapts to mobile */
-  .friends-header-container {
-    min-width: auto !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-  }
-  
-  /* Center align buttons on mobile */
-  .friends-header-container > div:last-child {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 6px !important;
-  }
-}
-
-/* Small Mobile Phones */
-@media screen and (max-width: 480px) {
-  .friend-request-icon, .notification-icon {
-    width: 80px !important;
-    height: 48px !important;
-    margin: 0 4px !important;
-    padding: 4px 3px !important;
-  }
-  
-  .icon-text {
-    font-size: 16px !important;
-    line-height: 1 !important;
-    margin-bottom: 1px !important;
-  }
-  
-  .icon-label {
-    font-size: 7px !important;
-    line-height: 1 !important;
-    letter-spacing: -1px !important;
-    margin-top: 1px !important;
-    transform: scale(0.9) !important;
-    transform-origin: center !important;
-  }
-  
-  /* Stack buttons vertically on very small screens */
-  .friends-header-container {
-    flex-direction: column !important;
-    align-items: center !important;
-  }
-  
-  .friends-header-container > div:first-child {
-    order: 1 !important;
-    margin-bottom: 10px !important;
-  }
-  
-  .friends-header-container > div:last-child {
-    order: 2 !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-  }
-  
-  /* Make buttons full width on tiny screens */
-  .friend-request-icon, .notification-icon, .add-friends-button {
+  /* Target the Accept Challenge button specifically */
+  .friends-content .MuiDialog-root .MuiDialog-paper button,
+  .friends-content [role="dialog"] button {
     width: 100% !important;
     max-width: 200px !important;
-    height: 44px !important;
-    margin: 4px 0 !important;
+    margin: 8px auto !important;
+    min-height: 40px !important;
+    border: none !important;
+    outline: none !important;
+    /* Remove any white borders/lines */
+    box-shadow: none !important;
+    background-clip: padding-box !important;
   }
   
-  /* Horizontal layout for icon and text on tiny screens */
-  .friend-request-icon, .notification-icon {
-    flex-direction: row !important;
-    justify-content: center !important;
-    gap: 6px !important;
-  }
-  
-  .icon-text, .icon-label {
-    display: inline-block !important;
-    margin: 0 !important;
-    line-height: 1.2 !important;
-  }
-  
-  .icon-text {
-    font-size: 18px !important;
-  }
-  
-  .icon-label {
-    font-size: 10px !important;
-    transform: none !important;
-    letter-spacing: 0 !important;
-  }
-}
-
-/* Extra Small Screens */
-@media screen and (max-width: 360px) {
-  .friend-request-icon, .notification-icon {
-    width: 75px !important;
-    height: 42px !important;
-    padding: 3px 2px !important;
-  }
-  
-  .icon-text {
+  /* Fix the button content styling */
+  .friends-content .MuiDialog-root .MuiDialog-paper button span,
+  .friends-content [role="dialog"] button span {
     font-size: 14px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: inline-block !important;
+    /* Ensure no white borders on text */
+    border: none !important;
+    outline: none !important;
   }
   
-  .icon-label {
-    font-size: 6px !important;
-    letter-spacing: -1.2px !important;
+  /* Fix the button container div */
+  .friends-content .MuiDialog-root .MuiDialog-paper button div,
+  .friends-content [role="dialog"] button div {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background-clip: padding-box !important;
   }
   
-  /* Ensure badge stays properly positioned on tiny screens */
-  .badge-style > span:first-child {
-    top: 0px !important;
-    right: 0px !important;
-    font-size: 9px !important;
-    min-width: 14px !important;
-    height: 14px !important;
-    line-height: 14px !important;
+  /* Remove any white borders from nested divs */
+  .friends-content .MuiDialog-root .MuiDialog-paper button div div,
+  .friends-content [role="dialog"] button div div {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background-clip: padding-box !important;
+  }
+  
+  /* Specific fix for the Accept Challenge button based on your HTML structure */
+  button[style*="background-color: rgb(76, 175, 80)"],
+  button[label="Accept Challenge"],
+  [role="dialog"] [label="Accept Challenge"],
+  [role="dialog"] button[primary] {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background-clip: padding-box !important;
+    overflow: hidden !important;
+    -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC) !important;
+    mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC) !important;
+  }
+  
+  /* Target the button's container elements */
+  button[label="Accept Challenge"] div,
+  [role="dialog"] [label="Accept Challenge"] div,
+  button[primary] div,
+  button[style*="background-color: rgb(76, 175, 80)"] div {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+  
+  button[label="Accept Challenge"] div div,
+  [role="dialog"] [label="Accept Challenge"] div div,
+  button[primary] div div,
+  button[style*="background-color: rgb(76, 175, 80)"] div div {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+  
+  /* Remove the problematic border from the parent container */
+  div[style*="border: 1px solid rgb(224, 201, 166)"],
+  div[style*="border:1px solid rgb(224, 201, 166)"],
+  div[style*="position: absolute"][style*="right: 4px"],
+  div[style*="position:absolute"][style*="right:4px"] {
+    border: none !important;
+    box-shadow: none !important;
+    background-clip: padding-box !important;
+    overflow: hidden !important;
+    -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC) !important;
+    mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC) !important;
+  }
+
+  /* Specifically target the exact container structure you provided */
+  div[style*="display: block"][style*="min-width: 88px"][style*="position: absolute"][style*="top: 12px"][style*="right: 4px"] {
+    border: none !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    background-clip: padding-box !important;
+    -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC) !important;
+    mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC) !important;
+  }
+  
+  /* Directly target RaisedButton with label="Accept Challenge" */
+  [label="Accept Challenge"],
+  button:has(span:contains("Accept Challenge")),
+  .MuiButton-root:has(span:contains("Accept Challenge")),
+  div[rightIconButton] button {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    background-clip: padding-box !important;
   }
 }
 
-/* Force visibility and proper display across all mobile sizes */
+/* Target the exact structure of the Accept Challenge button container */
 @media screen and (max-width: 768px) {
-  .friend-request-icon *, 
-  .notification-icon *,
-  .badge-style * {
-    visibility: visible !important;
-    opacity: 1 !important;
-    display: block !important;
+  /* Target based on exact HTML from user */
+  div[style*="position: absolute"][style*="top: 12px"][style*="right: 4px"][style*="border: 1px solid rgb(224, 201, 166)"],
+  div[style*="position:absolute"][style*="top:12px"][style*="right:4px"][style*="border:1px solid rgb(224, 201, 166)"] {
+    border: none !important;
+    border-color: transparent !important;
+    -webkit-border-image: none !important;
+    border-image: none !important;
   }
   
-  .icon-text, .icon-label {
-    color: #ffdd99 !important;
-    text-shadow: 0 0 1px rgba(255, 221, 153, 0.3) !important;
+  /* Additional global fix for all notifications dialog buttons */
+  [role="dialog"] [class*="ListItem"] button,
+  [role="dialog"] [class*="listItem"] button,
+  div.notifications-container button,
+  div[style*="notifications"] button {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
   }
   
-  /* Ensure badges don't interfere with icon layout */
-  .badge-style {
-    position: relative !important;
-    overflow: visible !important;
+  /* Fix parent containers too */
+  div.notifications-container > div > div,
+  [role="dialog"] [class*="ListItem"] > div,
+  [role="dialog"] [class*="listItem"] > div {
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Additional fix for very small screens */
+@media screen and (max-width: 480px) {
+  .friends-content .MuiDialog-root .MuiDialog-paper button,
+  .friends-content [role="dialog"] button {
+    min-height: 44px !important;
+    padding: 8px 12px !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
   }
   
-  /* Badge number positioning - directly on the icon */
-  .badge-style > span:first-child {
-    position: absolute !important;
-    top: -2px !important;
-    right: -2px !important;
-    z-index: 25 !important;
-    pointer-events: none !important;
-    background-color: #ff6b6b !important;
-    color: white !important;
-    border: 1px solid white !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+  /* Ensure button text is properly centered */
+  .friends-content .MuiDialog-root .MuiDialog-paper button span,
+  .friends-content [role="dialog"] button span {
+    line-height: 1.4 !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 }
